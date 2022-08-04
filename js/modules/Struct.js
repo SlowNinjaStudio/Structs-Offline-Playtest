@@ -1,4 +1,5 @@
 import {FLEET_STRUCT_DEFAULTS} from "./Constants.js";
+import {DefenseComponent} from "./DefenseComponent.js";
 
 export class Struct {
   /**
@@ -7,20 +8,21 @@ export class Struct {
    * @param {ManualWeapon} manualWeaponPrimary
    * @param {ManualWeapon} manualWeaponSecondary
    * @param {PassiveWeapon} passiveWeapon
+   * @param {DefenseComponent} defenseComponent
    */
   constructor(
     unitType,
     operatingAmbit,
     manualWeaponPrimary,
     manualWeaponSecondary,
-    passiveWeapon
+    passiveWeapon,
+    defenseComponent = null
   ) {
     this.id = this.generateId();
     this.unitType = unitType;
     this.operatingAmbit = operatingAmbit;
     this.maxHealth = FLEET_STRUCT_DEFAULTS.MAX_HEALTH;
     this.currentHealth = this.maxHealth;
-    this.armor = FLEET_STRUCT_DEFAULTS.ARMOR;
     this.defenders = [];
     this.defending = null;
     this.isDestroyed = false;
@@ -28,6 +30,7 @@ export class Struct {
     this.manualWeaponPrimary = manualWeaponPrimary;
     this.manualWeaponSecondary = manualWeaponSecondary;
     this.passiveWeapon = passiveWeapon;
+    this.defenseComponent = defenseComponent ? defenseComponent : new DefenseComponent();
   }
 
   /**
@@ -96,7 +99,7 @@ export class Struct {
    * @param {Struct} attacker
    */
   takeDamage(damage, attacker = null) {
-    this.setCurrentHealth(this.currentHealth - Math.max(1, damage - this.armor));
+    this.setCurrentHealth(this.currentHealth - this.defenseComponent.reduceAttackDamage(damage));
     if (this.currentHealth === 0) {
       this.destroyStruct();
 
@@ -122,6 +125,9 @@ export class Struct {
     if (!weapon.canTargetAmbit(struct.operatingAmbit)) {
       throw new Error('Cannot target ambit for attack');
     }
+    if (struct.defenseComponent.blocksTargeting(this)) {
+      throw new Error('Unable to target for attack');
+    }
   }
 
   /**
@@ -140,7 +146,8 @@ export class Struct {
     return !this.isDestroyed
       && !target.isDestroyed
       && this.canTargetAmbit(target.operatingAmbit)
-      && this.hasPassiveWeapon();
+      && this.hasPassiveWeapon()
+      && !target.defenseComponent.evadeCounterAttack();
   }
 
   /**
