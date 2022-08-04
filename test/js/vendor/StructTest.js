@@ -1,15 +1,40 @@
-import { DTest } from "../../DTestFramework.js";
-import { Struct } from "../../../js/modules/Struct.js";
+import {DTest} from "../../DTestFramework.js";
+import {Struct} from "../../../js/modules/Struct.js";
+import {ManualWeapon} from "../../../js/modules/ManualWeapon.js";
+import {AMBITS, FLEET_STRUCT_DEFAULTS} from "../../../js/modules/Constants.js";
+import {PassiveWeapon} from "../../../js/modules/PassiveWeapon.js";
+
+/**
+ * @return {Struct}
+ */
+function getTestStruct() {
+  return new Struct(
+    'TANK',
+    AMBITS.LAND,
+    new ManualWeapon(
+      'Unguided Weaponry',
+      [FLEET_STRUCT_DEFAULTS.ATTACK_DAMAGE],
+      false,
+      AMBITS.LAND
+    ),
+    null,
+    new PassiveWeapon(
+      'Counter-Attack',
+      FLEET_STRUCT_DEFAULTS.COUNTER_ATTACK_DAMAGE,
+      1
+    ),
+  );
+}
 
 const generateIdTest = new DTest('generateIdTest', function() {
-  const struct = new Struct();
+  const struct = getTestStruct();
   this.assertEquals(struct.generateId() !== struct.generateId(), true);
 });
 
 const addDefenderTest = new DTest('addDefenderTest', function () {
-  const structA = new Struct();
-  const structB = new Struct();
-  const structC = new Struct();
+  const structA = new getTestStruct();
+  const structB = new getTestStruct();
+  const structC = new getTestStruct();
   structA.addDefender(structB);
 
   this.assertEquals(structA.defenders.length, 1);
@@ -23,10 +48,10 @@ const addDefenderTest = new DTest('addDefenderTest', function () {
 });
 
 const removeDefenderTest = new DTest('removeDefenderTest', function () {
-  const structA = new Struct();
-  const structB = new Struct();
-  const structC = new Struct();
-  const structD = new Struct();
+  const structA = getTestStruct();
+  const structB = getTestStruct();
+  const structC = getTestStruct();
+  const structD = getTestStruct();
   structA.addDefender(structB);
   structA.addDefender(structC);
   structA.addDefender(structD);
@@ -41,10 +66,10 @@ const removeDefenderTest = new DTest('removeDefenderTest', function () {
 });
 
 const defendTest = new DTest('defendTest', function() {
-  const structA = new Struct();
-  const structB = new Struct();
-  const structC = new Struct();
-  const structD = new Struct();
+  const structA = getTestStruct();
+  const structB = getTestStruct();
+  const structC = getTestStruct();
+  const structD = getTestStruct();
   structA.defend(structB);
 
   this.assertEquals(structA.defending.id, structB.id);
@@ -64,8 +89,8 @@ const defendTest = new DTest('defendTest', function() {
 });
 
 const undefendTest = new DTest('undefendTest', function() {
-  const structA = new Struct();
-  const structB = new Struct();
+  const structA = getTestStruct();
+  const structB = getTestStruct();
   structA.defend(structB);
 
   this.assertEquals(structA.defending.id, structB.id);
@@ -78,9 +103,9 @@ const undefendTest = new DTest('undefendTest', function() {
 });
 
 const removeAllDefendersTest = new DTest('removeAllDefendersTest', function() {
-  const structA = new Struct();
-  const structB = new Struct();
-  const structC = new Struct();
+  const structA = getTestStruct();
+  const structB = getTestStruct();
+  const structC = getTestStruct();
   structA.defend(structC);
   structB.defend(structC);
 

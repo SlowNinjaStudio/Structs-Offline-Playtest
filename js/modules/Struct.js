@@ -1,18 +1,33 @@
 import {FLEET_STRUCT_DEFAULTS} from "./Constants.js";
 
 export class Struct {
-  constructor() {
+  /**
+   * @param {string} unitType
+   * @param {string} operatingAmbit
+   * @param {ManualWeapon} manualWeaponPrimary
+   * @param {ManualWeapon} manualWeaponSecondary
+   * @param {PassiveWeapon} passiveWeapon
+   */
+  constructor(
+    unitType,
+    operatingAmbit,
+    manualWeaponPrimary,
+    manualWeaponSecondary,
+    passiveWeapon
+  ) {
     this.id = this.generateId();
-    this.operatingAmbit = null;
-    this.targetAmbits = [];
+    this.unitType = unitType;
+    this.operatingAmbit = operatingAmbit;
     this.maxHealth = FLEET_STRUCT_DEFAULTS.MAX_HEALTH;
     this.currentHealth = this.maxHealth;
-    this.attackDamage = FLEET_STRUCT_DEFAULTS.ATTACK_DAMAGE;
-    this.counterAttackDamage = FLEET_STRUCT_DEFAULTS.COUNTER_ATTACK_DAMAGE;
     this.armor = FLEET_STRUCT_DEFAULTS.ARMOR;
     this.defenders = [];
     this.defending = null;
     this.isDestroyed = false;
+
+    this.manualWeaponPrimary = manualWeaponPrimary;
+    this.manualWeaponSecondary = manualWeaponSecondary;
+    this.passiveWeapon = passiveWeapon;
   }
 
   /**
@@ -78,28 +93,54 @@ export class Struct {
 
   /**
    * @param {number} damage
+   * @param {Struct} attacker
    */
-  takeDamage(damage) {
+  takeDamage(damage, attacker = null) {
     this.setCurrentHealth(this.currentHealth - Math.max(1, damage - this.armor));
     if (this.currentHealth === 0) {
       this.destroyStruct();
+
+      // Counter Attack on Death
+      if (this.hasPassiveWeapon() && attacker && !attacker.isDestroyed) {
+        attacker.takeDamage(this.passiveWeapon.getDamageOnDeath());
+      }
     }
   }
 
   /**
+   * @param {ManualWeapon} weapon
    * @param {Struct} struct
    * @returns {boolean}
    */
-  canAttack(struct) {
+  canAttack(weapon, struct) {
     if (this.isDestroyed) {
       throw new Error('A destroyed struct cannot attack');
     }
     if (struct.isDestroyed) {
       throw new Error('A destroyed struct cannot be attacked');
     }
-    if (!this.targetAmbits.includes(struct.operatingAmbit)) {
+    if (!weapon.canTargetAmbit(struct.operatingAmbit)) {
       throw new Error('Cannot target ambit for attack');
     }
+  }
+
+  /**
+   * @param {string} ambit
+   * @returns {boolean}
+   */
+  canTargetAmbit(ambit) {
+    return this.manualWeaponPrimary.canTargetAmbit(ambit) || this.manualWeaponSecondary.canTargetAmbit(ambit);
+  }
+
+  /**
+   * @param {Struct} target
+   * @returns {boolean}
+   */
+  canCounterAttack(target) {
+    return !this.isDestroyed
+      && !target.isDestroyed
+      && this.canTargetAmbit(target.operatingAmbit)
+      && this.hasPassiveWeapon();
   }
 
   /**
@@ -107,38 +148,85 @@ export class Struct {
    * @returns {boolean}
    */
   canTakeDamageFor(struct) {
-    return this.operatingAmbit === struct.operatingAmbit;
+    return !this.isDestroyed
+      && !struct.isDestroyed
+      && this.operatingAmbit === struct.operatingAmbit;
   }
 
   /**
-   * @param {Struct} struct
+   * @param {string} weaponSlot
+   * @returns {ManualWeapon}
    */
-  attack(struct) {
+  getManualWeapon(weaponSlot) {
+    if (weaponSlot.toUpperCase() === 'PRIMARY') {
+      return this.manualWeaponPrimary;
+    } else if (weaponSlot.toUpperCase() === 'SECONDARY') {
+      return this.manualWeaponSecondary;
+    } else {
+      throw new Error('Invalid weapon slot');
+    }
+  }
+
+  /**
+   * @returns {boolean}
+   */
+  hasPassiveWeapon() {
+    return !!this.passiveWeapon;
+  }
+
+  /**
+   * @param {Struct} attacker
+   * @param {ManualWeapon} attackingWeapon
+   * @param {Struct} target
+   * @return {boolean} whether or not the attack was blocked
+   */
+  blockAttack(attacker, attackingWeapon, target) {
+    if (this.canTakeDamageFor(target)) {
+      this.takeDamage(attackingWeapon.getDamage(), attacker);
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * @param {Struct} target
+   */
+  counterAttack(target) {
+    if (this.canCounterAttack(target)) {
+      target.takeDamage(this.passiveWeapon.getDamageOnCounter(), this);
+    }
+  }
+
+  /**
+   * @param {string} weaponSlot
+   * @param {Struct} target
+   */
+  attack(weaponSlot, target) {
     let attackBlocked = false;
+    const attackingWeapon = this.getManualWeapon(weaponSlot);
 
-    this.canAttack(struct);
+    this.canAttack(attackingWeapon, target);
 
-    for (let i = 0; i < struct.defenders.length; i++) {
-      // Defender Blocking
-      if (struct.defenders[i].canTakeDamageFor(struct)) {
-        struct.defenders[i].takeDamage(this.attackDamage);
-        attackBlocked = true;
+    for (let i = 0; i < target.defenders.length; i++) {
+      // Defender Block
+      if (!attackBlocked) {
+        attackBlocked = target.defenders[i].blockAttack(this, attackingWeapon, target);
       }
 
       // Defender Counter Attack
-      if (!struct.defenders[i].isDestroyed) {
-        this.takeDamage(this.defenders[i].counterAttackDamage);
+      target.defenders[i].counterAttack(this);
+
+      if (this.isDestroyed) {
+        return;
       }
     }
 
     // Attack
-    if (!this.isDestroyed && !attackBlocked) {
-      struct.takeDamage(this.attackDamage);
+    if (!attackBlocked) {
+      target.takeDamage(attackingWeapon.getDamage(), this);
     }
 
     // Counter Attack
-    if (!struct.isDestroyed) {
-      this.takeDamage(struct.counterAttackDamage);
-    }
+    target.counterAttack(this);
   }
 }
