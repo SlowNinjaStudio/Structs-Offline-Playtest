@@ -1,7 +1,7 @@
 import {DefenseComponent} from "./DefenseComponent.js";
 import {DEFENSE_COMPONENT_TYPES} from "./Constants.js";
 
-export class CounterMeasure extends DefenseComponent {
+export class CounterAttackEvasion extends DefenseComponent {
   /**
    * @param {string} name
    * @param {number} probability

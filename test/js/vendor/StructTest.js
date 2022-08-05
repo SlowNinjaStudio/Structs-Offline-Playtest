@@ -4,6 +4,7 @@ import {ManualWeapon} from "../../../js/modules/ManualWeapon.js";
 import {AMBITS, FLEET_STRUCT_DEFAULTS} from "../../../js/modules/Constants.js";
 import {PassiveWeapon} from "../../../js/modules/PassiveWeapon.js";
 import {AmbitDefense} from "../../../js/modules/AmbitDefense.js";
+import {CounterAttackEvasion} from "../../../js/modules/CounterAttackEvasion.js"
 
 /**
  * @return {Struct}
@@ -288,6 +289,62 @@ const canTargetAmbitTest = new DTest('canTargetAmbitTest', function(params) {
   ];
 });
 
+const canCounterAttackTest = new DTest('canCounterAttackTest', function(params) {
+  this.assertEquals(params.defender.canCounterAttack(params.attacker), params.expected);
+}, function() {
+  const attacker = getTestStruct();
+
+  const attackerDestroyed = getTestStruct();
+  attackerDestroyed.isDestroyed = true;
+
+  const attackerOutOfRangeAmbit = getTestStruct();
+  attackerOutOfRangeAmbit.operatingAmbit = AMBITS.WATER;
+
+  const attackerCounterAttackEvasion = getTestStruct();
+  attackerCounterAttackEvasion.defenseComponent = new CounterAttackEvasion('TEST', 1);
+
+  const defender = getTestStruct();
+
+  const defenderDestroyed = getTestStruct();
+  defenderDestroyed.isDestroyed = true;
+
+  const defenderNoCounterAttack = getTestStruct();
+  defenderNoCounterAttack.passiveWeapon = null;
+
+  return [
+    {
+      attacker: attacker,
+      defender: defender,
+      expected: true
+    },
+    {
+      attacker: attacker,
+      defender: defenderDestroyed,
+      expected: false
+    },
+    {
+      attacker: attackerDestroyed,
+      defender: defender,
+      expected: false
+    },
+    {
+      attacker: attackerOutOfRangeAmbit,
+      defender: defender,
+      expected: false
+    },
+    {
+      attacker: attacker,
+      defender: defenderNoCounterAttack,
+      expected: false
+    },
+    {
+      attacker: attackerCounterAttackEvasion,
+      defender: defender,
+      expected: false
+    },
+  ];
+});
+
 // Test execution
 console.log('StructTest');
 generateIdTest.run();
@@ -300,3 +357,4 @@ destroyStructTest.run();
 takeDamageTest.run();
 canAttackTest.run();
 canTargetAmbitTest.run();
+canCounterAttackTest.run();
