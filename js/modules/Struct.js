@@ -116,18 +116,10 @@ export class Struct {
    * @returns {boolean}
    */
   canAttack(weapon, struct) {
-    if (this.isDestroyed) {
-      throw new Error('A destroyed struct cannot attack');
-    }
-    if (struct.isDestroyed) {
-      throw new Error('A destroyed struct cannot be attacked');
-    }
-    if (!weapon.canTargetAmbit(struct.operatingAmbit)) {
-      throw new Error('Cannot target ambit for attack');
-    }
-    if (struct.defenseComponent.blocksTargeting(this)) {
-      throw new Error('Unable to target for attack');
-    }
+    return !this.isDestroyed
+      && !struct.isDestroyed
+      && weapon.canTargetAmbit(struct.operatingAmbit)
+      && !struct.defenseComponent.blocksTargeting(this);
   }
 
   /**
@@ -135,7 +127,8 @@ export class Struct {
    * @returns {boolean}
    */
   canTargetAmbit(ambit) {
-    return this.manualWeaponPrimary.canTargetAmbit(ambit) || this.manualWeaponSecondary.canTargetAmbit(ambit);
+    return !!((this.manualWeaponPrimary && this.manualWeaponPrimary.canTargetAmbit(ambit))
+      || (this.manualWeaponSecondary && this.manualWeaponSecondary.canTargetAmbit(ambit)));
   }
 
   /**
@@ -212,7 +205,9 @@ export class Struct {
     let attackBlocked = false;
     const attackingWeapon = this.getManualWeapon(weaponSlot);
 
-    this.canAttack(attackingWeapon, target);
+    if (!this.canAttack(attackingWeapon, target)) {
+      return;
+    }
 
     for (let i = 0; i < target.defenders.length; i++) {
       // Defender Block
