@@ -1,7 +1,7 @@
 import {DTest} from "../../DTestFramework.js";
 import {Struct} from "../../../js/modules/Struct.js";
 import {ManualWeapon} from "../../../js/modules/ManualWeapon.js";
-import {AMBITS, FLEET_STRUCT_DEFAULTS} from "../../../js/modules/Constants.js";
+import {AMBITS, FLEET_STRUCT_DEFAULTS, MANUAL_WEAPON_TYPES} from "../../../js/modules/Constants.js";
 import {PassiveWeapon} from "../../../js/modules/PassiveWeapon.js";
 import {AmbitDefense} from "../../../js/modules/AmbitDefense.js";
 import {CounterAttackEvasion} from "../../../js/modules/CounterAttackEvasion.js"
@@ -345,6 +345,105 @@ const canCounterAttackTest = new DTest('canCounterAttackTest', function(params) 
   ];
 });
 
+const canTakeDamageForTest = new DTest('canTakeDamageForTest', function(params) {
+  this.assertEquals(params.defender.canTakeDamageFor(params.defendee), params.expected)
+}, function() {
+  const structA = getTestStruct();
+  const structB = getTestStruct();
+  const structDestroyed = getTestStruct();
+  structDestroyed.isDestroyed = true;
+  const structDifferentAmbit = getTestStruct();
+  structDifferentAmbit.operatingAmbit = AMBITS.WATER;
+
+  return [
+    {
+      defender: structA,
+      defendee: structB,
+      expected: true
+    },
+    {
+      defender: structDestroyed,
+      defendee: structB,
+      expected: false
+    },
+    {
+      defender: structA,
+      defendee: structDestroyed,
+      expected: false
+    },
+    {
+      defender: structA,
+      defendee: structDifferentAmbit,
+      expected: false
+    },
+    {
+      defender: structDifferentAmbit,
+      defendee: structB,
+      expected: false
+    },
+  ];
+});
+
+const getManualWeaponTest = new DTest('getManualWeaponTest', function() {
+  const struct = getTestStruct();
+  let weaponPrimary = struct.getManualWeapon(MANUAL_WEAPON_TYPES.PRIMARY);
+  let weaponSecondary = struct.getManualWeapon(MANUAL_WEAPON_TYPES.SECONDARY);
+
+  this.assertEquals(weaponPrimary.name, 'Unguided Weaponry');
+  this.assertEquals(weaponSecondary, null);
+
+  struct.manualWeaponSecondary = new ManualWeapon(
+    'Attack Run',
+    [1,3],
+    false,
+    [AMBITS.LAND]
+  );
+
+  weaponPrimary = struct.getManualWeapon(MANUAL_WEAPON_TYPES.PRIMARY);
+  weaponSecondary = struct.getManualWeapon(MANUAL_WEAPON_TYPES.SECONDARY);
+
+  this.assertEquals(weaponPrimary.name, 'Unguided Weaponry');
+  this.assertEquals(weaponSecondary.name, 'Attack Run');
+
+  let errorMessage = null;
+  try {
+    struct.getManualWeapon('TERTIARY');
+  } catch(e) {
+    errorMessage = e.message;
+  }
+
+  this.assertEquals(errorMessage, 'Invalid weapon slot');
+});
+
+const blockAttackTest = new DTest('blockAttackTest', function() {
+  const attacker = getTestStruct();
+  const attackerWeapon = new ManualWeapon(
+    'Unguided Weaponry',
+    [2],
+    false,
+    [AMBITS.LAND]
+  );
+  const defender = getTestStruct();
+  defender.maxHealth = 3;
+  defender.currentHealth = 3;
+  const defendee = getTestStruct();
+  const defenderWrongAmbit = getTestStruct();
+  defenderWrongAmbit.maxHealth = 3;
+  defenderWrongAmbit.currentHealth = 3;
+  defenderWrongAmbit.operatingAmbit = AMBITS.WATER;
+
+  this.assertEquals(defender.currentHealth, 3);
+  this.assertEquals(defender.isDestroyed, false);
+  this.assertEquals(defender.blockAttack(attacker, attackerWeapon, defendee), true);
+  this.assertEquals(defender.currentHealth, 1);
+  this.assertEquals(defender.isDestroyed, false);
+  this.assertEquals(defender.blockAttack(attacker, attackerWeapon, defendee), true);
+  this.assertEquals(defender.currentHealth, 0);
+  this.assertEquals(defender.isDestroyed, true);
+  this.assertEquals(defender.blockAttack(attacker, attackerWeapon, defendee), false);
+  this.assertEquals(defenderWrongAmbit.blockAttack(attacker, attackerWeapon, defendee), false);
+});
+
 // Test execution
 console.log('StructTest');
 generateIdTest.run();
@@ -358,3 +457,6 @@ takeDamageTest.run();
 canAttackTest.run();
 canTargetAmbitTest.run();
 canCounterAttackTest.run();
+canTakeDamageForTest.run();
+getManualWeaponTest.run();
+blockAttackTest.run();

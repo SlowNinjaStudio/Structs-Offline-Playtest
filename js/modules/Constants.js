@@ -19,5 +19,10 @@ export const
     ATTACK_DAMAGE: 2,
     COUNTER_ATTACK_DAMAGE: 1,
     MAX_HEALTH: 3,
+  },
+
+  MANUAL_WEAPON_TYPES = {
+    PRIMARY: 'PRIMARY',
+    SECONDARY: 'SECONDARY'
   }
 ;

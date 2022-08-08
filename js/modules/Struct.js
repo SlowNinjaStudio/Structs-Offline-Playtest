@@ -1,4 +1,4 @@
-import {FLEET_STRUCT_DEFAULTS} from "./Constants.js";
+import {FLEET_STRUCT_DEFAULTS, MANUAL_WEAPON_TYPES} from "./Constants.js";
 import {DefenseComponent} from "./DefenseComponent.js";
 
 export class Struct {
@@ -158,9 +158,9 @@ export class Struct {
    * @returns {ManualWeapon}
    */
   getManualWeapon(weaponSlot) {
-    if (weaponSlot.toUpperCase() === 'PRIMARY') {
+    if (weaponSlot.toUpperCase() === MANUAL_WEAPON_TYPES.PRIMARY) {
       return this.manualWeaponPrimary;
-    } else if (weaponSlot.toUpperCase() === 'SECONDARY') {
+    } else if (weaponSlot.toUpperCase() === MANUAL_WEAPON_TYPES.SECONDARY) {
       return this.manualWeaponSecondary;
     } else {
       throw new Error('Invalid weapon slot');
