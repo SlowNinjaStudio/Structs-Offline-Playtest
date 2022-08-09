@@ -1,7 +1,7 @@
 import {DTest} from "../../DTestFramework.js";
 import {Struct} from "../../../js/modules/Struct.js";
 import {ManualWeapon} from "../../../js/modules/ManualWeapon.js";
-import {AMBITS, FLEET_STRUCT_DEFAULTS, MANUAL_WEAPON_TYPES} from "../../../js/modules/Constants.js";
+import {AMBITS, FLEET_STRUCT_DEFAULTS, MANUAL_WEAPON_SLOTS} from "../../../js/modules/Constants.js";
 import {PassiveWeapon} from "../../../js/modules/PassiveWeapon.js";
 import {AmbitDefense} from "../../../js/modules/AmbitDefense.js";
 import {CounterAttackEvasion} from "../../../js/modules/CounterAttackEvasion.js"
@@ -386,8 +386,8 @@ const canTakeDamageForTest = new DTest('canTakeDamageForTest', function(params) 
 
 const getManualWeaponTest = new DTest('getManualWeaponTest', function() {
   const struct = getTestStruct();
-  let weaponPrimary = struct.getManualWeapon(MANUAL_WEAPON_TYPES.PRIMARY);
-  let weaponSecondary = struct.getManualWeapon(MANUAL_WEAPON_TYPES.SECONDARY);
+  let weaponPrimary = struct.getManualWeapon(MANUAL_WEAPON_SLOTS.PRIMARY);
+  let weaponSecondary = struct.getManualWeapon(MANUAL_WEAPON_SLOTS.SECONDARY);
 
   this.assertEquals(weaponPrimary.name, 'Unguided Weaponry');
   this.assertEquals(weaponSecondary, null);
@@ -399,8 +399,8 @@ const getManualWeaponTest = new DTest('getManualWeaponTest', function() {
     [AMBITS.LAND]
   );
 
-  weaponPrimary = struct.getManualWeapon(MANUAL_WEAPON_TYPES.PRIMARY);
-  weaponSecondary = struct.getManualWeapon(MANUAL_WEAPON_TYPES.SECONDARY);
+  weaponPrimary = struct.getManualWeapon(MANUAL_WEAPON_SLOTS.PRIMARY);
+  weaponSecondary = struct.getManualWeapon(MANUAL_WEAPON_SLOTS.SECONDARY);
 
   this.assertEquals(weaponPrimary.name, 'Unguided Weaponry');
   this.assertEquals(weaponSecondary.name, 'Attack Run');
@@ -498,7 +498,7 @@ const attackTest = new DTest('attackTest', function() {
   nonBlockingDefender.operatingAmbit = AMBITS.WATER;
   nonBlockingDefender.defend(target);
 
-  attackerA.attack(MANUAL_WEAPON_TYPES.PRIMARY, target);
+  attackerA.attack(MANUAL_WEAPON_SLOTS.PRIMARY, target);
 
   this.assertEquals(blockingDefender.currentHealth, 1);
   this.assertEquals(blockingDefender.isDestroyed, false);
@@ -507,7 +507,7 @@ const attackTest = new DTest('attackTest', function() {
   this.assertEquals(attackerA.isDestroyed, true);
   this.assertEquals(target.currentHealth, 3);
 
-  attackerB.attack(MANUAL_WEAPON_TYPES.PRIMARY, target);
+  attackerB.attack(MANUAL_WEAPON_SLOTS.PRIMARY, target);
 
   this.assertEquals(blockingDefender.currentHealth, 0);
   this.assertEquals(blockingDefender.isDestroyed, true);
@@ -516,21 +516,21 @@ const attackTest = new DTest('attackTest', function() {
   this.assertEquals(attackerB.isDestroyed, false);
   this.assertEquals(target.currentHealth, 3);
 
-  attackerB.attack(MANUAL_WEAPON_TYPES.PRIMARY, target);
+  attackerB.attack(MANUAL_WEAPON_SLOTS.PRIMARY, target);
 
   this.assertEquals(nonBlockingDefender.currentHealth, 3);
   this.assertEquals(attackerB.currentHealth, 0);
   this.assertEquals(attackerB.isDestroyed, true);
   this.assertEquals(target.currentHealth, 3);
 
-  attackerC.attack(MANUAL_WEAPON_TYPES.PRIMARY, target);
+  attackerC.attack(MANUAL_WEAPON_SLOTS.PRIMARY, target);
 
   this.assertEquals(nonBlockingDefender.currentHealth, 3);
   this.assertEquals(attackerC.currentHealth, 1);
   this.assertEquals(attackerC.isDestroyed, false);
   this.assertEquals(target.currentHealth, 1);
 
-  attackerD.attack(MANUAL_WEAPON_TYPES.PRIMARY, target);
+  attackerD.attack(MANUAL_WEAPON_SLOTS.PRIMARY, target);
 
   this.assertEquals(nonBlockingDefender.currentHealth, 3);
   this.assertEquals(attackerD.currentHealth, 2);

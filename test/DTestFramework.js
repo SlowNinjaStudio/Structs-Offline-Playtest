@@ -20,6 +20,20 @@ export class DTest {
     this.numAssertions++;
   }
 
+  assertArrayEquals(a, b) {
+    if (a.length !== b.length) {
+      throw new DTestAssertError(`${JSON.stringify(a)} is not equal to ${JSON.stringify(b)}`);
+    }
+
+    for (let i = 0; i < a.length; i++) {
+      if (a[i] !== b[i]) {
+        throw new DTestAssertError(`${JSON.stringify(a)} is not equal to ${JSON.stringify(b)}`);
+      }
+    }
+
+    this.numAssertions++;
+  }
+
   run() {
     try {
 
