@@ -194,7 +194,9 @@ export class Struct {
   counterAttack(target) {
     if (this.canCounterAttack(target)) {
       target.takeDamage(this.passiveWeapon.getDamageOnCounter(), this);
+      return true;
     }
+    return false;
   }
 
   /**

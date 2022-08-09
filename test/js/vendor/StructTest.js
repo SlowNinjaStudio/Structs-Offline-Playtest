@@ -444,6 +444,101 @@ const blockAttackTest = new DTest('blockAttackTest', function() {
   this.assertEquals(defenderWrongAmbit.blockAttack(attacker, attackerWeapon, defendee), false);
 });
 
+const counterAttackTarget = new DTest('counterAttackTarget', function() {
+  const attacker = getTestStruct();
+  attacker.maxHealth = 2;
+  attacker.currentHealth = 2;
+  const defender = getTestStruct();
+  defender.passiveWeapon = new PassiveWeapon(
+    'Counter-Attack',
+    FLEET_STRUCT_DEFAULTS.COUNTER_ATTACK_DAMAGE,
+    1
+  );
+  const attackerWrongAmbit = getTestStruct();
+  attackerWrongAmbit.operatingAmbit = AMBITS.WATER;
+  const attackerEvadeCounterAttack = getTestStruct();
+  attackerEvadeCounterAttack.defenseComponent = new CounterAttackEvasion('Swift Block', 1);
+
+  this.assertEquals(defender.counterAttack(attacker), true);
+  this.assertEquals(attacker.currentHealth, 1);
+  this.assertEquals(attacker.isDestroyed, false);
+  this.assertEquals(defender.counterAttack(attacker), true);
+  this.assertEquals(attacker.currentHealth, 0);
+  this.assertEquals(attacker.isDestroyed, true);
+  this.assertEquals(defender.counterAttack(attacker), false);
+  this.assertEquals(defender.counterAttack(attackerWrongAmbit), false);
+  this.assertEquals(defender.counterAttack(attackerEvadeCounterAttack), false);
+});
+
+const attackTest = new DTest('attackTest', function() {
+  const attackerA = getTestStruct();
+  attackerA.maxHealth = 3;
+  attackerA.currentHealth = 3;
+  const attackerB = getTestStruct();
+  attackerB.maxHealth = 3;
+  attackerB.currentHealth = 3;
+  const attackerC = getTestStruct();
+  attackerC.maxHealth = 3;
+  attackerC.currentHealth = 3;
+  const attackerD = getTestStruct();
+  attackerD.maxHealth = 3;
+  attackerD.currentHealth = 3;
+  const targetWrongAmbit = getTestStruct();
+  targetWrongAmbit.operatingAmbit = AMBITS.WATER;
+  const target = getTestStruct();
+  target.maxHealth = 3;
+  target.currentHealth = 3;
+  const blockingDefender = getTestStruct();
+  blockingDefender.maxHealth = 3;
+  blockingDefender.currentHealth = 3;
+  blockingDefender.defend(target);
+  const nonBlockingDefender = getTestStruct();
+  nonBlockingDefender.maxHealth = 3;
+  nonBlockingDefender.currentHealth = 3;
+  nonBlockingDefender.operatingAmbit = AMBITS.WATER;
+  nonBlockingDefender.defend(target);
+
+  attackerA.attack(MANUAL_WEAPON_TYPES.PRIMARY, target);
+
+  this.assertEquals(blockingDefender.currentHealth, 1);
+  this.assertEquals(blockingDefender.isDestroyed, false);
+  this.assertEquals(nonBlockingDefender.currentHealth, 3);
+  this.assertEquals(attackerA.currentHealth, 0);
+  this.assertEquals(attackerA.isDestroyed, true);
+  this.assertEquals(target.currentHealth, 3);
+
+  attackerB.attack(MANUAL_WEAPON_TYPES.PRIMARY, target);
+
+  this.assertEquals(blockingDefender.currentHealth, 0);
+  this.assertEquals(blockingDefender.isDestroyed, true);
+  this.assertEquals(nonBlockingDefender.currentHealth, 3);
+  this.assertEquals(attackerB.currentHealth, 1);
+  this.assertEquals(attackerB.isDestroyed, false);
+  this.assertEquals(target.currentHealth, 3);
+
+  attackerB.attack(MANUAL_WEAPON_TYPES.PRIMARY, target);
+
+  this.assertEquals(nonBlockingDefender.currentHealth, 3);
+  this.assertEquals(attackerB.currentHealth, 0);
+  this.assertEquals(attackerB.isDestroyed, true);
+  this.assertEquals(target.currentHealth, 3);
+
+  attackerC.attack(MANUAL_WEAPON_TYPES.PRIMARY, target);
+
+  this.assertEquals(nonBlockingDefender.currentHealth, 3);
+  this.assertEquals(attackerC.currentHealth, 1);
+  this.assertEquals(attackerC.isDestroyed, false);
+  this.assertEquals(target.currentHealth, 1);
+
+  attackerD.attack(MANUAL_WEAPON_TYPES.PRIMARY, target);
+
+  this.assertEquals(nonBlockingDefender.currentHealth, 3);
+  this.assertEquals(attackerD.currentHealth, 2);
+  this.assertEquals(attackerD.isDestroyed, false);
+  this.assertEquals(target.currentHealth, 0);
+  this.assertEquals(target.isDestroyed, true);
+});
+
 // Test execution
 console.log('StructTest');
 generateIdTest.run();
@@ -460,3 +555,5 @@ canCounterAttackTest.run();
 canTakeDamageForTest.run();
 getManualWeaponTest.run();
 blockAttackTest.run();
+counterAttackTarget.run();
+attackTest.run();
