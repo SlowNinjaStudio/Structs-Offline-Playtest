@@ -10,13 +10,15 @@ export class PassiveWeapon {
     this.damage = damage;
     this.probability = probability;
     this.probabilityOnDeath = probabilityOnDeath;
+    this.damageSameAmbit = this.damage;
   }
 
   /**
    * @returns {number}
    */
-  getDamageOnCounter() {
-    return Math.random() < this.probability ? this.damage : 0;
+  getDamageOnCounter(sameAmbit = false) {
+    let damage = sameAmbit ? this.damageSameAmbit : this.damage;
+    return (Math.random() < this.probability) ? damage : 0;
   }
 
   /**

@@ -193,7 +193,7 @@ export class Struct {
    */
   counterAttack(target) {
     if (this.canCounterAttack(target)) {
-      target.takeDamage(this.passiveWeapon.getDamageOnCounter(), this);
+      target.takeDamage(this.passiveWeapon.getDamageOnCounter(this.operatingAmbit === target.operatingAmbit), this);
       return true;
     }
     return false;

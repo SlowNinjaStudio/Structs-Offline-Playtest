@@ -53,6 +53,10 @@ export class ManualWeaponFactory {
     );
   }
 
+  /**
+   * @param {string[]} ambits
+   * @return {ManualWeapon}
+   */
   makeUnguidedWeaponry(ambits) {
     return new ManualWeapon(
       MANUAL_WEAPONS.UNGUIDED_WEAPONRY,

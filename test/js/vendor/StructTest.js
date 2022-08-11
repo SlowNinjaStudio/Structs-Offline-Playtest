@@ -444,7 +444,7 @@ const blockAttackTest = new DTest('blockAttackTest', function() {
   this.assertEquals(defenderWrongAmbit.blockAttack(attacker, attackerWeapon, defendee), false);
 });
 
-const counterAttackTarget = new DTest('counterAttackTarget', function() {
+const counterAttackTest = new DTest('counterAttackTest', function() {
   const attacker = getTestStruct();
   attacker.maxHealth = 2;
   attacker.currentHealth = 2;
@@ -458,6 +458,23 @@ const counterAttackTarget = new DTest('counterAttackTarget', function() {
   attackerWrongAmbit.operatingAmbit = AMBITS.WATER;
   const attackerEvadeCounterAttack = getTestStruct();
   attackerEvadeCounterAttack.defenseComponent = new CounterAttackEvasion('Swift Block', 1);
+  const attackerSameOperatingAmibt = getTestStruct();
+  attackerSameOperatingAmibt.maxHealth = 3;
+  attackerSameOperatingAmibt.currentHealth = 3;
+  const attackerDiffOperatingAmibt = getTestStruct();
+  attackerDiffOperatingAmibt.operatingAmbit = AMBITS.WATER;
+  attackerDiffOperatingAmibt.maxHealth = 3;
+  attackerDiffOperatingAmibt.currentHealth = 3;
+  const advancedCounterAttack = new PassiveWeapon('Advanced Counter Attack', 1, 1);
+  advancedCounterAttack.damageSameAmbit = 2;
+  const defenderAdvancedCounterAttack = getTestStruct();
+  defenderAdvancedCounterAttack.passiveWeapon = advancedCounterAttack;
+  defenderAdvancedCounterAttack.manualWeaponSecondary = new ManualWeapon(
+    'Guided Weaponry',
+    [FLEET_STRUCT_DEFAULTS.ATTACK_DAMAGE],
+    true,
+    [AMBITS.WATER]
+  ),
 
   this.assertEquals(defender.counterAttack(attacker), true);
   this.assertEquals(attacker.currentHealth, 1);
@@ -468,6 +485,12 @@ const counterAttackTarget = new DTest('counterAttackTarget', function() {
   this.assertEquals(defender.counterAttack(attacker), false);
   this.assertEquals(defender.counterAttack(attackerWrongAmbit), false);
   this.assertEquals(defender.counterAttack(attackerEvadeCounterAttack), false);
+  this.assertEquals(defenderAdvancedCounterAttack.counterAttack(attackerSameOperatingAmibt), true);
+  this.assertEquals(attackerSameOperatingAmibt.currentHealth, 1);
+  this.assertEquals(attackerSameOperatingAmibt.isDestroyed, false);
+  this.assertEquals(defenderAdvancedCounterAttack.counterAttack(attackerDiffOperatingAmibt), true);
+  this.assertEquals(attackerDiffOperatingAmibt.currentHealth, 2);
+  this.assertEquals(attackerDiffOperatingAmibt.isDestroyed, false);
 });
 
 const attackTest = new DTest('attackTest', function() {
@@ -555,5 +578,5 @@ canCounterAttackTest.run();
 canTakeDamageForTest.run();
 getManualWeaponTest.run();
 blockAttackTest.run();
-counterAttackTarget.run();
+counterAttackTest.run();
 attackTest.run();
