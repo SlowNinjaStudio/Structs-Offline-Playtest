@@ -26,8 +26,8 @@ export class DefenseComponentFactory {
       case DEFENSE_COMPONENTS.STEALTH_MODE:
         component = this.makeStealthMode(ambits);
         break;
-      case DEFENSE_COMPONENTS.SWIFT_BLOCK:
-        component = this.makeSwiftBlock();
+      case DEFENSE_COMPONENTS.INDIRECT_COMBAT_MODULE:
+        component = this.makeIndirectCombatModule();
         break;
       default:
         throw new DefenseComponentFactoryError('Cannot make component, component does not exist.');
@@ -81,9 +81,9 @@ export class DefenseComponentFactory {
   /**
    * @return {DefenseComponent}
    */
-  makeSwiftBlock() {
+  makeIndirectCombatModule() {
     return new CounterAttackEvasion(
-      DEFENSE_COMPONENTS.SWIFT_BLOCK,
+      DEFENSE_COMPONENTS.INDIRECT_COMBAT_MODULE,
       1
     );
   }

@@ -474,7 +474,7 @@ const counterAttackTest = new DTest('counterAttackTest', function() {
     [FLEET_STRUCT_DEFAULTS.ATTACK_DAMAGE],
     true,
     [AMBITS.WATER]
-  ),
+  );
 
   this.assertEquals(defender.counterAttack(attacker), true);
   this.assertEquals(attacker.currentHealth, 1);

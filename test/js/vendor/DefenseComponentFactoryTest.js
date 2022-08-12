@@ -196,7 +196,7 @@ const makeTest = new DTest('makeTest', function(params) {
       reduceAttackDamage: unguidedWeapon.getDamage()
     },
     {
-      name: DEFENSE_COMPONENTS.SWIFT_BLOCK,
+      name: DEFENSE_COMPONENTS.INDIRECT_COMBAT_MODULE,
       ambits: [],
       probabilityExpected: 1,
       probabilityTestValue: 1,

@@ -9,8 +9,8 @@ export class DefenseComponent {
    * @param {number} probability
    */
   constructor(
-    type= DEFENSE_COMPONENT_TYPES.DEFAULT,
-    name= '',
+    type = DEFENSE_COMPONENT_TYPES.DEFAULT,
+    name = '',
     isActive = true,
     probability = 1,
   ) {

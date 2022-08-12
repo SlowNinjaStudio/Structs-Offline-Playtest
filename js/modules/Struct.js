@@ -1,5 +1,6 @@
 import {FLEET_STRUCT_DEFAULTS, MANUAL_WEAPON_SLOTS} from "./Constants.js";
 import {DefenseComponent} from "./DefenseComponent.js";
+import {PassiveWeapon} from "./PassiveWeapon.js";
 
 export class Struct {
   /**
@@ -15,7 +16,7 @@ export class Struct {
     operatingAmbit,
     manualWeaponPrimary,
     manualWeaponSecondary,
-    passiveWeapon,
+    passiveWeapon = null,
     defenseComponent = null
   ) {
     this.id = this.generateId();

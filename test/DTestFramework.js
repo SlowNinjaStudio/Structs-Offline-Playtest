@@ -34,6 +34,14 @@ export class DTest {
     this.numAssertions++;
   }
 
+  assertSetEquality(a, b) {
+    if (!(a.every(element => b.includes(element)) && b.every(element => a.includes(element)))) {
+      throw new DTestAssertError(`${JSON.stringify(a)} is not equal to ${JSON.stringify(b)}`);
+    }
+
+    this.numAssertions++;
+  }
+
   run() {
     try {
 
