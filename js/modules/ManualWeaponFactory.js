@@ -6,6 +6,7 @@ export class ManualWeaponFactory {
   /**
    * @param {string} weaponName
    * @param {string[]} ambits
+   * @return {ManualWeapon}
    */
   make(weaponName, ambits) {
     let weapon = null;

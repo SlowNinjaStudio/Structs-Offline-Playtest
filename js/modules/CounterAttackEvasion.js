@@ -7,8 +7,7 @@ export class CounterAttackEvasion extends DefenseComponent {
    * @param {number} probability
    */
   constructor(name, probability) {
-    super(DEFENSE_COMPONENT_TYPES.EVADE_COUNTER_ATTACK, name);
-    this.probability = probability;
+    super(DEFENSE_COMPONENT_TYPES.EVADE_COUNTER_ATTACK, name, true, probability);
   }
 
   /**

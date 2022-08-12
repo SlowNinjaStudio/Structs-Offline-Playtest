@@ -5,6 +5,7 @@ import {PassiveWeapon} from "./PassiveWeapon.js";
 export class PassiveWeaponFactory {
   /**
    * @param {string} weaponName
+   * @return {PassiveWeapon}
    */
   make(weaponName) {
     let weapon = null;

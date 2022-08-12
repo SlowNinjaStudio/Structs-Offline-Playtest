@@ -6,15 +6,18 @@ export class DefenseComponent {
    * @param {string} type
    * @param {string} name
    * @param {boolean} isActive whether or not the component is active by default or if it has to be activated
+   * @param {number} probability
    */
   constructor(
     type= DEFENSE_COMPONENT_TYPES.DEFAULT,
     name= '',
-    isActive = true
+    isActive = true,
+    probability = 1,
   ) {
     this.type = type;
     this.name = name;
     this.isActive = isActive;
+    this.probability = probability;
   }
 
   /**
@@ -29,6 +32,8 @@ export class DefenseComponent {
 
   /**
    * For defense components that can evade counter-attacks.
+   *
+   * @return {boolean}
    */
   evadeCounterAttack() {
     return false;

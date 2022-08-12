@@ -8,8 +8,7 @@ export class CounterMeasure extends DefenseComponent {
    * @param {boolean} guided
    */
   constructor(name, probability, guided) {
-    super(DEFENSE_COMPONENT_TYPES.COUNTER_MEASURE, name);
-    this.probability = probability;
+    super(DEFENSE_COMPONENT_TYPES.COUNTER_MEASURE, name, true, probability);
     this.guided = guided;
   }
 
