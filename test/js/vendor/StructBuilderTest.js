@@ -68,6 +68,96 @@ const makeTest = new DTest('makeTest', function(params) {
       manualWeaponSecondaryAmbits: [],
       passiveWeaponName: PASSIVE_WEAPONS.ADVANCED_COUNTER_ATTACK,
       defenseComponentName: ''
+    },
+    {
+      unitType: UNIT_TYPES.FIGHTER_JET,
+      operatingAmbit: AMBITS.SKY,
+      manualWeaponPrimaryName: MANUAL_WEAPONS.GUIDED_WEAPONRY,
+      manualWeaponPrimaryAmbits: [AMBITS.SKY],
+      manualWeaponSecondaryName: false,
+      manualWeaponSecondaryAmbits: [],
+      passiveWeaponName: PASSIVE_WEAPONS.COUNTER_ATTACK,
+      defenseComponentName: DEFENSE_COMPONENTS.SIGNAL_JAMMING
+    },
+    {
+      unitType: UNIT_TYPES.GALACTIC_BATTLESHIP,
+      operatingAmbit: AMBITS.SPACE,
+      manualWeaponPrimaryName: MANUAL_WEAPONS.UNGUIDED_WEAPONRY,
+      manualWeaponPrimaryAmbits: [AMBITS.WATER, AMBITS.LAND, AMBITS.SPACE],
+      manualWeaponSecondaryName: false,
+      manualWeaponSecondaryAmbits: [],
+      passiveWeaponName: PASSIVE_WEAPONS.COUNTER_ATTACK,
+      defenseComponentName: DEFENSE_COMPONENTS.SIGNAL_JAMMING
+    },
+    {
+      unitType: UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
+      operatingAmbit: AMBITS.SKY,
+      manualWeaponPrimaryName: MANUAL_WEAPONS.GUIDED_WEAPONRY,
+      manualWeaponPrimaryAmbits: [AMBITS.SKY, AMBITS.SPACE],
+      manualWeaponSecondaryName: false,
+      manualWeaponSecondaryAmbits: [],
+      passiveWeaponName: PASSIVE_WEAPONS.COUNTER_ATTACK,
+      defenseComponentName: DEFENSE_COMPONENTS.DEFENSIVE_MANEUVER
+    },
+    {
+      unitType: UNIT_TYPES.SAM_LAUNCHER,
+      operatingAmbit: AMBITS.LAND,
+      manualWeaponPrimaryName: MANUAL_WEAPONS.GUIDED_WEAPONRY,
+      manualWeaponPrimaryAmbits: [AMBITS.SKY, AMBITS.SPACE],
+      manualWeaponSecondaryName: false,
+      manualWeaponSecondaryAmbits: [],
+      passiveWeaponName: PASSIVE_WEAPONS.COUNTER_ATTACK,
+      defenseComponentName: ''
+    },
+    {
+      unitType: UNIT_TYPES.SPACE_FRIGATE,
+      operatingAmbit: AMBITS.SPACE,
+      manualWeaponPrimaryName: MANUAL_WEAPONS.GUIDED_WEAPONRY,
+      manualWeaponPrimaryAmbits: [AMBITS.SKY, AMBITS.SPACE],
+      manualWeaponSecondaryName: false,
+      manualWeaponSecondaryAmbits: [],
+      passiveWeaponName: PASSIVE_WEAPONS.COUNTER_ATTACK,
+      defenseComponentName: ''
+    },
+    {
+      unitType: UNIT_TYPES.STAR_FIGHTER,
+      operatingAmbit: AMBITS.SPACE,
+      manualWeaponPrimaryName: MANUAL_WEAPONS.GUIDED_WEAPONRY,
+      manualWeaponPrimaryAmbits: [AMBITS.SPACE],
+      manualWeaponSecondaryName: MANUAL_WEAPONS.ATTACK_RUN,
+      manualWeaponSecondaryAmbits: [AMBITS.SPACE],
+      passiveWeaponName: PASSIVE_WEAPONS.COUNTER_ATTACK,
+      defenseComponentName: ''
+    },
+    {
+      unitType: UNIT_TYPES.STEALTH_BOMBER,
+      operatingAmbit: AMBITS.SKY,
+      manualWeaponPrimaryName: MANUAL_WEAPONS.GUIDED_WEAPONRY,
+      manualWeaponPrimaryAmbits: [AMBITS.WATER, AMBITS.LAND],
+      manualWeaponSecondaryName: false,
+      manualWeaponSecondaryAmbits: [],
+      passiveWeaponName: PASSIVE_WEAPONS.COUNTER_ATTACK,
+      defenseComponentName: DEFENSE_COMPONENTS.STEALTH_MODE
+    },
+    {
+      unitType: UNIT_TYPES.SUB,
+      operatingAmbit: AMBITS.WATER,
+      manualWeaponPrimaryName: MANUAL_WEAPONS.GUIDED_WEAPONRY,
+      manualWeaponPrimaryAmbits: [AMBITS.WATER, AMBITS.SPACE],
+      manualWeaponSecondaryName: false,
+      manualWeaponSecondaryAmbits: [],
+      passiveWeaponName: PASSIVE_WEAPONS.COUNTER_ATTACK,
+      defenseComponentName: DEFENSE_COMPONENTS.STEALTH_MODE
+    },
+    {
+      unitType: UNIT_TYPES.TANK,
+      operatingAmbit: AMBITS.LAND,
+      manualWeaponPrimaryName: MANUAL_WEAPONS.UNGUIDED_WEAPONRY,
+      manualWeaponPrimaryAmbits: [AMBITS.LAND],
+      manualWeaponSecondaryName: false,
+      manualWeaponSecondaryAmbits: [],
+      passiveWeaponName: PASSIVE_WEAPONS.COUNTER_ATTACK,
+      defenseComponentName: DEFENSE_COMPONENTS.ARMOUR
     }
   ];
 });

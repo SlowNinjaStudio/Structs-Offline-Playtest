@@ -17,21 +17,48 @@ export class StructBuilder {
    * @return {Struct}
    */
   make(unitType) {
-    let weapon = null;
+    let struct = null;
     switch(unitType) {
       case UNIT_TYPES.ARTILLERY:
-        weapon = this.makeArtillery();
+        struct = this.makeArtillery();
         break;
       case UNIT_TYPES.CRUISER:
-        weapon = this.makeCruiser();
+        struct = this.makeCruiser();
         break;
       case UNIT_TYPES.DESTROYER:
-        weapon = this.makeDestroyer();
+        struct = this.makeDestroyer();
+        break;
+      case UNIT_TYPES.FIGHTER_JET:
+        struct = this.makeFighterJet();
+        break;
+      case UNIT_TYPES.GALACTIC_BATTLESHIP:
+        struct = this.makeGalacticBattleship();
+        break;
+      case UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR:
+        struct = this.makeHighAltitudeInterceptor();
+        break;
+      case UNIT_TYPES.SAM_LAUNCHER:
+        struct = this.makeSAMLauncher();
+        break;
+      case UNIT_TYPES.SPACE_FRIGATE:
+        struct = this.makeSpaceFrigate();
+        break;
+      case UNIT_TYPES.STAR_FIGHTER:
+        struct = this.makeStarFighter();
+        break;
+      case UNIT_TYPES.STEALTH_BOMBER:
+        struct = this.makeStealthBomber();
+        break;
+      case UNIT_TYPES.SUB:
+        struct = this.makeSub();
+        break;
+      case UNIT_TYPES.TANK:
+        struct = this.makeTank();
         break;
       default:
         throw new StructBuilderError('Cannot make struct, unit type does not exist.');
     }
-    return weapon;
+    return struct;
   }
 
   /**
@@ -84,6 +111,165 @@ export class StructBuilder {
       ),
       null,
       this.passiveWeaponFactory.make(PASSIVE_WEAPONS.ADVANCED_COUNTER_ATTACK)
+    );
+  }
+
+  /**
+   * @return {Struct}
+   */
+  makeFighterJet() {
+    return new Struct(
+      UNIT_TYPES.FIGHTER_JET,
+      AMBITS.SKY,
+      this.manualWeaponFactory.make(
+        MANUAL_WEAPONS.GUIDED_WEAPONRY,
+        [AMBITS.SKY]
+      ),
+      null,
+      this.passiveWeaponFactory.make(PASSIVE_WEAPONS.COUNTER_ATTACK),
+      this.defenseComponentFactory.make(DEFENSE_COMPONENTS.SIGNAL_JAMMING)
+    );
+  }
+
+  /**
+   * @return {Struct}
+   */
+  makeGalacticBattleship() {
+    return new Struct(
+      UNIT_TYPES.GALACTIC_BATTLESHIP,
+      AMBITS.SPACE,
+      this.manualWeaponFactory.make(
+        MANUAL_WEAPONS.UNGUIDED_WEAPONRY,
+        [AMBITS.WATER, AMBITS.LAND, AMBITS.SPACE]
+      ),
+      null,
+      this.passiveWeaponFactory.make(PASSIVE_WEAPONS.COUNTER_ATTACK),
+      this.defenseComponentFactory.make(DEFENSE_COMPONENTS.SIGNAL_JAMMING)
+    );
+  }
+
+  /**
+   * @return {Struct}
+   */
+  makeHighAltitudeInterceptor() {
+    return new Struct(
+      UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
+      AMBITS.SKY,
+      this.manualWeaponFactory.make(
+        MANUAL_WEAPONS.GUIDED_WEAPONRY,
+        [AMBITS.SKY, AMBITS.SPACE]
+      ),
+      null,
+      this.passiveWeaponFactory.make(PASSIVE_WEAPONS.COUNTER_ATTACK),
+      this.defenseComponentFactory.make(DEFENSE_COMPONENTS.DEFENSIVE_MANEUVER)
+    );
+  }
+
+  /**
+   * @return {Struct}
+   */
+  makeSAMLauncher() {
+    return new Struct(
+      UNIT_TYPES.SAM_LAUNCHER,
+      AMBITS.LAND,
+      this.manualWeaponFactory.make(
+        MANUAL_WEAPONS.GUIDED_WEAPONRY,
+        [AMBITS.SKY, AMBITS.SPACE]
+      ),
+      null,
+      this.passiveWeaponFactory.make(PASSIVE_WEAPONS.COUNTER_ATTACK)
+    );
+  }
+
+  /**
+   * @return {Struct}
+   */
+  makeSpaceFrigate() {
+    return new Struct(
+      UNIT_TYPES.SPACE_FRIGATE,
+      AMBITS.SPACE,
+      this.manualWeaponFactory.make(
+        MANUAL_WEAPONS.GUIDED_WEAPONRY,
+        [AMBITS.SKY, AMBITS.SPACE]
+      ),
+      null,
+      this.passiveWeaponFactory.make(PASSIVE_WEAPONS.COUNTER_ATTACK)
+    );
+  }
+
+  /**
+   * @return {Struct}
+   */
+  makeStarFighter() {
+    return new Struct(
+      UNIT_TYPES.STAR_FIGHTER,
+      AMBITS.SPACE,
+      this.manualWeaponFactory.make(
+        MANUAL_WEAPONS.GUIDED_WEAPONRY,
+        [AMBITS.SPACE]
+      ),
+      this.manualWeaponFactory.make(
+        MANUAL_WEAPONS.ATTACK_RUN,
+        [AMBITS.SPACE]
+      ),
+      this.passiveWeaponFactory.make(PASSIVE_WEAPONS.COUNTER_ATTACK)
+    );
+  }
+
+  /**
+   * @return {Struct}
+   */
+  makeStealthBomber() {
+    return new Struct(
+      UNIT_TYPES.STEALTH_BOMBER,
+      AMBITS.SKY,
+      this.manualWeaponFactory.make(
+        MANUAL_WEAPONS.GUIDED_WEAPONRY,
+        [AMBITS.WATER, AMBITS.LAND]
+      ),
+      null,
+      this.passiveWeaponFactory.make(PASSIVE_WEAPONS.COUNTER_ATTACK),
+      this.defenseComponentFactory.make(
+        DEFENSE_COMPONENTS.STEALTH_MODE,
+        [AMBITS.WATER, AMBITS.LAND, AMBITS.SPACE]
+      )
+    );
+  }
+
+  /**
+   * @return {Struct}
+   */
+  makeSub() {
+    return new Struct(
+      UNIT_TYPES.SUB,
+      AMBITS.WATER,
+      this.manualWeaponFactory.make(
+        MANUAL_WEAPONS.GUIDED_WEAPONRY,
+        [AMBITS.WATER, AMBITS.SPACE]
+      ),
+      null,
+      this.passiveWeaponFactory.make(PASSIVE_WEAPONS.COUNTER_ATTACK),
+      this.defenseComponentFactory.make(
+        DEFENSE_COMPONENTS.STEALTH_MODE,
+        [AMBITS.LAND, AMBITS.SKY, AMBITS.SPACE]
+      )
+    );
+  }
+
+  /**
+   * @return {Struct}
+   */
+  makeTank() {
+    return new Struct(
+      UNIT_TYPES.TANK,
+      AMBITS.LAND,
+      this.manualWeaponFactory.make(
+        MANUAL_WEAPONS.UNGUIDED_WEAPONRY,
+        [AMBITS.LAND]
+      ),
+      null,
+      this.passiveWeaponFactory.make(PASSIVE_WEAPONS.COUNTER_ATTACK),
+      this.defenseComponentFactory.make(DEFENSE_COMPONENTS.ARMOUR)
     );
   }
 }

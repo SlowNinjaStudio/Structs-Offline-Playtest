@@ -11,7 +11,7 @@ export class DefenseComponentFactory {
    * @param {string[]} ambits
    * @return {DefenseComponent}
    */
-  make(componentName, ambits= []) {
+  make(componentName, ambits = []) {
     let component = null;
     switch(componentName) {
       case DEFENSE_COMPONENTS.ARMOUR:
