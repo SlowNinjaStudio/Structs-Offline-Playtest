@@ -50,16 +50,6 @@ const makeTest = new DTest('makeTest', function(params) {
       defenseComponentName: DEFENSE_COMPONENTS.INDIRECT_COMBAT_MODULE
     },
     {
-      unitType: UNIT_TYPES.COMMAND_SHIP,
-      operatingAmbit: AMBITS.SPACE,
-      manualWeaponPrimaryName: MANUAL_WEAPONS.GUIDED_WEAPONRY,
-      manualWeaponPrimaryAmbits: [AMBITS.WATER, AMBITS.LAND, AMBITS.SKY, AMBITS.SPACE],
-      manualWeaponSecondaryName: false,
-      manualWeaponSecondaryAmbits: [],
-      passiveWeaponName: PASSIVE_WEAPONS.STRONG_COUNTER_ATTACK,
-      defenseComponentName: DEFENSE_COMPONENTS.OMNI_ENGINE
-    },
-    {
       unitType: UNIT_TYPES.CRUISER,
       operatingAmbit: AMBITS.WATER,
       manualWeaponPrimaryName: MANUAL_WEAPONS.GUIDED_WEAPONRY,
