@@ -5,6 +5,9 @@ import {AMBITS, FLEET_STRUCT_DEFAULTS, MANUAL_WEAPON_SLOTS} from "../../../js/mo
 import {PassiveWeapon} from "../../../js/modules/PassiveWeapon.js";
 import {AmbitDefense} from "../../../js/modules/AmbitDefense.js";
 import {CounterAttackEvasion} from "../../../js/modules/CounterAttackEvasion.js"
+import {DefendActionDisabledError} from "../../../js/modules/DefendActionDisabledError.js";
+import {InvalidManualWeaponSlotError} from "../../../js/modules/InvalidManualWeaponSlotError.js";
+import {AftermarketEngine} from "../../../js/modules/AftermarketEngine.js";
 
 /**
  * @return {Struct}
@@ -72,6 +75,9 @@ const defendTest = new DTest('defendTest', function() {
   const structB = getTestStruct();
   const structC = getTestStruct();
   const structD = getTestStruct();
+  const structNoDefending = getTestStruct();
+  structNoDefending.canDefend = false;
+
   structA.defend(structB);
 
   this.assertEquals(structA.defending.id, structB.id);
@@ -88,6 +94,15 @@ const defendTest = new DTest('defendTest', function() {
   this.assertEquals(structD.defenders[0].id, structA.id);
   this.assertEquals(structB.defenders.length, 1);
   this.assertEquals(structB.defenders[0].id, structC.id);
+
+  let error = null;
+  try {
+    structNoDefending.defend(structD);
+  } catch (e) {
+    error = e;
+  }
+
+  this.assertEquals(error instanceof DefendActionDisabledError, true);
 });
 
 const undefendTest = new DTest('undefendTest', function() {
@@ -405,14 +420,14 @@ const getManualWeaponTest = new DTest('getManualWeaponTest', function() {
   this.assertEquals(weaponPrimary.name, 'Unguided Weaponry');
   this.assertEquals(weaponSecondary.name, 'Attack Run');
 
-  let errorMessage = null;
+  let error = null;
   try {
     struct.getManualWeapon('TERTIARY');
   } catch(e) {
-    errorMessage = e.message;
+    error = e;
   }
 
-  this.assertEquals(errorMessage, 'Invalid weapon slot');
+  this.assertEquals(error instanceof InvalidManualWeaponSlotError, true);
 });
 
 const blockAttackTest = new DTest('blockAttackTest', function() {
@@ -562,6 +577,35 @@ const attackTest = new DTest('attackTest', function() {
   this.assertEquals(target.isDestroyed, true);
 });
 
+const changeAmbitTest = new DTest('changeAmbitTest', function() {
+  const struct = getTestStruct();
+
+  this.assertEquals(struct.changeAmbit(AMBITS.SPACE), false);
+
+  struct.defenseComponent = new AftermarketEngine(
+    'Test',
+    [AMBITS.LAND, AMBITS.SKY, AMBITS.SPACE],
+  );
+
+  this.assertEquals(struct.changeAmbit(AMBITS.SPACE), true);
+  this.assertEquals(struct.changeAmbit(AMBITS.LAND), true);
+  this.assertEquals(struct.changeAmbit(AMBITS.WATER), false);
+  this.assertEquals(struct.changeAmbit(AMBITS.SKY), true);
+
+  struct.defenseComponent = new AftermarketEngine(
+    'Test',
+    [AMBITS.WATER, AMBITS.LAND, AMBITS.SKY, AMBITS.SPACE],
+    2
+  );
+
+  this.assertEquals(struct.changeAmbit(AMBITS.WATER), true);
+  this.assertEquals(struct.changeAmbit(AMBITS.SPACE), false);
+  this.assertEquals(struct.operatingAmbit, AMBITS.WATER);
+  this.assertEquals(struct.changeAmbit(AMBITS.SKY), true);
+  this.assertEquals(struct.operatingAmbit, AMBITS.SKY);
+
+});
+
 // Test execution
 console.log('StructTest');
 generateIdTest.run();
@@ -580,3 +624,4 @@ getManualWeaponTest.run();
 blockAttackTest.run();
 counterAttackTest.run();
 attackTest.run();
+changeAmbitTest.run();

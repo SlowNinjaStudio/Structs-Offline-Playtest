@@ -31,6 +31,15 @@ export class DefenseComponent {
   }
 
   /**
+   * @param {string} currentAmbit
+   * @param {string} desiredAmbit
+   * @return {boolean}
+   */
+  canChangeAmbit(currentAmbit, desiredAmbit) {
+    return false;
+  }
+
+  /**
    * For defense components that can evade counter-attacks.
    *
    * @return {boolean}

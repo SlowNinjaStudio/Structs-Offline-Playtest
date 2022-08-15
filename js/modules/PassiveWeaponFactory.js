@@ -1,4 +1,4 @@
-import {FLEET_STRUCT_DEFAULTS, PASSIVE_WEAPONS} from "./Constants.js";
+import {COMMAND_STRUCT_DEFAULTS, FLEET_STRUCT_DEFAULTS, PASSIVE_WEAPONS} from "./Constants.js";
 import {PassiveWeaponFactoryError} from "./PassiveWeaponFactoryError.js";
 import {PassiveWeapon} from "./PassiveWeapon.js";
 
@@ -18,6 +18,9 @@ export class PassiveWeaponFactory {
         break;
       case PASSIVE_WEAPONS.LAST_RESORT:
         weapon = this.makeLastResort();
+        break;
+      case PASSIVE_WEAPONS.STRONG_COUNTER_ATTACK:
+        weapon = this.makeStrongCounterAttack();
         break;
       default:
         throw new PassiveWeaponFactoryError('Cannot make weapon, weapon does not exist.');
@@ -60,6 +63,18 @@ export class PassiveWeaponFactory {
       FLEET_STRUCT_DEFAULTS.ATTACK_DAMAGE,
       0,
       1
+    );
+  }
+
+  /**
+   * @return {PassiveWeapon}
+   */
+  makeStrongCounterAttack() {
+    return new PassiveWeapon(
+      PASSIVE_WEAPONS.STRONG_COUNTER_ATTACK,
+      COMMAND_STRUCT_DEFAULTS.COUNTER_ATTACK_DAMAGE,
+      1,
+      0
     );
   }
 }

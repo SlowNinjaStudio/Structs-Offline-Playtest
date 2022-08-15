@@ -1,6 +1,8 @@
 import {FLEET_STRUCT_DEFAULTS, MANUAL_WEAPON_SLOTS} from "./Constants.js";
 import {DefenseComponent} from "./DefenseComponent.js";
 import {PassiveWeapon} from "./PassiveWeapon.js";
+import {DefendActionDisabledError} from "./DefendActionDisabledError.js";
+import {InvalidManualWeaponSlotError} from "./InvalidManualWeaponSlotError.js";
 
 export class Struct {
   /**
@@ -27,6 +29,7 @@ export class Struct {
     this.defenders = [];
     this.defending = null;
     this.isDestroyed = false;
+    this.canDefend = true;
 
     this.manualWeaponPrimary = manualWeaponPrimary;
     this.manualWeaponSecondary = manualWeaponSecondary;
@@ -77,6 +80,9 @@ export class Struct {
    * @param {Struct} struct
    */
   defend(struct) {
+    if (!this.canDefend) {
+      throw new DefendActionDisabledError('This struct cannot defend other structs');
+    }
     this.undefend();
     struct.addDefender(this);
     this.defending = struct;
@@ -164,7 +170,7 @@ export class Struct {
     } else if (weaponSlot.toUpperCase() === MANUAL_WEAPON_SLOTS.SECONDARY) {
       return this.manualWeaponSecondary;
     } else {
-      throw new Error('Invalid weapon slot');
+      throw new InvalidManualWeaponSlotError('Invalid weapon slot');
     }
   }
 
@@ -233,5 +239,17 @@ export class Struct {
 
     // Counter Attack
     target.counterAttack(this);
+  }
+
+  /**
+   * @param {string} ambit
+   * @return {boolean}
+   */
+  changeAmbit(ambit) {
+    if (this.defenseComponent.canChangeAmbit(this.operatingAmbit, ambit)) {
+      this.operatingAmbit = ambit;
+      return true;
+    }
+    return false;
   }
 }

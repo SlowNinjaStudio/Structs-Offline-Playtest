@@ -1,5 +1,5 @@
 import {DTest} from "../../DTestFramework.js";
-import {FLEET_STRUCT_DEFAULTS, PASSIVE_WEAPONS} from "../../../js/modules/Constants.js";
+import {COMMAND_STRUCT_DEFAULTS, FLEET_STRUCT_DEFAULTS, PASSIVE_WEAPONS} from "../../../js/modules/Constants.js";
 import {PassiveWeaponFactory} from "../../../js/modules/PassiveWeaponFactory.js";
 
 const makeTest = new DTest('makeTest', function(params) {
@@ -32,6 +32,13 @@ const makeTest = new DTest('makeTest', function(params) {
       damageSameAmbit: FLEET_STRUCT_DEFAULTS.ATTACK_DAMAGE,
       probability: 0,
       probabilityOnDeath: 1
+    },
+    {
+      weaponName: PASSIVE_WEAPONS.STRONG_COUNTER_ATTACK,
+      damage: COMMAND_STRUCT_DEFAULTS.COUNTER_ATTACK_DAMAGE,
+      damageSameAmbit: COMMAND_STRUCT_DEFAULTS.COUNTER_ATTACK_DAMAGE,
+      probability: 1,
+      probabilityOnDeath: 0
     }
   ];
 });

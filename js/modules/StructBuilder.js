@@ -22,6 +22,9 @@ export class StructBuilder {
       case UNIT_TYPES.ARTILLERY:
         struct = this.makeArtillery();
         break;
+      case UNIT_TYPES.COMMAND_SHIP:
+        struct = this.makeCommandShip();
+        break;
       case UNIT_TYPES.CRUISER:
         struct = this.makeCruiser();
         break;
@@ -75,6 +78,23 @@ export class StructBuilder {
       null,
       null,
       this.defenseComponentFactory.make(DEFENSE_COMPONENTS.INDIRECT_COMBAT_MODULE)
+    );
+  }
+
+  /**
+   * @return {Struct}
+   */
+  makeCommandShip() {
+    return new Struct(
+      UNIT_TYPES.COMMAND_SHIP,
+      AMBITS.SPACE,
+      this.manualWeaponFactory.make(
+        MANUAL_WEAPONS.GUIDED_WEAPONRY,
+        [AMBITS.WATER, AMBITS.LAND, AMBITS.SKY, AMBITS.SPACE]
+      ),
+      null,
+      this.passiveWeaponFactory.make(PASSIVE_WEAPONS.STRONG_COUNTER_ATTACK),
+      this.defenseComponentFactory.make(DEFENSE_COMPONENTS.OMNI_ENGINE)
     );
   }
 

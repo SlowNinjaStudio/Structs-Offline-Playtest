@@ -31,6 +31,10 @@ const makeTest = new DTest('makeTest', function(params) {
     component.reduceAttackDamage(params.incomingDamage, params.attackingWeapon),
     params.reduceAttackDamage
   );
+  this.assertEquals(
+    component.canChangeAmbit(params.currentAmbit, params.desiredAmbit),
+    params.canChangeAmbit
+  );
 }, function() {
   const manualWeaponFactory = new ManualWeaponFactory();
   const unguidedWeapon = manualWeaponFactory.make(MANUAL_WEAPONS.UNGUIDED_WEAPONRY, [AMBITS.LAND]);
@@ -58,7 +62,10 @@ const makeTest = new DTest('makeTest', function(params) {
       incomingDamage: unguidedWeapon.getDamage(),
       blocksTargeting: false,
       evadeCounterAttack: false,
-      reduceAttackDamage: FLEET_STRUCT_DEFAULTS.ATTACK_DAMAGE - FLEET_STRUCT_DEFAULTS.ARMOUR
+      reduceAttackDamage: FLEET_STRUCT_DEFAULTS.ATTACK_DAMAGE - FLEET_STRUCT_DEFAULTS.ARMOUR,
+      canChangeAmbit: false,
+      currentAmbit: AMBITS.LAND,
+      desiredAmbit: AMBITS.SPACE
     },
     {
       name: DEFENSE_COMPONENTS.DEFENSIVE_MANEUVER,
@@ -73,7 +80,10 @@ const makeTest = new DTest('makeTest', function(params) {
       incomingDamage: unguidedWeapon.getDamage(),
       blocksTargeting: false,
       evadeCounterAttack: false,
-      reduceAttackDamage: 0
+      reduceAttackDamage: 0,
+      canChangeAmbit: false,
+      currentAmbit: AMBITS.LAND,
+      desiredAmbit: AMBITS.SPACE
     },
     {
       name: DEFENSE_COMPONENTS.DEFENSIVE_MANEUVER,
@@ -88,7 +98,10 @@ const makeTest = new DTest('makeTest', function(params) {
       incomingDamage: unguidedWeapon.getDamage(),
       blocksTargeting: false,
       evadeCounterAttack: false,
-      reduceAttackDamage: unguidedWeapon.getDamage()
+      reduceAttackDamage: unguidedWeapon.getDamage(),
+      canChangeAmbit: false,
+      currentAmbit: AMBITS.LAND,
+      desiredAmbit: AMBITS.SPACE
     },
     {
       name: DEFENSE_COMPONENTS.DEFENSIVE_MANEUVER,
@@ -103,97 +116,10 @@ const makeTest = new DTest('makeTest', function(params) {
       incomingDamage: guidedWeapon.getDamage(),
       blocksTargeting: false,
       evadeCounterAttack: false,
-      reduceAttackDamage: guidedWeapon.getDamage()
-    },
-    {
-      name: DEFENSE_COMPONENTS.SIGNAL_JAMMING,
-      ambits: [],
-      probabilityExpected: 2/3,
-      probabilityTestValue: 1,
-      type: DEFENSE_COMPONENT_TYPES.COUNTER_MEASURE,
-      isActiveExpected: true,
-      isActiveTestValue: true,
-      attacker: attacker,
-      attackingWeapon: guidedWeapon,
-      incomingDamage: guidedWeapon.getDamage(),
-      blocksTargeting: false,
-      evadeCounterAttack: false,
-      reduceAttackDamage: 0
-    },
-    {
-      name: DEFENSE_COMPONENTS.SIGNAL_JAMMING,
-      ambits: [],
-      probabilityExpected: 2/3,
-      probabilityTestValue: 0,
-      type: DEFENSE_COMPONENT_TYPES.COUNTER_MEASURE,
-      isActiveExpected: true,
-      isActiveTestValue: true,
-      attacker: attacker,
-      attackingWeapon: guidedWeapon,
-      incomingDamage: guidedWeapon.getDamage(),
-      blocksTargeting: false,
-      evadeCounterAttack: false,
-      reduceAttackDamage: guidedWeapon.getDamage()
-    },
-    {
-      name: DEFENSE_COMPONENTS.SIGNAL_JAMMING,
-      ambits: [],
-      probabilityExpected: 2/3,
-      probabilityTestValue: 1,
-      type: DEFENSE_COMPONENT_TYPES.COUNTER_MEASURE,
-      isActiveExpected: true,
-      isActiveTestValue: true,
-      attacker: attacker,
-      attackingWeapon: unguidedWeapon,
-      incomingDamage: unguidedWeapon.getDamage(),
-      blocksTargeting: false,
-      evadeCounterAttack: false,
-      reduceAttackDamage: unguidedWeapon.getDamage()
-    },
-    {
-      name: DEFENSE_COMPONENTS.STEALTH_MODE,
-      ambits: [AMBITS.LAND],
-      probabilityExpected: 1,
-      probabilityTestValue: 1,
-      type: DEFENSE_COMPONENT_TYPES.AMBIT_DEFENSE,
-      isActiveExpected: false,
-      isActiveTestValue: true,
-      attacker: attacker,
-      attackingWeapon: unguidedWeapon,
-      incomingDamage: unguidedWeapon.getDamage(),
-      blocksTargeting: true,
-      evadeCounterAttack: false,
-      reduceAttackDamage: unguidedWeapon.getDamage()
-    },
-    {
-      name: DEFENSE_COMPONENTS.STEALTH_MODE,
-      ambits: [AMBITS.LAND],
-      probabilityExpected: 1,
-      probabilityTestValue: 1,
-      type: DEFENSE_COMPONENT_TYPES.AMBIT_DEFENSE,
-      isActiveExpected: false,
-      isActiveTestValue: false,
-      attacker: attacker,
-      attackingWeapon: unguidedWeapon,
-      incomingDamage: unguidedWeapon.getDamage(),
-      blocksTargeting: false,
-      evadeCounterAttack: false,
-      reduceAttackDamage: unguidedWeapon.getDamage()
-    },
-    {
-      name: DEFENSE_COMPONENTS.STEALTH_MODE,
-      ambits: [AMBITS.WATER],
-      probabilityExpected: 1,
-      probabilityTestValue: 1,
-      type: DEFENSE_COMPONENT_TYPES.AMBIT_DEFENSE,
-      isActiveExpected: false,
-      isActiveTestValue: true,
-      attacker: attacker,
-      attackingWeapon: unguidedWeapon,
-      incomingDamage: unguidedWeapon.getDamage(),
-      blocksTargeting: false,
-      evadeCounterAttack: false,
-      reduceAttackDamage: unguidedWeapon.getDamage()
+      reduceAttackDamage: guidedWeapon.getDamage(),
+      canChangeAmbit: false,
+      currentAmbit: AMBITS.LAND,
+      desiredAmbit: AMBITS.SPACE
     },
     {
       name: DEFENSE_COMPONENTS.INDIRECT_COMBAT_MODULE,
@@ -208,7 +134,136 @@ const makeTest = new DTest('makeTest', function(params) {
       incomingDamage: unguidedWeapon.getDamage(),
       blocksTargeting: false,
       evadeCounterAttack: true,
-      reduceAttackDamage: unguidedWeapon.getDamage()
+      reduceAttackDamage: unguidedWeapon.getDamage(),
+      canChangeAmbit: false,
+      currentAmbit: AMBITS.LAND,
+      desiredAmbit: AMBITS.SPACE
+    },
+    {
+      name: DEFENSE_COMPONENTS.OMNI_ENGINE,
+      ambits: [],
+      probabilityExpected: 1,
+      probabilityTestValue: 1,
+      type: DEFENSE_COMPONENT_TYPES.AFTERMARKET_ENGINE,
+      isActiveExpected: true,
+      isActiveTestValue: true,
+      attacker: attacker,
+      attackingWeapon: unguidedWeapon,
+      incomingDamage: unguidedWeapon.getDamage(),
+      blocksTargeting: false,
+      evadeCounterAttack: false,
+      reduceAttackDamage: unguidedWeapon.getDamage(),
+      canChangeAmbit: true,
+      currentAmbit: AMBITS.LAND,
+      desiredAmbit: AMBITS.SPACE
+    },
+    {
+      name: DEFENSE_COMPONENTS.SIGNAL_JAMMING,
+      ambits: [],
+      probabilityExpected: 2/3,
+      probabilityTestValue: 1,
+      type: DEFENSE_COMPONENT_TYPES.COUNTER_MEASURE,
+      isActiveExpected: true,
+      isActiveTestValue: true,
+      attacker: attacker,
+      attackingWeapon: guidedWeapon,
+      incomingDamage: guidedWeapon.getDamage(),
+      blocksTargeting: false,
+      evadeCounterAttack: false,
+      reduceAttackDamage: 0,
+      canChangeAmbit: false,
+      currentAmbit: AMBITS.LAND,
+      desiredAmbit: AMBITS.SPACE
+    },
+    {
+      name: DEFENSE_COMPONENTS.SIGNAL_JAMMING,
+      ambits: [],
+      probabilityExpected: 2/3,
+      probabilityTestValue: 0,
+      type: DEFENSE_COMPONENT_TYPES.COUNTER_MEASURE,
+      isActiveExpected: true,
+      isActiveTestValue: true,
+      attacker: attacker,
+      attackingWeapon: guidedWeapon,
+      incomingDamage: guidedWeapon.getDamage(),
+      blocksTargeting: false,
+      evadeCounterAttack: false,
+      reduceAttackDamage: guidedWeapon.getDamage(),
+      canChangeAmbit: false,
+      currentAmbit: AMBITS.LAND,
+      desiredAmbit: AMBITS.SPACE
+    },
+    {
+      name: DEFENSE_COMPONENTS.SIGNAL_JAMMING,
+      ambits: [],
+      probabilityExpected: 2/3,
+      probabilityTestValue: 1,
+      type: DEFENSE_COMPONENT_TYPES.COUNTER_MEASURE,
+      isActiveExpected: true,
+      isActiveTestValue: true,
+      attacker: attacker,
+      attackingWeapon: unguidedWeapon,
+      incomingDamage: unguidedWeapon.getDamage(),
+      blocksTargeting: false,
+      evadeCounterAttack: false,
+      reduceAttackDamage: unguidedWeapon.getDamage(),
+      canChangeAmbit: false,
+      currentAmbit: AMBITS.LAND,
+      desiredAmbit: AMBITS.SPACE
+    },
+    {
+      name: DEFENSE_COMPONENTS.STEALTH_MODE,
+      ambits: [AMBITS.LAND],
+      probabilityExpected: 1,
+      probabilityTestValue: 1,
+      type: DEFENSE_COMPONENT_TYPES.AMBIT_DEFENSE,
+      isActiveExpected: false,
+      isActiveTestValue: true,
+      attacker: attacker,
+      attackingWeapon: unguidedWeapon,
+      incomingDamage: unguidedWeapon.getDamage(),
+      blocksTargeting: true,
+      evadeCounterAttack: false,
+      reduceAttackDamage: unguidedWeapon.getDamage(),
+      canChangeAmbit: false,
+      currentAmbit: AMBITS.LAND,
+      desiredAmbit: AMBITS.SPACE
+    },
+    {
+      name: DEFENSE_COMPONENTS.STEALTH_MODE,
+      ambits: [AMBITS.LAND],
+      probabilityExpected: 1,
+      probabilityTestValue: 1,
+      type: DEFENSE_COMPONENT_TYPES.AMBIT_DEFENSE,
+      isActiveExpected: false,
+      isActiveTestValue: false,
+      attacker: attacker,
+      attackingWeapon: unguidedWeapon,
+      incomingDamage: unguidedWeapon.getDamage(),
+      blocksTargeting: false,
+      evadeCounterAttack: false,
+      reduceAttackDamage: unguidedWeapon.getDamage(),
+      canChangeAmbit: false,
+      currentAmbit: AMBITS.LAND,
+      desiredAmbit: AMBITS.SPACE
+    },
+    {
+      name: DEFENSE_COMPONENTS.STEALTH_MODE,
+      ambits: [AMBITS.WATER],
+      probabilityExpected: 1,
+      probabilityTestValue: 1,
+      type: DEFENSE_COMPONENT_TYPES.AMBIT_DEFENSE,
+      isActiveExpected: false,
+      isActiveTestValue: true,
+      attacker: attacker,
+      attackingWeapon: unguidedWeapon,
+      incomingDamage: unguidedWeapon.getDamage(),
+      blocksTargeting: false,
+      evadeCounterAttack: false,
+      reduceAttackDamage: unguidedWeapon.getDamage(),
+      canChangeAmbit: false,
+      currentAmbit: AMBITS.LAND,
+      desiredAmbit: AMBITS.SPACE
     }
   ];
 });
