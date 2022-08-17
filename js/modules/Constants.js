@@ -48,6 +48,13 @@ export const
     SECONDARY: 'SECONDARY'
   },
 
+  MAX_FLEET_STRUCTS_PER_AMBIT = {
+    SPACE: 4,
+    SKY: 4,
+    LAND: 4,
+    WATER: 4
+  },
+
   ORDER_OF_AMBITS = [
     AMBITS.WATER,
     AMBITS.LAND,
@@ -60,6 +67,15 @@ export const
     COUNTER_ATTACK: 'COUNTER ATTACK',
     LAST_RESORT: 'LAST RESORT',
     STRONG_COUNTER_ATTACK: 'STRONG COUNTER ATTACK'
+  },
+
+  PLAYER_DEFAULTS = {
+    ID_PREFIX: 'player-',
+    MAX_ACTIVE_FLEET_STRUCTS: 16
+  },
+
+  STRUCT_DEFAULTS = {
+    ID_PREFIX: 'struct-'
   },
 
   UNIT_TYPES = {

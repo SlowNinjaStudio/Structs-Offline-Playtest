@@ -31,11 +31,6 @@ function getTestStruct() {
   );
 }
 
-const generateIdTest = new DTest('generateIdTest', function() {
-  const struct = getTestStruct();
-  this.assertEquals(struct.generateId() !== struct.generateId(), true);
-});
-
 const addDefenderTest = new DTest('addDefenderTest', function () {
   const structA = new getTestStruct();
   const structB = new getTestStruct();
@@ -608,7 +603,6 @@ const changeAmbitTest = new DTest('changeAmbitTest', function() {
 
 // Test execution
 console.log('StructTest');
-generateIdTest.run();
 addDefenderTest.run();
 removeDefenderTest.run();
 defendTest.run();

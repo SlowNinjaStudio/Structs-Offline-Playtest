@@ -1,8 +1,9 @@
-import {FLEET_STRUCT_DEFAULTS, MANUAL_WEAPON_SLOTS} from "./Constants.js";
+import {FLEET_STRUCT_DEFAULTS, MANUAL_WEAPON_SLOTS, STRUCT_DEFAULTS} from "./Constants.js";
 import {DefenseComponent} from "./DefenseComponent.js";
 import {PassiveWeapon} from "./PassiveWeapon.js";
 import {DefendActionDisabledError} from "./DefendActionDisabledError.js";
 import {InvalidManualWeaponSlotError} from "./InvalidManualWeaponSlotError.js";
+import {IdGenerator} from "./IdGenerator.js";
 
 export class Struct {
   /**
@@ -21,7 +22,7 @@ export class Struct {
     passiveWeapon = null,
     defenseComponent = null
   ) {
-    this.id = this.generateId();
+    this.id = (new IdGenerator()).generate(STRUCT_DEFAULTS.ID_PREFIX);
     this.unitType = unitType;
     this.operatingAmbit = operatingAmbit;
     this.maxHealth = FLEET_STRUCT_DEFAULTS.MAX_HEALTH;
@@ -35,13 +36,6 @@ export class Struct {
     this.manualWeaponSecondary = manualWeaponSecondary;
     this.passiveWeapon = passiveWeapon;
     this.defenseComponent = defenseComponent ? defenseComponent : new DefenseComponent();
-  }
-
-  /**
-   * @returns {string}
-   */
-  generateId() {
-    return Date.now().toString(36) + Math.random().toString(36).substring(2);
   }
 
   /**
