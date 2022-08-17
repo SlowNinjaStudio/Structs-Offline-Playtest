@@ -16,6 +16,17 @@ export class Fleet {
     this.sky = [];
     this.land = [];
     this.water = [];
+
+    this.initAmbits();
+  }
+
+  initAmbits() {
+    const ambits = Object.values(AMBITS);
+    for (let j = 0; j < ambits.length; j++) {
+      for (let i = 0; i < this.maxStructsPerAmbit[ambits[j]]; i++) {
+        this[ambits[j].toLowerCase()].push(null);
+      }
+    }
   }
 
   /**
@@ -24,7 +35,7 @@ export class Fleet {
    * @return {Struct}
    */
   findStructByAmbitAndId(ambit, id) {
-    return this[ambit.toLowerCase()].find(fleetStruct => fleetStruct.id === id);
+    return this[ambit.toLowerCase()].find(fleetStruct => !!fleetStruct ? (fleetStruct.id === id) : false);
   }
 
   /**
@@ -49,17 +60,27 @@ export class Fleet {
   }
 
   /**
+   * @param {string} ambit
    * @return {number}
    */
-  numberOfStructsStored() {
-    return this.space.length + this.sky.length + this.land.length + this.water.length;
+  numberOfStructsInAmbit(ambit) {
+    return this[ambit.toLowerCase()].reduce((numStructs, struct) => numStructs + (!!struct ? 1 : 0), 0);
+  }
+
+  /**
+   * @return {number}
+   */
+  numberOfStructs() {
+    return Object.values(AMBITS).reduce((totalNumStructs, ambit) =>
+        totalNumStructs + this.numberOfStructsInAmbit(ambit)
+    , 0);
   }
 
   /**
    * @return {number}
    */
   capacityRemaining() {
-    return this.maxStructs - this.numberOfStructsStored();
+    return this.maxStructs - this.numberOfStructs();
   }
 
   /**
@@ -67,7 +88,7 @@ export class Fleet {
    * @return {number}
    */
   ambitCapacityRemaining(ambit) {
-    return this.maxStructsPerAmbit[ambit] - this[ambit.toLowerCase()].length;
+    return this.maxStructsPerAmbit[ambit] - this.numberOfStructsInAmbit(ambit);
   }
 
   /**
@@ -86,21 +107,46 @@ export class Fleet {
   }
 
   /**
-   * @param {Struct} struct
+   * @param {string} ambit
+   * @param {number} index
    * @return {boolean}
    */
-  canAddStruct(struct) {
-    return this.isCapacityRemaining()
+  isSlotAvailable(ambit, index) {
+    if (index < 0 || index >= this.maxStructsPerAmbit[ambit]) {
+      return false;
+    }
+    const slot = this[ambit.toLowerCase()][index];
+    return slot === null || slot.isDestroyed;
+  }
+
+  /**
+   * @param {Struct} struct
+   * @param {number} index
+   * @return {boolean}
+   */
+  canAddStruct(struct, index) {
+    return this.isSlotAvailable(struct.operatingAmbit, index)
+      && this.isCapacityRemaining()
       && this.isAmbitCapacityRemaining(struct.operatingAmbit)
       && !this.includes(struct);
   }
 
   /**
+   * @param {string} ambit
+   * @return {number}
+   */
+  findFreeAmbitSlot(ambit) {
+    return this[ambit.toLowerCase()].indexOf(null);
+  }
+
+  /**
    * @param {Struct} struct
+   * @param {number} index
    * @return {boolean}
    */
-  addStruct(struct) {
-    if (this.canAddStruct(struct)) {
+  addStruct(struct, index= -1) {
+    index = index > -1 ? index : this.findFreeAmbitSlot(struct.operatingAmbit);
+    if (this.canAddStruct(struct, index)) {
       this[struct.operatingAmbit.toLowerCase()].push(struct);
       return true;
     }
@@ -113,11 +159,11 @@ export class Fleet {
    * @return {boolean}
    */
   removeStructByAmbitAndId(ambit, id) {
-    const index = this[ambit.toLowerCase()].findIndex(fleetStruct => fleetStruct.id === id);
+    const index = this[ambit.toLowerCase()].findIndex(fleetStruct => !!fleetStruct ? (fleetStruct.id === id) : false);
     if (index < 0) {
       return false;
     }
-    const removed = this[ambit.toLowerCase()].splice(index, 1);
-    return removed.length > 0;
+    this[ambit.toLowerCase()][index] = null;
+    return true;
   }
 }

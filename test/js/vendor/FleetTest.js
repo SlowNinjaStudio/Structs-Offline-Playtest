@@ -11,9 +11,9 @@ const findStructByAmbitAndIdTest = new DTest('findStructByAmbitAndIdTest', funct
   const structLand2 = structBuilder.make(UNIT_TYPES.SAM_LAUNCHER);
   const structSky1 = structBuilder.make(UNIT_TYPES.FIGHTER_JET);
 
-  fleet.land.push(structLand1);
-  fleet.land.push(structLand2);
-  fleet.sky.push(structSky1);
+  fleet.land[0] = structLand1;
+  fleet.land[1] = structLand2;
+  fleet.sky[0] = structSky1;
 
   this.assertEquals(fleet.findStructByAmbitAndId(AMBITS.LAND, structLand1.id).id, structLand1.id);
   this.assertEquals(fleet.findStructByAmbitAndId(AMBITS.LAND, structLand2.id).id, structLand2.id);
@@ -29,9 +29,9 @@ const findStructByIdTest = new DTest('findStructByIdTest', function() {
   const structSky1 = structBuilder.make(UNIT_TYPES.FIGHTER_JET);
   const fakeId = (new IdGenerator()).generate();
 
-  fleet.land.push(structLand1);
-  fleet.land.push(structLand2);
-  fleet.sky.push(structSky1);
+  fleet.land[0] = structLand1;
+  fleet.land[1] = structLand2;
+  fleet.sky[0] = structSky1;
 
   this.assertEquals(fleet.findStructById(structLand1.id).id, structLand1.id);
   this.assertEquals(fleet.findStructById(structLand2.id).id, structLand2.id);
@@ -45,7 +45,7 @@ const includesTest = new DTest('includesTest', function() {
   const structLand1 = structBuilder.make(UNIT_TYPES.TANK);
   const structLand2 = structBuilder.make(UNIT_TYPES.SAM_LAUNCHER);
 
-  fleet.land.push(structLand1);
+  fleet.land[0] = structLand1;
 
   this.assertEquals(fleet.includes(structLand1), true);
   this.assertEquals(fleet.includes(structLand2), false);
@@ -58,13 +58,13 @@ const numberOfStructsStoredTest = new DTest('numberOfStructsStoredTest', functio
   const structLand2 = structBuilder.make(UNIT_TYPES.SAM_LAUNCHER);
   const structSky1 = structBuilder.make(UNIT_TYPES.FIGHTER_JET);
 
-  this.assertEquals(fleet.numberOfStructsStored(), 0);
+  this.assertEquals(fleet.numberOfStructs(), 0);
 
-  fleet.land.push(structLand1);
-  fleet.land.push(structLand2);
-  fleet.sky.push(structSky1);
+  fleet.land[0] = structLand1;
+  fleet.land[1] = structLand2;
+  fleet.sky[0] = structSky1;
 
-  this.assertEquals(fleet.numberOfStructsStored(), 3);
+  this.assertEquals(fleet.numberOfStructs(), 3);
 });
 
 const capacityRemainingTest = new DTest('capacityRemainingTest', function() {
@@ -76,9 +76,9 @@ const capacityRemainingTest = new DTest('capacityRemainingTest', function() {
 
   this.assertEquals(fleet.capacityRemaining(), 16);
 
-  fleet.land.push(structLand1);
-  fleet.land.push(structLand2);
-  fleet.sky.push(structSky1);
+  fleet.land[0] = structLand1;
+  fleet.land[1] = structLand2;
+  fleet.sky[0] = structSky1;
 
   this.assertEquals(fleet.capacityRemaining(), 13);
 });
@@ -95,9 +95,9 @@ const ambitCapacityRemainingTest = new DTest('ambitCapacityRemainingTest', funct
   this.assertEquals(fleet.ambitCapacityRemaining(AMBITS.LAND), 4);
   this.assertEquals(fleet.ambitCapacityRemaining(AMBITS.WATER), 4);
 
-  fleet.land.push(structLand1);
-  fleet.land.push(structLand2);
-  fleet.sky.push(structSky1);
+  fleet.land[0] = structLand1;
+  fleet.land[1] = structLand2;
+  fleet.sky[0] = structSky1;
 
   this.assertEquals(fleet.ambitCapacityRemaining(AMBITS.SPACE), 4);
   this.assertEquals(fleet.ambitCapacityRemaining(AMBITS.SKY), 3);
@@ -113,11 +113,11 @@ const isCapacityRemainingTest = new DTest('isCapacityRemainingTest', function() 
 
   this.assertEquals(fleet.isCapacityRemaining(), true);
 
-  fleet.land.push(structLand1);
+  fleet.land[0] = structLand1;
 
   this.assertEquals(fleet.isCapacityRemaining(), true);
 
-  fleet.land.push(structLand2);
+  fleet.land[1] = structLand2;
 
   this.assertEquals(fleet.isCapacityRemaining(), false);
 });
@@ -132,13 +132,13 @@ const isAmbitCapacityRemainingTest = new DTest('isAmbitCapacityRemainingTest', f
 
   this.assertEquals(fleet.isAmbitCapacityRemaining(AMBITS.LAND), true);
 
-  fleet.land.push(structLand1);
-  fleet.land.push(structLand2);
-  fleet.land.push(structLand3);
+  fleet.land[0] = structLand1;
+  fleet.land[1] = structLand2;
+  fleet.land[2] = structLand3;
 
   this.assertEquals(fleet.isAmbitCapacityRemaining(AMBITS.LAND), true);
 
-  fleet.land.push(structLand4);
+  fleet.land[3] = structLand4;
 
   this.assertEquals(fleet.isAmbitCapacityRemaining(AMBITS.LAND), false);
   this.assertEquals(fleet.isAmbitCapacityRemaining(AMBITS.WATER), true);
@@ -169,8 +169,8 @@ const addStructTest = new DTest('addStructTest', function() {
   this.assertEquals(fleet.addStruct(structWater1), true);
 
   // One struct remaining before hitting max structs
-  this.assertEquals(fleet.canAddStruct(structSky1), true);
-  this.assertEquals(fleet.canAddStruct(structSpace1), true);
+  this.assertEquals(fleet.canAddStruct(structSky1, 0), true);
+  this.assertEquals(fleet.canAddStruct(structSpace1, 0), true);
 
   this.assertEquals(fleet.addStruct(structSpace1), true);
 
@@ -186,25 +186,26 @@ const removeStructByAmbitAndIdTest = new DTest('removeStructByAmbitAndIdTest', f
   const structLand3 = structBuilder.make(UNIT_TYPES.TANK);
   const structSky1 = structBuilder.make(UNIT_TYPES.FIGHTER_JET);
 
-  fleet.land.push(structLand1);
-  fleet.land.push(structLand2);
-  fleet.land.push(structLand3);
+  fleet.land[0] = structLand1;
+  fleet.land[1] = structLand2;
+  fleet.land[2] = structLand3;
 
   this.assertEquals(fleet.removeStructByAmbitAndId(AMBITS.SKY, structSky1.id), false);
 
-  fleet.sky.push(structSky1);
+  fleet.sky[2] = structSky1;
 
-  this.assertEquals(fleet.numberOfStructsStored(), 4);
+  this.assertEquals(fleet.numberOfStructs(), 4);
 
   this.assertEquals(fleet.removeStructByAmbitAndId(AMBITS.LAND, structLand2.id), true);
 
-  this.assertEquals(fleet.numberOfStructsStored(), 3);
+  this.assertEquals(fleet.numberOfStructs(), 3);
   this.assertEquals(fleet.land[0].id, structLand1.id);
-  this.assertEquals(fleet.land[1].id, structLand3.id);
+  this.assertEquals(fleet.land[1], null);
+  this.assertEquals(fleet.land[2].id, structLand3.id);
 
   this.assertEquals(fleet.removeStructByAmbitAndId(AMBITS.SKY, structSky1.id), true);
 
-  this.assertEquals(fleet.sky.length, 0);
+  this.assertEquals(fleet.numberOfStructsInAmbit(AMBITS.SKY), 0);
 });
 
 // Test execution
