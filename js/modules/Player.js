@@ -12,18 +12,12 @@ export class Player {
     this.name = name;
     this.commandStruct = (new CommandStructBuilder()).make(UNIT_TYPES.COMMAND_SHIP);
     this.fleet = new Fleet();
-    this.defeated = false;
   }
 
   /**
    * @return {boolean}
    */
-  // isDefeated() {
-  //   if (!this.defeated) {
-  //     this.defeated = this.activeFleetStructs.every(struct => struct.isDestroyed === true)
-  //       || this.commandStruct.isDestroyed;
-  //   }
-  //
-  //   return this.defeated;
-  // }
+  isDefeated() {
+    return this.commandStruct.isDestroyed;
+  }
 }

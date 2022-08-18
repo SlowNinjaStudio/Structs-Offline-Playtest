@@ -208,6 +208,32 @@ const removeStructByAmbitAndIdTest = new DTest('removeStructByAmbitAndIdTest', f
   this.assertEquals(fleet.numberOfStructsInAmbit(AMBITS.SKY), 0);
 });
 
+const isDestroyedTest = new DTest('isDestroyedTest', function() {
+  const fleet = new Fleet();
+  const structBuilder = new StructBuilder();
+  const structLand1 = structBuilder.make(UNIT_TYPES.TANK);
+  const structLand2 = structBuilder.make(UNIT_TYPES.SAM_LAUNCHER);
+  const structSky1 = structBuilder.make(UNIT_TYPES.FIGHTER_JET);
+
+  fleet.land[0] = structLand1;
+  fleet.land[1] = structLand2;
+  fleet.sky[0] = structSky1;
+
+  this.assertEquals(fleet.isDestroyed(), false);
+
+  fleet.land[1].isDestroyed = true;
+
+  this.assertEquals(fleet.isDestroyed(), false);
+
+  fleet.sky[0].isDestroyed = true;
+
+  this.assertEquals(fleet.isDestroyed(), false);
+
+  fleet.land[0].isDestroyed = true;
+
+  this.assertEquals(fleet.isDestroyed(), true);
+});
+
 // Test execution
 console.log('FleetTest');
 findStructByAmbitAndIdTest.run();
@@ -220,3 +246,4 @@ isCapacityRemainingTest.run();
 isAmbitCapacityRemainingTest.run();
 addStructTest.run();
 removeStructByAmbitAndIdTest.run();
+isDestroyedTest.run();

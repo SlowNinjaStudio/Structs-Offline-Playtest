@@ -2,7 +2,6 @@ import {AMBITS, MAX_FLEET_STRUCTS_PER_AMBIT, PLAYER_DEFAULTS} from "./Constants.
 
 export class Fleet {
   /**
-   *
    * @param {number} maxStructs
    * @param {Object} maxStructsPerAmbit
    */
@@ -164,6 +163,26 @@ export class Fleet {
       return false;
     }
     this[ambit.toLowerCase()][index] = null;
+    return true;
+  }
+
+  /**
+   * @return {boolean}
+   */
+  isDestroyed() {
+    if (this.numberOfStructs() === 0) {
+      return false;
+    }
+
+    const ambits = Object.values(AMBITS);
+    for (let j = 0; j < ambits.length; j++) {
+      const ambitStructs = this[ambits[j].toLowerCase()];
+      for (let i = 0; i < ambitStructs.length; i++) {
+        if (!!ambitStructs[i] && !ambitStructs[i].isDestroyed) {
+          return false;
+        }
+      }
+    }
     return true;
   }
 }
