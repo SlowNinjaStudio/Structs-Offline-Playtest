@@ -11,9 +11,493 @@
 </head>
 
 <body>
+  <style>
+    html {
+      background: #000000 url(/img/background/space-texture.png);
+      background-size: 256px 256px;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: -webkit-crisp-edges;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      font-family: sans-serif;
+      font-size: 0;
+      text-align: center;
+    }
+    .struct > img {
+      border: 1px solid black;
+      margin: 2px;
+      width: 50px;
+    }
+    .side.enemy .struct > img {
+      transform: scaleX(-1);
+    }
+    .struct {
+      background: #ffffff;
+      border: 4px solid #000000;
+      box-sizing: border-box;
+      display: inline-block;
+      font-size: 0;
+      height: 100px;
+      margin: 2px;
+      padding: 2px 1px;
+      text-align: center;
+      vertical-align: text-bottom;
+      width: 66px;
+    }
+    .struct.empty {
+      background: rgba(255, 255, 255, 0.25);
+      border: 4px dashed #cccccc;
+    }
+    .struct.selected {
+      border: 4px solid #00bfff;
+    }
+    .struct.target {
+      border: 4px solid #ff3000;
+    }
+    .struct.critical {
+      background: #ff9780;
+    }
+    .side {
+      display: inline-block;
+      padding: 2px;
+      vertical-align: middle;
+    }
+    .side.player {
+      border: 1px solid #00bfff;
+    }
+    .side.enemy {
+      border: 1px solid #ff3000;
+    }
+    .side.vs {
+      color: white;
+      font-size: 60px;
+      text-align: center;
+      width: 150px;
+    }
+    .side > .title {
+      background: #424242;
+      font-size: 30px;
+    }
+    .side.player > .title {
+      color: #00bfff;
+      border-bottom: 1px solid #00bfff;
+    }
+    .side.enemy > .title {
+      color: #ff3000;
+      border-bottom: 1px solid #ff3000;
+    }
+    .ambit.space {
+      background: rgba(80, 80, 80, 0.25);
+    }
+    .ambit.sky {
+      background: rgba(255, 255, 255, 0.25);
+    }
+    .ambit.land {
+      background: rgba(83, 179, 71, 0.25);
+    }
+    .ambit.water {
+      background: rgb(71, 123, 179, 0.25)
+    }
 
-  <!-- Add your site or application content here -->
-  <p>Hello world! This is HTML5 Boilerplate.</p>
+    .commandStructContainer {
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .fleetContainer {
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .commandFleetDivider {
+      border-right: 1px solid gold;
+      display: inline-block;
+      height: 410px;
+      vertical-align: middle;
+    }
+
+    @media (max-width: 800px) {
+      .side.vs {
+        display: block;
+        width: 100%;
+      }
+    }
+  </style>
+
+
+  <div class="side player">
+    <div class="title">Player</div>
+    <div class="commandStructContainer">
+      <div class="ambit space">
+        <div class="struct empty"></div>
+      </div>
+      <div class="ambit sky">
+        <div class="struct">
+          <div>
+            <img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png">
+          </div>
+          <img src="img/command-ship.jpg">
+          <div>
+            <img src="img/icons/icon-strength.png">
+          </div>
+        </div>
+      </div>
+      <div class="ambit land">
+        <div class="struct empty"></div>
+      </div>
+      <div class="ambit water">
+        <div class="struct empty"></div>
+      </div>
+    </div>
+
+    <div class="commandFleetDivider"></div>
+
+    <div class="fleetContainer">
+      <div class="ambit space">
+        <div class="struct">
+          <div>
+            <img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png">
+          </div>
+          <img src="img/space-star-fighter.jpg">
+          <div>
+            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+          </div>
+        </div>
+        <div class="struct">
+          <div>
+            <img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png"><img src="img/icons/icon-health-empty.png">
+          </div>
+          <img src="img/space-space-frigate.jpg">
+          <div>
+            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+          </div>
+        </div>
+        <div class="struct">
+          <div>
+            <img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png">
+          </div>
+          <img src="img/space-galatic-battleship.jpg">
+          <div>
+            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+          </div>
+        </div>
+        <div class="struct">
+          <div>
+            <img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png">
+          </div>
+          <img src="img/space-star-fighter.jpg">
+          <div>
+            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+          </div>
+        </div>
+      </div>
+      <div class="ambit sky">
+        <div class="struct">
+          <div>
+            <img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png">
+          </div>
+          <img src="img/sky-fighter-jet.jpg">
+          <div>
+            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+          </div>
+        </div>
+        <div class="struct selected">
+          <div>
+            <img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png">
+          </div>
+          <img src="img/sky-high-altitude-interceptor.jpg">
+          <div>
+            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+          </div>
+        </div>
+        <div class="struct">
+          <div>
+            <img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png">
+          </div>
+          <img src="img/sky-stealth-bomber.jpg">
+          <div>
+            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+          </div>
+        </div>
+        <div class="struct">
+          <div>
+            <img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png">
+          </div>
+          <img src="img/sky-fighter-jet.jpg">
+          <div>
+            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+          </div>
+        </div>
+      </div>
+      <div class="ambit land">
+        <div class="struct">
+          <div>
+            <img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png">
+          </div>
+          <img src="img/land-tank.jpg">
+          <div>
+            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+          </div>
+        </div>
+        <div class="struct target">
+          <div>
+            <img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png">
+          </div>
+          <img src="img/land-artillery.jpg">
+          <div>
+            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+          </div>
+        </div>
+        <div class="struct">
+          <div>
+            <img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png">
+          </div>
+          <img src="img/land-sam-launcher.jpg">
+          <div>
+            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+          </div>
+        </div>
+        <div class="struct">
+          <div>
+            <img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png">
+          </div>
+          <img src="img/land-tank.jpg">
+          <div>
+            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+          </div>
+        </div>
+      </div>
+      <div class="ambit water">
+        <div class="struct">
+          <div>
+            <img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png">
+          </div>
+          <img src="img/water-sub.jpg">
+          <div>
+            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+          </div>
+        </div>
+        <div class="struct critical">
+          <div>
+            <img src="img/icons/icon-health.png"><img src="img/icons/icon-health-empty.png"><img src="img/icons/icon-health-empty.png">
+          </div>
+          <img src="img/water-destroyer.jpg">
+          <div>
+            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+          </div>
+        </div>
+        <div class="struct">
+          <div>
+            <img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png">
+          </div>
+          <img src="img/water-cruiser.jpg">
+          <div>
+            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+          </div>
+        </div>
+        <div class="struct">
+          <div>
+            <img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png">
+          </div>
+          <img src="img/water-sub.jpg">
+          <div>
+            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="side vs">VS</div>
+
+
+  <div class="side enemy">
+    <div class="title">Enemy</div>
+    <div class="fleetContainer">
+      <div class="ambit space">
+        <div class="struct">
+          <div>
+            <img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png">
+          </div>
+          <img src="img/space-star-fighter.jpg">
+          <div>
+            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+          </div>
+        </div>
+        <div class="struct">
+          <div>
+            <img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png"><img src="img/icons/icon-health-empty.png">
+          </div>
+          <img src="img/space-space-frigate.jpg">
+          <div>
+            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+          </div>
+        </div>
+        <div class="struct">
+          <div>
+            <img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png">
+          </div>
+          <img src="img/space-galatic-battleship.jpg">
+          <div>
+            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+          </div>
+        </div>
+        <div class="struct">
+          <div>
+            <img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png">
+          </div>
+          <img src="img/space-star-fighter.jpg">
+          <div>
+            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+          </div>
+        </div>
+      </div>
+      <div class="ambit sky">
+        <div class="struct">
+          <div>
+            <img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png">
+          </div>
+          <img src="img/sky-fighter-jet.jpg">
+          <div>
+            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+          </div>
+        </div>
+        <div class="struct selected">
+          <div>
+            <img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png">
+          </div>
+          <img src="img/sky-high-altitude-interceptor.jpg">
+          <div>
+            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+          </div>
+        </div>
+        <div class="struct">
+          <div>
+            <img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png">
+          </div>
+          <img src="img/sky-stealth-bomber.jpg">
+          <div>
+            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+          </div>
+        </div>
+        <div class="struct">
+          <div>
+            <img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png">
+          </div>
+          <img src="img/sky-fighter-jet.jpg">
+          <div>
+            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+          </div>
+        </div>
+      </div>
+      <div class="ambit land">
+        <div class="struct">
+          <div>
+            <img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png">
+          </div>
+          <img src="img/land-tank.jpg">
+          <div>
+            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+          </div>
+        </div>
+        <div class="struct target">
+          <div>
+            <img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png">
+          </div>
+          <img src="img/land-artillery.jpg">
+          <div>
+            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+          </div>
+        </div>
+        <div class="struct">
+          <div>
+            <img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png">
+          </div>
+          <img src="img/land-sam-launcher.jpg">
+          <div>
+            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+          </div>
+        </div>
+        <div class="struct">
+          <div>
+            <img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png">
+          </div>
+          <img src="img/land-tank.jpg">
+          <div>
+            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+          </div>
+        </div>
+      </div>
+      <div class="ambit water">
+        <div class="struct">
+          <div>
+            <img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png">
+          </div>
+          <img src="img/water-sub.jpg">
+          <div>
+            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+          </div>
+        </div>
+        <div class="struct critical">
+          <div>
+            <img src="img/icons/icon-health.png"><img src="img/icons/icon-health-empty.png"><img src="img/icons/icon-health-empty.png">
+          </div>
+          <img src="img/water-destroyer.jpg">
+          <div>
+            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+          </div>
+        </div>
+        <div class="struct">
+          <div>
+            <img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png">
+          </div>
+          <img src="img/water-cruiser.jpg">
+          <div>
+            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+          </div>
+        </div>
+        <div class="struct">
+          <div>
+            <img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png">
+          </div>
+          <img src="img/water-sub.jpg">
+          <div>
+            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="commandFleetDivider"></div>
+
+    <div class="commandStructContainer">
+      <div class="ambit space">
+        <div class="struct empty"></div>
+      </div>
+      <div class="ambit sky">
+        <div class="struct">
+          <div>
+            <img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png"><img src="img/icons/icon-health.png">
+          </div>
+          <img src="img/command-ship.jpg">
+          <div>
+            <img src="img/icons/icon-strength.png">
+          </div>
+        </div>
+      </div>
+      <div class="ambit land">
+        <div class="struct empty"></div>
+      </div>
+      <div class="ambit water">
+        <div class="struct empty"></div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
   <script src="js/vendor/modernizr-3.11.2.min.js"></script>
   <script src="js/plugins.js"></script>
   <script src="js/main.js"></script>
