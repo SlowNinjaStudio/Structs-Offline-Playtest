@@ -126,6 +126,16 @@
       margin-bottom: 8px;
     }
 
+    .attributes-container .col-3.pe-1 {
+      text-align: right;
+    }
+
+    .defense-container {
+      border-top: 1px solid #cccccc;
+      margin-top: 8px;
+      padding-top: 8px;
+    }
+
     /* Bootstrap Overrides - Start */
 
     .offcanvas .container-fluid {
@@ -216,78 +226,125 @@
           </div>
         </div>
 
-        <div class="row">
-          <div class="col-auto">
-            <div class="row">
-              <div class="col-auto col-4">
-                <img src="img/space-star-fighter.jpg" style="height:80px">
+        <div class="attributes-container">
+          <div class="row">
+            <div class="col-auto">
+              <div class="row">
+                <div class="col-auto col-4">
+                  <img src="img/space-star-fighter.jpg" style="height:80px">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col text-center">
+                  Star Fighter
+                </div>
+              </div>
+              <div class="row">
+                <div class="col text-center">
+                  <img src="img/icons/icon-health.png"><strong>:</strong> 3/3
+                </div>
               </div>
             </div>
-            <div class="row">
-              <div class="col text-center">
-                Star Fighter
+            <div class="col">
+              <div class="row">
+                <div class="col-3 pe-1">
+                  <img src="img/icons/icon-location-pin.png"><strong>:</strong>
+                </div>
+                <div class="col ps-1">
+                  <img src="img/icons/icon-ambit-space.png"> 1
+                </div>
               </div>
-            </div>
-          </div>
-          <div class="col">
-            <div class="row">
-              <div class="col">
-                <img src="img/icons/icon-location-pin.png"><strong>:</strong>
-                <img src="img/icons/icon-ambit-space.png"> 0
+              <div class="row">
+                <div class="col-3 pe-1">
+                  <strong>1</strong> <img src="img/icons/icon-attack-range.png"><strong>:</strong>
+                </div>
+                <div class="col ps-1">
+                  <img src="img/icons/icon-fire.png"> 2,
+                  <img src="img/icons/icon-accuracy.png">,
+                  <img src="img/icons/icon-ambit-water.png">
+                  <img src="img/icons/icon-ambit-land.png">
+                  <img src="img/icons/icon-ambit-sky.png">
+                  <img src="img/icons/icon-ambit-space.png">
+                </div>
               </div>
-            </div>
-            <div class="row">
-              <div class="col">
-                <img src="img/icons/icon-attack-range.png"><strong>1:</strong>
-                <img src="img/icons/icon-fire.png">2,
-                <img src="img/icons/icon-accuracy.png">,
-                <img src="img/icons/icon-ambit-water.png">
-                <img src="img/icons/icon-ambit-land.png">
-                <img src="img/icons/icon-ambit-sky.png">
-                <img src="img/icons/icon-ambit-space.png">
+              <div class="row">
+                <div class="col-3 pe-1">
+                  <strong>2</strong> <img src="img/icons/icon-attack-range.png"><strong>:</strong>
+                </div>
+                <div class="col ps-1">
+                  <img src="img/icons/icon-fire.png"> 1-3,
+                  <img src="img/icons/icon-accuracy.png">,
+                  <img src="img/icons/icon-ambit-water.png">
+                  <img src="img/icons/icon-ambit-land.png">
+                  <img src="img/icons/icon-ambit-sky.png">
+                  <img src="img/icons/icon-ambit-space.png">
+                </div>
               </div>
-            </div>
-            <div class="row">
-              <div class="col">
-                <img src="img/icons/icon-attack-range.png"><strong>2:</strong>
-                <img src="img/icons/icon-fire.png">1-3,
-                <img src="img/icons/icon-accuracy.png">,
-                <img src="img/icons/icon-ambit-water.png">
-                <img src="img/icons/icon-ambit-land.png">
-                <img src="img/icons/icon-ambit-sky.png">
-                <img src="img/icons/icon-ambit-space.png">
+              <div class="row">
+                <div class="col-3 pe-1">
+                  <img src="img/icons/icon-counter-attack.png"><strong>:</strong>
+                </div>
+                <div class="col ps-1">
+                  <img src="img/icons/icon-fire.png"> 2,
+                  <img src="img/icons/icon-skull.png">,
+                  <img src="img/icons/icon-damage-same-ambit.png"> 3,
+                  <img src="img/icons/icon-x-red.png">
+                </div>
               </div>
-            </div>
-            <div class="row">
-              <div class="col">
-                <img src="img/icons/icon-counter-attack.png"><strong>:</strong>
-                <img src="img/icons/icon-fire.png">
-                2,
-                <img src="img/icons/icon-skull.png">,
-                <img src="img/icons/icon-damage-same-ambit.png">
-                3,
-                <img src="img/icons/icon-x-red.png">
-              </div>
-            </div>
-            <div class="row">
-              <div class="col">
-                <img src="img/icons/icon-def-melee.png"><strong>:</strong>
-                <img src="img/icons/icon-unguided.png">
-                2/3,
-                <img src="img/icons/icon-damage-down.png">
-                -1,
-                <img src="img/icons/icon-invisible.png">
-                <img src="img/icons/icon-ambit-water.png">
-                <img src="img/icons/icon-ambit-land.png">
-                <img src="img/icons/icon-ambit-sky.png">
-                <img src="img/icons/icon-ambit-space.png">,
-                <img src="img/icons/icon-speed.png">
+              <div class="row">
+                <div class="col-3 pe-1">
+                  <img src="img/icons/icon-def-melee.png"><strong>:</strong>
+                </div>
+                <div class="col ps-1">
+                  <img src="img/icons/icon-unguided.png"> 2/3,
+                  <img src="img/icons/icon-damage-down.png"> -1,
+                  <img src="img/icons/icon-invisible.png">
+                  <img src="img/icons/icon-ambit-water.png">
+                  <img src="img/icons/icon-ambit-land.png">
+                  <img src="img/icons/icon-ambit-sky.png">
+                  <img src="img/icons/icon-ambit-space.png">,
+                  <img src="img/icons/icon-speed.png">
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
+        <div class="defense-container">
+          <div class="row">
+            <div class="col-auto pe-1">
+              <img src="img/icons/icon-rook.png">:
+            </div>
+            <div class="col-auto ps-1">
+              <img src="img/icons/icon-ambit-land.png"> 2
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-auto pe-1">
+              <img src="img/icons/icon-strength.png">:
+            </div>
+            <div class="col ps-1">
+              <div class="row">
+                <div class="col">
+                  <img src="img/icons/icon-ambit-space.png"> 1,2,3,4
+                </div>
+                <div class="col">
+                  <img src="img/icons/icon-ambit-sky.png"> 1,2,3,4
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <img src="img/icons/icon-ambit-land.png"> 1,2,3,4
+                </div>
+                <div class="col">
+                  <img src="img/icons/icon-ambit-water.png"> 1,2,3,4
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
   </div>
 
@@ -334,7 +391,7 @@
             </div>
             <img src="img/space-star-fighter.jpg">
             <div>
-              <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+              <img src="img/icons/icon-rook.png"><img src="img/icons/icon-strength.png">
             </div>
           </div>
         </a>
@@ -344,7 +401,7 @@
           </div>
           <img src="img/space-space-frigate.jpg">
           <div>
-            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+            <img src="img/icons/icon-rook.png"><img src="img/icons/icon-strength.png">
           </div>
         </div>
         <div class="struct">
@@ -353,7 +410,7 @@
           </div>
           <img src="img/space-galatic-battleship.jpg">
           <div>
-            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+            <img src="img/icons/icon-rook.png"><img src="img/icons/icon-strength.png">
           </div>
         </div>
         <div class="struct">
@@ -362,7 +419,7 @@
           </div>
           <img src="img/space-star-fighter.jpg">
           <div>
-            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+            <img src="img/icons/icon-rook.png"><img src="img/icons/icon-strength.png">
           </div>
         </div>
       </div>
@@ -373,7 +430,7 @@
           </div>
           <img src="img/sky-fighter-jet.jpg">
           <div>
-            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+            <img src="img/icons/icon-rook.png"><img src="img/icons/icon-strength.png">
           </div>
         </div>
         <div class="struct selected">
@@ -382,7 +439,7 @@
           </div>
           <img src="img/sky-high-altitude-interceptor.jpg">
           <div>
-            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+            <img src="img/icons/icon-rook.png"><img src="img/icons/icon-strength.png">
           </div>
         </div>
         <div class="struct">
@@ -391,7 +448,7 @@
           </div>
           <img src="img/sky-stealth-bomber.jpg">
           <div>
-            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+            <img src="img/icons/icon-rook.png"><img src="img/icons/icon-strength.png">
           </div>
         </div>
         <div class="struct">
@@ -400,7 +457,7 @@
           </div>
           <img src="img/sky-fighter-jet.jpg">
           <div>
-            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+            <img src="img/icons/icon-rook.png"><img src="img/icons/icon-strength.png">
           </div>
         </div>
       </div>
@@ -411,7 +468,7 @@
           </div>
           <img src="img/land-tank.jpg">
           <div>
-            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+            <img src="img/icons/icon-rook.png"><img src="img/icons/icon-strength.png">
           </div>
         </div>
         <div class="struct target">
@@ -420,7 +477,7 @@
           </div>
           <img src="img/land-artillery.jpg">
           <div>
-            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+            <img src="img/icons/icon-rook.png"><img src="img/icons/icon-strength.png">
           </div>
         </div>
         <div class="struct">
@@ -429,7 +486,7 @@
           </div>
           <img src="img/land-sam-launcher.jpg">
           <div>
-            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+            <img src="img/icons/icon-rook.png"><img src="img/icons/icon-strength.png">
           </div>
         </div>
         <div class="struct">
@@ -438,7 +495,7 @@
           </div>
           <img src="img/land-tank.jpg">
           <div>
-            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+            <img src="img/icons/icon-rook.png"><img src="img/icons/icon-strength.png">
           </div>
         </div>
       </div>
@@ -449,7 +506,7 @@
           </div>
           <img src="img/water-sub.jpg">
           <div>
-            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+            <img src="img/icons/icon-rook.png"><img src="img/icons/icon-strength.png">
           </div>
         </div>
         <div class="struct critical">
@@ -458,7 +515,7 @@
           </div>
           <img src="img/water-destroyer.jpg">
           <div>
-            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+            <img src="img/icons/icon-rook.png"><img src="img/icons/icon-strength.png">
           </div>
         </div>
         <div class="struct">
@@ -467,7 +524,7 @@
           </div>
           <img src="img/water-cruiser.jpg">
           <div>
-            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+            <img src="img/icons/icon-rook.png"><img src="img/icons/icon-strength.png">
           </div>
         </div>
         <div class="struct">
@@ -476,7 +533,7 @@
           </div>
           <img src="img/water-sub.jpg">
           <div>
-            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+            <img src="img/icons/icon-rook.png"><img src="img/icons/icon-strength.png">
           </div>
         </div>
       </div>
@@ -497,7 +554,7 @@
           </div>
           <img src="img/space-star-fighter.jpg">
           <div>
-            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+            <img src="img/icons/icon-rook.png"><img src="img/icons/icon-strength.png">
           </div>
         </div>
         <div class="struct">
@@ -506,7 +563,7 @@
           </div>
           <img src="img/space-space-frigate.jpg">
           <div>
-            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+            <img src="img/icons/icon-rook.png"><img src="img/icons/icon-strength.png">
           </div>
         </div>
         <div class="struct">
@@ -515,7 +572,7 @@
           </div>
           <img src="img/space-galatic-battleship.jpg">
           <div>
-            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+            <img src="img/icons/icon-rook.png"><img src="img/icons/icon-strength.png">
           </div>
         </div>
         <div class="struct">
@@ -524,7 +581,7 @@
           </div>
           <img src="img/space-star-fighter.jpg">
           <div>
-            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+            <img src="img/icons/icon-rook.png"><img src="img/icons/icon-strength.png">
           </div>
         </div>
       </div>
@@ -535,7 +592,7 @@
           </div>
           <img src="img/sky-fighter-jet.jpg">
           <div>
-            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+            <img src="img/icons/icon-rook.png"><img src="img/icons/icon-strength.png">
           </div>
         </div>
         <div class="struct selected">
@@ -544,7 +601,7 @@
           </div>
           <img src="img/sky-high-altitude-interceptor.jpg">
           <div>
-            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+            <img src="img/icons/icon-rook.png"><img src="img/icons/icon-strength.png">
           </div>
         </div>
         <div class="struct">
@@ -553,7 +610,7 @@
           </div>
           <img src="img/sky-stealth-bomber.jpg">
           <div>
-            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+            <img src="img/icons/icon-rook.png"><img src="img/icons/icon-strength.png">
           </div>
         </div>
         <div class="struct">
@@ -562,7 +619,7 @@
           </div>
           <img src="img/sky-fighter-jet.jpg">
           <div>
-            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+            <img src="img/icons/icon-rook.png"><img src="img/icons/icon-strength.png">
           </div>
         </div>
       </div>
@@ -573,7 +630,7 @@
           </div>
           <img src="img/land-tank.jpg">
           <div>
-            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+            <img src="img/icons/icon-rook.png"><img src="img/icons/icon-strength.png">
           </div>
         </div>
         <div class="struct target">
@@ -582,7 +639,7 @@
           </div>
           <img src="img/land-artillery.jpg">
           <div>
-            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+            <img src="img/icons/icon-rook.png"><img src="img/icons/icon-strength.png">
           </div>
         </div>
         <div class="struct">
@@ -591,7 +648,7 @@
           </div>
           <img src="img/land-sam-launcher.jpg">
           <div>
-            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+            <img src="img/icons/icon-rook.png"><img src="img/icons/icon-strength.png">
           </div>
         </div>
         <div class="struct">
@@ -600,7 +657,7 @@
           </div>
           <img src="img/land-tank.jpg">
           <div>
-            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+            <img src="img/icons/icon-rook.png"><img src="img/icons/icon-strength.png">
           </div>
         </div>
       </div>
@@ -611,7 +668,7 @@
           </div>
           <img src="img/water-sub.jpg">
           <div>
-            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+            <img src="img/icons/icon-rook.png"><img src="img/icons/icon-strength.png">
           </div>
         </div>
         <div class="struct critical">
@@ -620,7 +677,7 @@
           </div>
           <img src="img/water-destroyer.jpg">
           <div>
-            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+            <img src="img/icons/icon-rook.png"><img src="img/icons/icon-strength.png">
           </div>
         </div>
         <div class="struct">
@@ -629,7 +686,7 @@
           </div>
           <img src="img/water-cruiser.jpg">
           <div>
-            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+            <img src="img/icons/icon-rook.png"><img src="img/icons/icon-strength.png">
           </div>
         </div>
         <div class="struct">
@@ -638,7 +695,7 @@
           </div>
           <img src="img/water-sub.jpg">
           <div>
-            <img src="img/icons/icon-def-melee.png"><img src="img/icons/icon-strength.png">
+            <img src="img/icons/icon-rook.png"><img src="img/icons/icon-strength.png">
           </div>
         </div>
       </div>
