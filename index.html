@@ -133,6 +133,12 @@
       padding-top: 8px;
     }
 
+    .offcanvas.structDetails {
+      margin: 0 auto;
+      max-width: 500px;
+      visibility: visible;
+    }
+
     /* Bootstrap Overrides - Start */
 
     .offcanvas .container-fluid {
@@ -172,7 +178,7 @@
 </head>
 
 <body>
-  <div class="offcanvas offcanvas-bottom player" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel">
+  <div class="offcanvas offcanvas-bottom structDetails player" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel">
     <div class="offcanvas-header">
       <div class="container-fluid">
         <div class="row">
@@ -260,7 +266,10 @@
                   ><img src="img/icons/icon-location-pin.png" alt="location-pin"></a><strong>:</strong>
                 </div>
                 <div class="col ps-1">
-                  <img src="img/icons/icon-ambit-space.png" alt="ambit-space"> 1
+                  <a href="javascript: void(0)"
+                     data-bs-toggle="popover"
+                     data-bs-content="Space Ambit"
+                  ><img src="img/icons/icon-ambit-space.png" alt="ambit-space"></a> 1
                 </div>
               </div>
               <div class="row">
@@ -271,12 +280,30 @@
                   ><strong>1</strong> <img src="img/icons/icon-attack-range.png" alt="attack-range"></a><strong>:</strong>
                 </div>
                 <div class="col ps-1">
-                  <img src="img/icons/icon-fire.png" alt="fire"> 2,
-                  <img src="img/icons/icon-accuracy.png" alt="accuracy">,
-                  <img src="img/icons/icon-ambit-water.png" alt="ambit-water">
-                  <img src="img/icons/icon-ambit-land.png" alt="ambit-land">
-                  <img src="img/icons/icon-ambit-sky.png" alt="ambit-sky">
-                  <img src="img/icons/icon-ambit-space.png" alt="ambit-space">
+                  <a href="javascript: void(0)"
+                     data-bs-toggle="popover"
+                     data-bs-content="Damage Value"
+                  ><img src="img/icons/icon-fire.png" alt="fire"></a> 2,
+                  <a href="javascript: void(0)"
+                     data-bs-toggle="popover"
+                     data-bs-content="Guided"
+                  ><img src="img/icons/icon-accuracy.png" alt="accuracy"></a>,
+                  <a href="javascript: void(0)"
+                     data-bs-toggle="popover"
+                     data-bs-content="Water Ambit"
+                  ><img src="img/icons/icon-ambit-water.png" alt="ambit-water"></a>
+                  <a href="javascript: void(0)"
+                     data-bs-toggle="popover"
+                     data-bs-content="Land Ambit"
+                  ><img src="img/icons/icon-ambit-land.png" alt="ambit-land"></a>
+                  <a href="javascript: void(0)"
+                     data-bs-toggle="popover"
+                     data-bs-content="Sky Ambit"
+                  ><img src="img/icons/icon-ambit-sky.png" alt="ambit-sky"></a>
+                  <a href="javascript: void(0)"
+                     data-bs-toggle="popover"
+                     data-bs-content="Space Ambit"
+                  ><img src="img/icons/icon-ambit-space.png" alt="ambit-space"></a>
                 </div>
               </div>
               <div class="row">
@@ -287,12 +314,30 @@
                   ><strong>2</strong> <img src="img/icons/icon-attack-range.png" alt="attack-range"></a><strong>:</strong>
                 </div>
                 <div class="col ps-1">
-                  <img src="img/icons/icon-fire.png" alt="fire"> 1-3,
-                  <img src="img/icons/icon-accuracy.png" alt="accuracy">,
-                  <img src="img/icons/icon-ambit-water.png" alt="ambit-water">
-                  <img src="img/icons/icon-ambit-land.png" alt="ambit-land">
-                  <img src="img/icons/icon-ambit-sky.png" alt="ambit-sky">
-                  <img src="img/icons/icon-ambit-space.png" alt="ambit-space">
+                  <a href="javascript: void(0)"
+                     data-bs-toggle="popover"
+                     data-bs-content="Damage Value"
+                  ><img src="img/icons/icon-fire.png" alt="fire"></a> 1-3,
+                  <a href="javascript: void(0)"
+                     data-bs-toggle="popover"
+                     data-bs-content="Guided"
+                  ><img src="img/icons/icon-accuracy.png" alt="accuracy"></a>,
+                  <a href="javascript: void(0)"
+                     data-bs-toggle="popover"
+                     data-bs-content="Water Ambit"
+                  ><img src="img/icons/icon-ambit-water.png" alt="ambit-water"></a>
+                  <a href="javascript: void(0)"
+                     data-bs-toggle="popover"
+                     data-bs-content="Land Ambit"
+                  ><img src="img/icons/icon-ambit-land.png" alt="ambit-land"></a>
+                  <a href="javascript: void(0)"
+                     data-bs-toggle="popover"
+                     data-bs-content="Sky Ambit"
+                  ><img src="img/icons/icon-ambit-sky.png" alt="ambit-sky"></a>
+                  <a href="javascript: void(0)"
+                     data-bs-toggle="popover"
+                     data-bs-content="Space Ambit"
+                  ><img src="img/icons/icon-ambit-space.png" alt="ambit-space"></a>
                 </div>
               </div>
               <div class="row">
@@ -303,10 +348,20 @@
                   ><img src="img/icons/icon-counter-attack.png" alt="counter-attack"></a><strong>:</strong>
                 </div>
                 <div class="col ps-1">
-                  <img src="img/icons/icon-fire.png" alt="fire"> 2,
-                  <img src="img/icons/icon-skull.png" alt="skull">,
-                  <img src="img/icons/icon-damage-same-ambit.png" alt="damage-same-ambit"> 3,
-                  <img src="img/icons/icon-x-red.png" alt="x-red">
+                  <a href="javascript: void(0)"
+                     data-bs-toggle="popover"
+                     data-bs-content="Damage Value"
+                  ><img src="img/icons/icon-fire.png" alt="fire"></a> 2,
+                  <a href="javascript: void(0)"
+                     data-bs-toggle="popover"
+                     title="On Death"
+                     data-bs-content="The following attributes only apply on death."
+                  ><img src="img/icons/icon-skull.png" alt="skull"></a>,
+                  <a href="javascript: void(0)"
+                     data-bs-toggle="popover"
+                     title="Same Ambit Damage Value"
+                     data-bs-content="The damage value when the attacker and defender have the same operating ambit."
+                  ><img src="img/icons/icon-damage-same-ambit.png" alt="damage-same-ambit"></a> 3,
                 </div>
               </div>
               <div class="row">
@@ -317,14 +372,41 @@
                   ><img src="img/icons/icon-def-melee.png" alt="def-melee"></a><strong>:</strong>
                 </div>
                 <div class="col ps-1">
-                  <img src="img/icons/icon-unguided.png" alt="unguided"> 2/3,
-                  <img src="img/icons/icon-damage-down.png" alt="damage-down"> -1,
-                  <img src="img/icons/icon-invisible.png" alt="invisible">
-                  <img src="img/icons/icon-ambit-water.png" alt="ambit-water">
-                  <img src="img/icons/icon-ambit-land.png" alt="ambit-land">
-                  <img src="img/icons/icon-ambit-sky.png" alt="ambit-sky">
-                  <img src="img/icons/icon-ambit-space.png" alt="ambit-space">,
-                  <img src="img/icons/icon-speed.png" alt="speed">
+                  <a href="javascript: void(0)"
+                     data-bs-toggle="popover"
+                     data-bs-content="Unguided"
+                  ><img src="img/icons/icon-unguided.png" alt="unguided"></a> 2/3,
+                  <a href="javascript: void(0)"
+                     data-bs-toggle="popover"
+                     title="Incoming Damage Reduction"
+                     data-bs-content="The amount incoming damage is reduced by."
+                  ><img src="img/icons/icon-damage-down.png" alt="damage-down"></a> -1,
+                  <a href="javascript: void(0)"
+                     data-bs-toggle="popover"
+                     title="Stealth Mode"
+                     data-bs-content="This struct can hide from attacks from the following ambits."
+                  ><img src="img/icons/icon-invisible.png" alt="invisible"></a>
+                  <a href="javascript: void(0)"
+                     data-bs-toggle="popover"
+                     data-bs-content="Water Ambit"
+                  ><img src="img/icons/icon-ambit-water.png" alt="ambit-water"></a>
+                  <a href="javascript: void(0)"
+                     data-bs-toggle="popover"
+                     data-bs-content="Land Ambit"
+                  ><img src="img/icons/icon-ambit-land.png" alt="ambit-land"></a>
+                  <a href="javascript: void(0)"
+                     data-bs-toggle="popover"
+                     data-bs-content="Sky Ambit"
+                  ><img src="img/icons/icon-ambit-sky.png" alt="ambit-sky"></a>
+                  <a href="javascript: void(0)"
+                     data-bs-toggle="popover"
+                     data-bs-content="Space Ambit"
+                  ><img src="img/icons/icon-ambit-space.png" alt="ambit-space"></a>,
+                  <a href="javascript: void(0)"
+                     data-bs-toggle="popover"
+                     title="Movement Ability"
+                     data-bs-content="This struct can change ambits."
+                  ><img src="img/icons/icon-speed.png" alt="speed"></a>
                 </div>
               </div>
             </div>
@@ -334,31 +416,54 @@
         <div class="defense-container">
           <div class="row">
             <div class="col-auto pe-1">
-              <img src="img/icons/icon-rook.png" alt="rook">:
+              <a href="javascript: void(0)"
+                 data-bs-toggle="popover"
+                 title="Defending"
+                 data-bs-content="The struct this struct is defending."
+              ><img src="img/icons/icon-rook.png" alt="rook"></a>:
             </div>
             <div class="col-auto ps-1">
-              <img src="img/icons/icon-ambit-land.png" alt="ambit-land"> 2
+              <a href="javascript: void(0)"
+                 data-bs-toggle="popover"
+                 data-bs-content="Land Ambit"
+              ><img src="img/icons/icon-ambit-land.png" alt="ambit-land"></a> 2
             </div>
           </div>
           <div class="row">
             <div class="col-auto pe-1">
-              <img src="img/icons/icon-strength.png" alt="strength">:
+              <a href="javascript: void(0)"
+                 data-bs-toggle="popover"
+                 title="Defended By"
+                 data-bs-content="The list of structs defending this struct."
+              ><img src="img/icons/icon-strength.png" alt="strength"></a>:
             </div>
             <div class="col ps-1">
               <div class="row">
                 <div class="col">
-                  <img src="img/icons/icon-ambit-space.png" alt="ambit-space"> 1,2,3,4
+                  <a href="javascript: void(0)"
+                     data-bs-toggle="popover"
+                     data-bs-content="Space Structs"
+                  ><img src="img/icons/icon-ambit-space.png" alt="ambit-space"></a> 1,2,3,4
                 </div>
                 <div class="col">
-                  <img src="img/icons/icon-ambit-sky.png" alt="ambit-sky"> 1,2,3,4
+                  <a href="javascript: void(0)"
+                     data-bs-toggle="popover"
+                     data-bs-content="Sky Structs"
+                  ><img src="img/icons/icon-ambit-sky.png" alt="ambit-sky"></a> 1,2,3,4
                 </div>
               </div>
               <div class="row">
                 <div class="col">
-                  <img src="img/icons/icon-ambit-land.png" alt="ambit-land"> 1,2,3,4
+                  <a href="javascript: void(0)"
+                     data-bs-toggle="popover"
+                     data-bs-content="Land Structs"
+                  ><img src="img/icons/icon-ambit-land.png" alt="ambit-land"></a> 1,2,3,4
                 </div>
                 <div class="col">
-                  <img src="img/icons/icon-ambit-water.png" alt="ambit-water"> 1,2,3,4
+                  <a href="javascript: void(0)"
+                     data-bs-toggle="popover"
+                     data-bs-content="Water Structs"
+                  ><img src="img/icons/icon-ambit-water.png" alt="ambit-water"></a> 1,2,3,4
                 </div>
               </div>
             </div>
