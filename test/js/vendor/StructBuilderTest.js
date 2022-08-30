@@ -1,7 +1,7 @@
 import {DTest} from "../../DTestFramework.js";
 import {
   AMBITS,
-  DEFENSE_COMPONENTS,
+  DEFENSE_COMPONENTS, IMG,
   MANUAL_WEAPONS,
   PASSIVE_WEAPONS,
   UNIT_TYPES
@@ -47,7 +47,8 @@ const makeTest = new DTest('makeTest', function(params) {
       manualWeaponSecondaryName: false,
       manualWeaponSecondaryAmbits: [],
       passiveWeaponName: false,
-      defenseComponentName: DEFENSE_COMPONENTS.INDIRECT_COMBAT_MODULE
+      defenseComponentName: DEFENSE_COMPONENTS.INDIRECT_COMBAT_MODULE,
+      image: IMG.STRUCTS + 'land-artillery.jpg'
     },
     {
       unitType: UNIT_TYPES.CRUISER,
@@ -57,7 +58,8 @@ const makeTest = new DTest('makeTest', function(params) {
       manualWeaponSecondaryName: MANUAL_WEAPONS.UNGUIDED_WEAPONRY,
       manualWeaponSecondaryAmbits: [AMBITS.SKY],
       passiveWeaponName: PASSIVE_WEAPONS.COUNTER_ATTACK,
-      defenseComponentName: DEFENSE_COMPONENTS.SIGNAL_JAMMING
+      defenseComponentName: DEFENSE_COMPONENTS.SIGNAL_JAMMING,
+      image: IMG.STRUCTS + 'water-cruiser.jpg'
     },
     {
       unitType: UNIT_TYPES.DESTROYER,
@@ -67,7 +69,8 @@ const makeTest = new DTest('makeTest', function(params) {
       manualWeaponSecondaryName: false,
       manualWeaponSecondaryAmbits: [],
       passiveWeaponName: PASSIVE_WEAPONS.ADVANCED_COUNTER_ATTACK,
-      defenseComponentName: ''
+      defenseComponentName: '',
+      image: IMG.STRUCTS + 'water-destroyer.jpg'
     },
     {
       unitType: UNIT_TYPES.FIGHTER_JET,
@@ -77,7 +80,8 @@ const makeTest = new DTest('makeTest', function(params) {
       manualWeaponSecondaryName: false,
       manualWeaponSecondaryAmbits: [],
       passiveWeaponName: PASSIVE_WEAPONS.COUNTER_ATTACK,
-      defenseComponentName: DEFENSE_COMPONENTS.SIGNAL_JAMMING
+      defenseComponentName: DEFENSE_COMPONENTS.SIGNAL_JAMMING,
+      image: IMG.STRUCTS + 'sky-fighter-jet.jpg'
     },
     {
       unitType: UNIT_TYPES.GALACTIC_BATTLESHIP,
@@ -87,7 +91,8 @@ const makeTest = new DTest('makeTest', function(params) {
       manualWeaponSecondaryName: false,
       manualWeaponSecondaryAmbits: [],
       passiveWeaponName: PASSIVE_WEAPONS.COUNTER_ATTACK,
-      defenseComponentName: DEFENSE_COMPONENTS.SIGNAL_JAMMING
+      defenseComponentName: DEFENSE_COMPONENTS.SIGNAL_JAMMING,
+      image: IMG.STRUCTS + 'space-galatic-battleship.jpg'
     },
     {
       unitType: UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
@@ -97,7 +102,8 @@ const makeTest = new DTest('makeTest', function(params) {
       manualWeaponSecondaryName: false,
       manualWeaponSecondaryAmbits: [],
       passiveWeaponName: PASSIVE_WEAPONS.COUNTER_ATTACK,
-      defenseComponentName: DEFENSE_COMPONENTS.DEFENSIVE_MANEUVER
+      defenseComponentName: DEFENSE_COMPONENTS.DEFENSIVE_MANEUVER,
+      image: IMG.STRUCTS + 'sky-high-altitude-interceptor.jpg'
     },
     {
       unitType: UNIT_TYPES.SAM_LAUNCHER,
@@ -107,7 +113,8 @@ const makeTest = new DTest('makeTest', function(params) {
       manualWeaponSecondaryName: false,
       manualWeaponSecondaryAmbits: [],
       passiveWeaponName: PASSIVE_WEAPONS.COUNTER_ATTACK,
-      defenseComponentName: ''
+      defenseComponentName: '',
+      image: IMG.STRUCTS + 'land-sam-launcher.jpg'
     },
     {
       unitType: UNIT_TYPES.SPACE_FRIGATE,
@@ -117,7 +124,8 @@ const makeTest = new DTest('makeTest', function(params) {
       manualWeaponSecondaryName: false,
       manualWeaponSecondaryAmbits: [],
       passiveWeaponName: PASSIVE_WEAPONS.COUNTER_ATTACK,
-      defenseComponentName: ''
+      defenseComponentName: '',
+      image: IMG.STRUCTS + 'space-space-frigate.jpg'
     },
     {
       unitType: UNIT_TYPES.STAR_FIGHTER,
@@ -127,7 +135,8 @@ const makeTest = new DTest('makeTest', function(params) {
       manualWeaponSecondaryName: MANUAL_WEAPONS.ATTACK_RUN,
       manualWeaponSecondaryAmbits: [AMBITS.SPACE],
       passiveWeaponName: PASSIVE_WEAPONS.COUNTER_ATTACK,
-      defenseComponentName: ''
+      defenseComponentName: '',
+      image: IMG.STRUCTS + 'space-star-fighter.jpg'
     },
     {
       unitType: UNIT_TYPES.STEALTH_BOMBER,
@@ -137,7 +146,8 @@ const makeTest = new DTest('makeTest', function(params) {
       manualWeaponSecondaryName: false,
       manualWeaponSecondaryAmbits: [],
       passiveWeaponName: PASSIVE_WEAPONS.COUNTER_ATTACK,
-      defenseComponentName: DEFENSE_COMPONENTS.STEALTH_MODE
+      defenseComponentName: DEFENSE_COMPONENTS.STEALTH_MODE,
+      image: IMG.STRUCTS + 'sky-stealth-bomber.jpg'
     },
     {
       unitType: UNIT_TYPES.SUB,
@@ -147,7 +157,8 @@ const makeTest = new DTest('makeTest', function(params) {
       manualWeaponSecondaryName: false,
       manualWeaponSecondaryAmbits: [],
       passiveWeaponName: PASSIVE_WEAPONS.COUNTER_ATTACK,
-      defenseComponentName: DEFENSE_COMPONENTS.STEALTH_MODE
+      defenseComponentName: DEFENSE_COMPONENTS.STEALTH_MODE,
+      image: IMG.STRUCTS + 'water-sub.jpg'
     },
     {
       unitType: UNIT_TYPES.TANK,
@@ -157,7 +168,8 @@ const makeTest = new DTest('makeTest', function(params) {
       manualWeaponSecondaryName: false,
       manualWeaponSecondaryAmbits: [],
       passiveWeaponName: PASSIVE_WEAPONS.COUNTER_ATTACK,
-      defenseComponentName: DEFENSE_COMPONENTS.ARMOUR
+      defenseComponentName: DEFENSE_COMPONENTS.ARMOUR,
+      image: IMG.STRUCTS + 'land-tank.jpg'
     }
   ];
 });

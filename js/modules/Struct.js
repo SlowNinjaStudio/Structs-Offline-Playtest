@@ -13,6 +13,7 @@ export class Struct {
    * @param {ManualWeapon} manualWeaponSecondary
    * @param {PassiveWeapon} passiveWeapon
    * @param {DefenseComponent} defenseComponent
+   * @param {string} image
    */
   constructor(
     unitType,
@@ -20,7 +21,8 @@ export class Struct {
     manualWeaponPrimary,
     manualWeaponSecondary,
     passiveWeapon = null,
-    defenseComponent = null
+    defenseComponent = null,
+    image = ''
   ) {
     this.id = (new IdGenerator()).generate(STRUCT_DEFAULTS.ID_PREFIX);
     this.unitType = unitType;
@@ -36,6 +38,7 @@ export class Struct {
     this.manualWeaponSecondary = manualWeaponSecondary;
     this.passiveWeapon = passiveWeapon;
     this.defenseComponent = defenseComponent ? defenseComponent : new DefenseComponent();
+    this.image = image;
   }
 
   /**

@@ -1,4 +1,4 @@
-import {AMBITS, DEFENSE_COMPONENTS, MANUAL_WEAPONS, PASSIVE_WEAPONS, UNIT_TYPES} from "./Constants.js";
+import {AMBITS, DEFENSE_COMPONENTS, IMG, MANUAL_WEAPONS, PASSIVE_WEAPONS, UNIT_TYPES} from "./Constants.js";
 import {Struct} from "./Struct.js";
 import {ManualWeaponFactory} from "./ManualWeaponFactory.js";
 import {PassiveWeaponFactory} from "./PassiveWeaponFactory.js";
@@ -74,7 +74,8 @@ export class StructBuilder {
       ),
       null,
       null,
-      this.defenseComponentFactory.make(DEFENSE_COMPONENTS.INDIRECT_COMBAT_MODULE)
+      this.defenseComponentFactory.make(DEFENSE_COMPONENTS.INDIRECT_COMBAT_MODULE),
+      IMG.STRUCTS + 'land-artillery.jpg'
     );
   }
 
@@ -94,7 +95,8 @@ export class StructBuilder {
         [AMBITS.SKY]
       ),
       this.passiveWeaponFactory.make(PASSIVE_WEAPONS.COUNTER_ATTACK),
-      this.defenseComponentFactory.make(DEFENSE_COMPONENTS.SIGNAL_JAMMING)
+      this.defenseComponentFactory.make(DEFENSE_COMPONENTS.SIGNAL_JAMMING),
+      IMG.STRUCTS + 'water-cruiser.jpg'
     );
   }
 
@@ -110,7 +112,9 @@ export class StructBuilder {
         [AMBITS.WATER, AMBITS.SKY]
       ),
       null,
-      this.passiveWeaponFactory.make(PASSIVE_WEAPONS.ADVANCED_COUNTER_ATTACK)
+      this.passiveWeaponFactory.make(PASSIVE_WEAPONS.ADVANCED_COUNTER_ATTACK),
+      null,
+      IMG.STRUCTS + 'water-destroyer.jpg'
     );
   }
 
@@ -127,7 +131,8 @@ export class StructBuilder {
       ),
       null,
       this.passiveWeaponFactory.make(PASSIVE_WEAPONS.COUNTER_ATTACK),
-      this.defenseComponentFactory.make(DEFENSE_COMPONENTS.SIGNAL_JAMMING)
+      this.defenseComponentFactory.make(DEFENSE_COMPONENTS.SIGNAL_JAMMING),
+      IMG.STRUCTS + 'sky-fighter-jet.jpg'
     );
   }
 
@@ -144,7 +149,8 @@ export class StructBuilder {
       ),
       null,
       this.passiveWeaponFactory.make(PASSIVE_WEAPONS.COUNTER_ATTACK),
-      this.defenseComponentFactory.make(DEFENSE_COMPONENTS.SIGNAL_JAMMING)
+      this.defenseComponentFactory.make(DEFENSE_COMPONENTS.SIGNAL_JAMMING),
+      IMG.STRUCTS + 'space-galatic-battleship.jpg'
     );
   }
 
@@ -161,7 +167,8 @@ export class StructBuilder {
       ),
       null,
       this.passiveWeaponFactory.make(PASSIVE_WEAPONS.COUNTER_ATTACK),
-      this.defenseComponentFactory.make(DEFENSE_COMPONENTS.DEFENSIVE_MANEUVER)
+      this.defenseComponentFactory.make(DEFENSE_COMPONENTS.DEFENSIVE_MANEUVER),
+      IMG.STRUCTS + 'sky-high-altitude-interceptor.jpg'
     );
   }
 
@@ -177,7 +184,9 @@ export class StructBuilder {
         [AMBITS.SKY, AMBITS.SPACE]
       ),
       null,
-      this.passiveWeaponFactory.make(PASSIVE_WEAPONS.COUNTER_ATTACK)
+      this.passiveWeaponFactory.make(PASSIVE_WEAPONS.COUNTER_ATTACK),
+      null,
+      IMG.STRUCTS + 'land-sam-launcher.jpg'
     );
   }
 
@@ -193,7 +202,9 @@ export class StructBuilder {
         [AMBITS.SKY, AMBITS.SPACE]
       ),
       null,
-      this.passiveWeaponFactory.make(PASSIVE_WEAPONS.COUNTER_ATTACK)
+      this.passiveWeaponFactory.make(PASSIVE_WEAPONS.COUNTER_ATTACK),
+      null,
+      IMG.STRUCTS + 'space-space-frigate.jpg'
     );
   }
 
@@ -212,7 +223,9 @@ export class StructBuilder {
         MANUAL_WEAPONS.ATTACK_RUN,
         [AMBITS.SPACE]
       ),
-      this.passiveWeaponFactory.make(PASSIVE_WEAPONS.COUNTER_ATTACK)
+      this.passiveWeaponFactory.make(PASSIVE_WEAPONS.COUNTER_ATTACK),
+      null,
+      IMG.STRUCTS + 'space-star-fighter.jpg'
     );
   }
 
@@ -232,7 +245,8 @@ export class StructBuilder {
       this.defenseComponentFactory.make(
         DEFENSE_COMPONENTS.STEALTH_MODE,
         [AMBITS.WATER, AMBITS.LAND, AMBITS.SPACE]
-      )
+      ),
+      IMG.STRUCTS + 'sky-stealth-bomber.jpg'
     );
   }
 
@@ -252,7 +266,8 @@ export class StructBuilder {
       this.defenseComponentFactory.make(
         DEFENSE_COMPONENTS.STEALTH_MODE,
         [AMBITS.LAND, AMBITS.SKY, AMBITS.SPACE]
-      )
+      ),
+      IMG.STRUCTS + 'water-sub.jpg'
     );
   }
 
@@ -269,7 +284,8 @@ export class StructBuilder {
       ),
       null,
       this.passiveWeaponFactory.make(PASSIVE_WEAPONS.COUNTER_ATTACK),
-      this.defenseComponentFactory.make(DEFENSE_COMPONENTS.ARMOUR)
+      this.defenseComponentFactory.make(DEFENSE_COMPONENTS.ARMOUR),
+      IMG.STRUCTS + 'land-tank.jpg'
     );
   }
 }

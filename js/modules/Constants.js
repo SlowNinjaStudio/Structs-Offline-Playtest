@@ -36,6 +36,11 @@ export const
     MAX_HEALTH: 3,
   },
 
+  IMG = {
+    ICONS: 'img/icons/',
+    STRUCTS: 'img/'
+  },
+
   MANUAL_WEAPONS = {
     ATTACK_RUN: 'ATTACK RUN',
     GUIDED_WEAPONRY: 'GUIDED WEAPONRY',
@@ -54,6 +59,8 @@ export const
     LAND: 4,
     WATER: 4
   },
+
+  MAX_HEART_ICONS = 3,
 
   ORDER_OF_AMBITS = [
     AMBITS.WATER,
