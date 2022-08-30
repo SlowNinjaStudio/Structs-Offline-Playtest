@@ -4,6 +4,7 @@ import {PassiveWeapon} from "./PassiveWeapon.js";
 import {DefendActionDisabledError} from "./DefendActionDisabledError.js";
 import {InvalidManualWeaponSlotError} from "./InvalidManualWeaponSlotError.js";
 import {IdGenerator} from "./IdGenerator.js";
+import {Util} from "./Util.js";
 
 export class Struct {
   /**
@@ -39,6 +40,7 @@ export class Struct {
     this.passiveWeapon = passiveWeapon;
     this.defenseComponent = defenseComponent ? defenseComponent : new DefenseComponent();
     this.image = image;
+    this.util = new Util();
   }
 
   /**
@@ -248,5 +250,12 @@ export class Struct {
       return true;
     }
     return false;
+  }
+
+  /**
+   * @return {string}
+   */
+  getUnitTypeLabel() {
+    return this.util.titleCase(this.unitType);
   }
 }

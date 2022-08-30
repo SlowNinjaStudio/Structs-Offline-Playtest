@@ -1,7 +1,8 @@
 import {UINavbar} from "./components/UINavbar.js";
 import {StructBuilder} from "../modules/StructBuilder.js";
-import {UNIT_TYPES} from "../modules/Constants.js";
+import {OWNER_TYPES, UNIT_TYPES} from "../modules/Constants.js";
 import {UIStructMapView} from "./components/UIStructMapView.js";
+import {UIStructDetails} from "./components/UIStructDetails.js";
 
 (new UINavbar()).init('nav-wrapper');
 
@@ -79,4 +80,16 @@ structElms.forEach(structElm => {
       >${structElm.outerHTML}</a>
     `;
   }
+});
+
+document.getElementById('offcanvasBottom').innerHTML = (new UIStructDetails(playerSpaceFrigate, OWNER_TYPES.PLAYER)).render();
+
+
+
+const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+popoverTriggerList.map(function (popoverTriggerEl) {
+  return new bootstrap.Popover(popoverTriggerEl, {
+    container: 'body',
+    trigger: 'focus'
+  });
 });

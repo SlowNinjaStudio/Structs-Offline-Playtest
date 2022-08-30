@@ -1,0 +1,30 @@
+import {DTest} from "../../DTestFramework.js";
+import {Util} from "../../../js/modules/Util.js";
+
+const titleCaseTest = new DTest('titleCaseTest', function(params) {
+  const util = new Util();
+  this.assertEquals(util.titleCase(params.text), params.expected);
+}, function() {
+  return [
+    {
+      text: 'hello world',
+      expected: 'Hello World'
+    },
+    {
+      text: 'HELLO WORLD',
+      expected: 'Hello World'
+    },
+    {
+      text: `who's that girl?`,
+      expected: `Who's That Girl?`
+    },
+    {
+      text: ` who's THAT giRL?`,
+      expected: ` Who's That Girl?`
+    }
+  ];
+});
+
+// Test execution
+console.log('UtilTest');
+titleCaseTest.run();
