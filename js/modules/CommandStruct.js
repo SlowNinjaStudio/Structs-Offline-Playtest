@@ -30,4 +30,11 @@ export class CommandStruct extends Struct {
     this.currentHealth = this.maxHealth;
     this.canDefend = false;
   }
+
+  /**
+   * @return {boolean}
+   */
+  isCommandStruct() {
+    return false;
+  }
 }

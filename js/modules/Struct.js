@@ -35,6 +35,7 @@ export class Struct {
     this.isDestroyed = false;
     this.canDefend = true;
     this.image = image;
+    this.ambitSlot = null;
 
     this.manualWeaponPrimary = manualWeaponPrimary;
     this.manualWeaponSecondary = manualWeaponSecondary;
@@ -257,5 +258,30 @@ export class Struct {
    */
   getUnitTypeLabel() {
     return this.util.titleCase(this.unitType);
+  }
+
+  /**
+   * @param {number} ambitIndex
+   */
+  setAmbitSlot(ambitIndex) {
+    this.ambitSlot = ambitIndex;
+  }
+
+  clearAmbitSlot() {
+    this.ambitSlot = null;
+  }
+
+  /**
+   * @return {number|null}
+   */
+  getAmbitSlot() {
+    return this.ambitSlot;
+  }
+
+  /**
+   * @return {boolean}
+   */
+  isCommandStruct() {
+    return false;
   }
 }

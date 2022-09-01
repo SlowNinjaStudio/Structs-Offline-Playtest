@@ -145,10 +145,10 @@ const isAmbitCapacityRemainingTest = new DTest('isAmbitCapacityRemainingTest', f
 });
 
 const addStructTest = new DTest('addStructTest', function() {
-  const fleet = new Fleet(3, {
+  const fleet = new Fleet(4, {
     SPACE: 1,
     SKY: 1,
-    LAND: 1,
+    LAND: 2,
     WATER: 1
   });
   const structBuilder = new StructBuilder();
@@ -156,15 +156,20 @@ const addStructTest = new DTest('addStructTest', function() {
   const structSky1 = structBuilder.make(UNIT_TYPES.FIGHTER_JET);
   const structLand1 = structBuilder.make(UNIT_TYPES.TANK);
   const structLand2 = structBuilder.make(UNIT_TYPES.TANK);
+  const structLand3 = structBuilder.make(UNIT_TYPES.TANK);
   const structWater1 = structBuilder.make(UNIT_TYPES.SUB);
 
   this.assertEquals(fleet.addStruct(structLand1), true);
+  this.assertEquals(fleet.land[0].getAmbitSlot(), 0);
 
   // Can't add the same struct twice
   this.assertEquals(fleet.addStruct(structLand1), false);
 
+  this.assertEquals(fleet.addStruct(structLand2), true);
+  this.assertEquals(fleet.land[1].getAmbitSlot(), 1);
+
   // At max structs per land ambit
-  this.assertEquals(fleet.addStruct(structLand2), false);
+  this.assertEquals(fleet.addStruct(structLand3), false);
 
   this.assertEquals(fleet.addStruct(structWater1), true);
 
@@ -186,17 +191,21 @@ const removeStructByAmbitAndIdTest = new DTest('removeStructByAmbitAndIdTest', f
   const structLand3 = structBuilder.make(UNIT_TYPES.TANK);
   const structSky1 = structBuilder.make(UNIT_TYPES.FIGHTER_JET);
 
-  fleet.land[0] = structLand1;
-  fleet.land[1] = structLand2;
-  fleet.land[2] = structLand3;
+  fleet.addStruct(structLand1);
+  fleet.addStruct(structLand2);
+  fleet.addStruct(structLand3);
 
   this.assertEquals(fleet.removeStructByAmbitAndId(AMBITS.SKY, structSky1.id), false);
 
-  fleet.sky[2] = structSky1;
+  fleet.addStruct(structSky1, 2);
 
   this.assertEquals(fleet.numberOfStructs(), 4);
 
+  this.assertEquals(structLand2.getAmbitSlot(), 1);
+
   this.assertEquals(fleet.removeStructByAmbitAndId(AMBITS.LAND, structLand2.id), true);
+
+  this.assertEquals(structLand2.getAmbitSlot(), null);
 
   this.assertEquals(fleet.numberOfStructs(), 3);
   this.assertEquals(fleet.land[0].id, structLand1.id);

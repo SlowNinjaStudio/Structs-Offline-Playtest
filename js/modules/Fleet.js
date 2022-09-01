@@ -146,7 +146,8 @@ export class Fleet {
   addStruct(struct, index= -1) {
     index = index > -1 ? index : this.findFreeAmbitSlot(struct.operatingAmbit);
     if (this.canAddStruct(struct, index)) {
-      this[struct.operatingAmbit.toLowerCase()].push(struct);
+      struct.setAmbitSlot(index);
+      this[struct.operatingAmbit.toLowerCase()][index] = struct;
       return true;
     }
     return false;
@@ -162,6 +163,7 @@ export class Fleet {
     if (index < 0) {
       return false;
     }
+    this[ambit.toLowerCase()][index].clearAmbitSlot();
     this[ambit.toLowerCase()][index] = null;
     return true;
   }
