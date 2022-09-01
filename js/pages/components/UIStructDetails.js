@@ -161,10 +161,10 @@ export class UIStructDetails {
    */
   getPassiveWeaponIcons(weapon) {
     const icons = [];
-    if (weapon.probabilityOnDeath === 1) {
+    if (weapon.probabilityOnDeath.toString() === '1/1') {
       icons.push(this.getOnDeathIcon());
     }
-    if (weapon.probability === 1) {
+    if (weapon.probability.toString() === '1/1') {
       icons.push(this.getDamageIcon(`${weapon.damage}`));
     }
     if (weapon.damage !== weapon.damageSameAmbit) {
@@ -238,6 +238,77 @@ export class UIStructDetails {
         break;
     }
     return icons;
+  }
+
+  /**
+   * @param {Struct} defending
+   * @return {string}
+   */
+  getDefendingIcons(defending) {
+    return `
+      <div class="row">
+        <div class="col-auto pe-1">
+          <a href="javascript: void(0)"
+             data-bs-toggle="popover"
+             title="Defending"
+             data-bs-content="The struct this struct is defending."
+          ><img src="${IMG.ICONS}icon-rook.png" alt="rook"></a>:
+        </div>
+        <div class="col-auto ps-1">
+        ${defending ? `
+          ${this.getAmbitIcon(defending.operatingAmbit)} ${defending.ambitSlot}
+        ` : '--'}
+        </div>
+      </div>
+    `;
+  }
+
+  /**
+   * @param {Struct} struct
+   * @param {string} ambit
+   * @return {string}
+   */
+  getDefendersByAmbit(struct, ambit) {
+    const ambitDefenders = struct.defenders.filter(defender => defender.operatingAmbit === ambit);
+    let slots = ambitDefenders.reduce((slotsList, defender) => `${slotsList}, ${defender.getAmbitSlot()}`, '');
+    slots = slots.length > 2 ? slots.slice(2) : '--';
+    return `${this.getAmbitIcon(ambit)} ${slots}`;
+  }
+
+  /**
+   * @param {Struct} struct
+   * @return {string}
+   */
+  getDefendedByIcons(struct) {
+    return `
+      <div class="row">
+        <div class="col-auto pe-1">
+          <a href="javascript: void(0)"
+             data-bs-toggle="popover"
+             title="Defended By"
+             data-bs-content="The list of structs defending this struct."
+          ><img src="${IMG.ICONS}icon-strength.png" alt="strength"></a>:
+        </div>
+        <div class="col ps-1">
+          <div class="row">
+            <div class="col">
+              ${this.getDefendersByAmbit(this.struct, AMBITS.SPACE)}
+            </div>
+            <div class="col">
+              ${this.getDefendersByAmbit(this.struct, AMBITS.SKY)}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              ${this.getDefendersByAmbit(this.struct, AMBITS.LAND)}
+            </div>
+            <div class="col">
+              ${this.getDefendersByAmbit(this.struct, AMBITS.WATER)}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
   }
 
   render() {
@@ -380,60 +451,8 @@ export class UIStructDetails {
           </div>
 
           <div class="defense-container">
-            <div class="row">
-              <div class="col-auto pe-1">
-                <a href="javascript: void(0)"
-                   data-bs-toggle="popover"
-                   title="Defending"
-                   data-bs-content="The struct this struct is defending."
-                ><img src="${IMG.ICONS}icon-rook.png" alt="rook"></a>:
-              </div>
-              <div class="col-auto ps-1">
-                <a href="javascript: void(0)"
-                   data-bs-toggle="popover"
-                   data-bs-content="Land Ambit"
-                ><img src="${IMG.ICONS}icon-ambit-land.png" alt="ambit-land"></a> 2
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-auto pe-1">
-                <a href="javascript: void(0)"
-                   data-bs-toggle="popover"
-                   title="Defended By"
-                   data-bs-content="The list of structs defending this struct."
-                ><img src="${IMG.ICONS}icon-strength.png" alt="strength"></a>:
-              </div>
-              <div class="col ps-1">
-                <div class="row">
-                  <div class="col">
-                    <a href="javascript: void(0)"
-                       data-bs-toggle="popover"
-                       data-bs-content="Space Structs"
-                    ><img src="${IMG.ICONS}icon-ambit-space.png" alt="ambit-space"></a> 1,2,3,4
-                  </div>
-                  <div class="col">
-                    <a href="javascript: void(0)"
-                       data-bs-toggle="popover"
-                       data-bs-content="Sky Structs"
-                    ><img src="${IMG.ICONS}icon-ambit-sky.png" alt="ambit-sky"></a> 1,2,3,4
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col">
-                    <a href="javascript: void(0)"
-                       data-bs-toggle="popover"
-                       data-bs-content="Land Structs"
-                    ><img src="${IMG.ICONS}icon-ambit-land.png" alt="ambit-land"></a> 1,2,3,4
-                  </div>
-                  <div class="col">
-                    <a href="javascript: void(0)"
-                       data-bs-toggle="popover"
-                       data-bs-content="Water Structs"
-                    ><img src="${IMG.ICONS}icon-ambit-water.png" alt="ambit-water"></a> 1,2,3,4
-                  </div>
-                </div>
-              </div>
-            </div>
+            ${this.getDefendingIcons(this.struct.defending)}
+            ${this.getDefendedByIcons(this.struct)}
           </div>
 
         </div>
