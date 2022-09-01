@@ -27,7 +27,7 @@ function getTestStruct() {
     new PassiveWeapon(
       'Counter-Attack',
       FLEET_STRUCT_DEFAULTS.COUNTER_ATTACK_DAMAGE,
-      1
+      new Fraction(1, 1)
     ),
   );
 }
@@ -463,7 +463,7 @@ const counterAttackTest = new DTest('counterAttackTest', function() {
   defender.passiveWeapon = new PassiveWeapon(
     'Counter-Attack',
     FLEET_STRUCT_DEFAULTS.COUNTER_ATTACK_DAMAGE,
-    1
+    new Fraction(1, 1)
   );
   const attackerWrongAmbit = getTestStruct();
   attackerWrongAmbit.operatingAmbit = AMBITS.WATER;
@@ -476,7 +476,7 @@ const counterAttackTest = new DTest('counterAttackTest', function() {
   attackerDiffOperatingAmibt.operatingAmbit = AMBITS.WATER;
   attackerDiffOperatingAmibt.maxHealth = 3;
   attackerDiffOperatingAmibt.currentHealth = 3;
-  const advancedCounterAttack = new PassiveWeapon('Advanced Counter Attack', 1, 1);
+  const advancedCounterAttack = new PassiveWeapon('Advanced Counter Attack', 1, new Fraction(1, 1));
   advancedCounterAttack.damageSameAmbit = 2;
   const defenderAdvancedCounterAttack = getTestStruct();
   defenderAdvancedCounterAttack.passiveWeapon = advancedCounterAttack;

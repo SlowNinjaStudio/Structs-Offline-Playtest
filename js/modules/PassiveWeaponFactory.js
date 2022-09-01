@@ -1,6 +1,7 @@
 import {COMMAND_STRUCT_DEFAULTS, FLEET_STRUCT_DEFAULTS, PASSIVE_WEAPONS} from "./Constants.js";
 import {PassiveWeaponFactoryError} from "./PassiveWeaponFactoryError.js";
 import {PassiveWeapon} from "./PassiveWeapon.js";
+import {Fraction} from "./Fraction.js";
 
 export class PassiveWeaponFactory {
   /**
@@ -35,8 +36,8 @@ export class PassiveWeaponFactory {
     const weapon = new PassiveWeapon(
       PASSIVE_WEAPONS.ADVANCED_COUNTER_ATTACK,
       FLEET_STRUCT_DEFAULTS.COUNTER_ATTACK_DAMAGE,
-      1,
-      0
+      new Fraction(1, 1),
+      new Fraction(0, 1)
     );
     weapon.damageSameAmbit = FLEET_STRUCT_DEFAULTS.ATTACK_DAMAGE;
     return weapon;
@@ -49,8 +50,8 @@ export class PassiveWeaponFactory {
     return new PassiveWeapon(
       PASSIVE_WEAPONS.COUNTER_ATTACK,
       FLEET_STRUCT_DEFAULTS.COUNTER_ATTACK_DAMAGE,
-      1,
-      0
+      new Fraction(1, 1),
+      new Fraction(0, 1)
     );
   }
 
@@ -61,8 +62,8 @@ export class PassiveWeaponFactory {
     return new PassiveWeapon(
       PASSIVE_WEAPONS.LAST_RESORT,
       FLEET_STRUCT_DEFAULTS.ATTACK_DAMAGE,
-      0,
-      1
+      new Fraction(0, 1),
+      new Fraction(1, 1)
     );
   }
 
@@ -73,8 +74,8 @@ export class PassiveWeaponFactory {
     return new PassiveWeapon(
       PASSIVE_WEAPONS.STRONG_COUNTER_ATTACK,
       COMMAND_STRUCT_DEFAULTS.COUNTER_ATTACK_DAMAGE,
-      1,
-      0
+      new Fraction(1, 1),
+      new Fraction(0, 1)
     );
   }
 }
