@@ -5,6 +5,7 @@ import {CounterMeasure} from "./CounterMeasure.js";
 import {AmbitDefense} from "./AmbitDefense.js";
 import {CounterAttackEvasion} from "./CounterAttackEvasion.js";
 import {AftermarketEngine} from "./AftermarketEngine.js";
+import {Fraction} from "./Fraction.js";
 
 export class DefenseComponentFactory {
   /**
@@ -55,7 +56,7 @@ export class DefenseComponentFactory {
   makeDefensiveManeuver() {
     return new CounterMeasure(
       DEFENSE_COMPONENTS.DEFENSIVE_MANEUVER,
-      2/3,
+      new Fraction(2, 3),
       false
     );
   }
@@ -66,7 +67,7 @@ export class DefenseComponentFactory {
   makeIndirectCombatModule() {
     return new CounterAttackEvasion(
       DEFENSE_COMPONENTS.INDIRECT_COMBAT_MODULE,
-      1
+      new Fraction(1, 1)
     );
   }
 
@@ -86,7 +87,7 @@ export class DefenseComponentFactory {
   makeSignalJamming() {
     return new CounterMeasure(
       DEFENSE_COMPONENTS.SIGNAL_JAMMING,
-      2/3,
+      new Fraction(2, 3),
       true
     );
   }

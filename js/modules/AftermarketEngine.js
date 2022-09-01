@@ -6,10 +6,9 @@ export class AftermarketEngine extends DefenseComponent {
    * @param {string} name
    * @param {string[]} operatingAmbits
    * @param {number|null} maxTravelDistance
-   * @param {number} probability
    */
-  constructor(name, operatingAmbits, maxTravelDistance = ORDER_OF_AMBITS.length, probability = 1) {
-    super(DEFENSE_COMPONENT_TYPES.AFTERMARKET_ENGINE, name, true, probability);
+  constructor(name, operatingAmbits, maxTravelDistance = ORDER_OF_AMBITS.length) {
+    super(DEFENSE_COMPONENT_TYPES.AFTERMARKET_ENGINE, name, true);
     this.operatingAmbits = operatingAmbits;
     this.maxTravelDistance = maxTravelDistance;
   }

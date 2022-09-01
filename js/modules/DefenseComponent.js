@@ -1,4 +1,5 @@
 import {DEFENSE_COMPONENT_TYPES} from "./Constants.js";
+import {Fraction} from "./Fraction.js";
 
 export class DefenseComponent {
 
@@ -6,13 +7,13 @@ export class DefenseComponent {
    * @param {string} type
    * @param {string} name
    * @param {boolean} isActive whether or not the component is active by default or if it has to be activated
-   * @param {number} probability
+   * @param {Fraction} probability
    */
   constructor(
     type = DEFENSE_COMPONENT_TYPES.DEFAULT,
     name = '',
     isActive = true,
-    probability = 1,
+    probability = new Fraction(1, 1),
   ) {
     this.type = type;
     this.name = name;

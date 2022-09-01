@@ -4,7 +4,7 @@ import {DEFENSE_COMPONENT_TYPES} from "./Constants.js";
 export class CounterAttackEvasion extends DefenseComponent {
   /**
    * @param {string} name
-   * @param {number} probability
+   * @param {Fraction} probability
    */
   constructor(name, probability) {
     super(DEFENSE_COMPONENT_TYPES.EVADE_COUNTER_ATTACK, name, true, probability);
@@ -14,6 +14,6 @@ export class CounterAttackEvasion extends DefenseComponent {
    * @return {boolean}
    */
   evadeCounterAttack() {
-    return Math.random() < this.probability;
+    return Math.random() < this.probability.toDecimal();
   }
 }

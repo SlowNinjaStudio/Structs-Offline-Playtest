@@ -11,6 +11,7 @@ import {PassiveWeaponFactory} from "../../../js/modules/PassiveWeaponFactory.js"
 import {DefenseComponentFactory} from "../../../js/modules/DefenseComponentFactory.js";
 import {ManualWeaponFactory} from "../../../js/modules/ManualWeaponFactory.js";
 import {Struct} from "../../../js/modules/Struct.js";
+import {Fraction} from "../../../js/modules/Fraction.js";
 
 const makeTest = new DTest('makeTest', function(params) {
   const component = (new DefenseComponentFactory()).make(params.name, params.ambits);
@@ -19,7 +20,7 @@ const makeTest = new DTest('makeTest', function(params) {
 
   component.isActive = params.isActiveTestValue;
 
-  this.assertEquals(component.probability, params.probabilityExpected);
+  this.assertEquals(component.probability.toString(), params.probabilityExpected.toString());
 
   component.probability = params.probabilityTestValue;
 
@@ -52,8 +53,8 @@ const makeTest = new DTest('makeTest', function(params) {
     {
       name: DEFENSE_COMPONENTS.ARMOUR,
       ambits: [],
-      probabilityExpected: 1,
-      probabilityTestValue: 1,
+      probabilityExpected: '1/1',
+      probabilityTestValue: new Fraction(1, 1),
       type: DEFENSE_COMPONENT_TYPES.ARMOUR,
       isActiveExpected: true,
       isActiveTestValue: true,
@@ -70,8 +71,8 @@ const makeTest = new DTest('makeTest', function(params) {
     {
       name: DEFENSE_COMPONENTS.DEFENSIVE_MANEUVER,
       ambits: [],
-      probabilityExpected: 2/3,
-      probabilityTestValue: 1,
+      probabilityExpected: '2/3',
+      probabilityTestValue: new Fraction(1, 1),
       type: DEFENSE_COMPONENT_TYPES.COUNTER_MEASURE,
       isActiveExpected: true,
       isActiveTestValue: true,
@@ -88,8 +89,8 @@ const makeTest = new DTest('makeTest', function(params) {
     {
       name: DEFENSE_COMPONENTS.DEFENSIVE_MANEUVER,
       ambits: [],
-      probabilityExpected: 2/3,
-      probabilityTestValue: 0,
+      probabilityExpected: '2/3',
+      probabilityTestValue: new Fraction(0, 1),
       type: DEFENSE_COMPONENT_TYPES.COUNTER_MEASURE,
       isActiveExpected: true,
       isActiveTestValue: true,
@@ -106,8 +107,8 @@ const makeTest = new DTest('makeTest', function(params) {
     {
       name: DEFENSE_COMPONENTS.DEFENSIVE_MANEUVER,
       ambits: [],
-      probabilityExpected: 2/3,
-      probabilityTestValue: 1,
+      probabilityExpected: '2/3',
+      probabilityTestValue: new Fraction(1, 1),
       type: DEFENSE_COMPONENT_TYPES.COUNTER_MEASURE,
       isActiveExpected: true,
       isActiveTestValue: true,
@@ -124,8 +125,8 @@ const makeTest = new DTest('makeTest', function(params) {
     {
       name: DEFENSE_COMPONENTS.INDIRECT_COMBAT_MODULE,
       ambits: [],
-      probabilityExpected: 1,
-      probabilityTestValue: 1,
+      probabilityExpected: '1/1',
+      probabilityTestValue: new Fraction(1, 1),
       type: DEFENSE_COMPONENT_TYPES.EVADE_COUNTER_ATTACK,
       isActiveExpected: true,
       isActiveTestValue: true,
@@ -142,8 +143,8 @@ const makeTest = new DTest('makeTest', function(params) {
     {
       name: DEFENSE_COMPONENTS.OMNI_ENGINE,
       ambits: [],
-      probabilityExpected: 1,
-      probabilityTestValue: 1,
+      probabilityExpected: '1/1',
+      probabilityTestValue: new Fraction(1, 1),
       type: DEFENSE_COMPONENT_TYPES.AFTERMARKET_ENGINE,
       isActiveExpected: true,
       isActiveTestValue: true,
@@ -160,8 +161,8 @@ const makeTest = new DTest('makeTest', function(params) {
     {
       name: DEFENSE_COMPONENTS.SIGNAL_JAMMING,
       ambits: [],
-      probabilityExpected: 2/3,
-      probabilityTestValue: 1,
+      probabilityExpected: '2/3',
+      probabilityTestValue: new Fraction(1, 1),
       type: DEFENSE_COMPONENT_TYPES.COUNTER_MEASURE,
       isActiveExpected: true,
       isActiveTestValue: true,
@@ -178,8 +179,8 @@ const makeTest = new DTest('makeTest', function(params) {
     {
       name: DEFENSE_COMPONENTS.SIGNAL_JAMMING,
       ambits: [],
-      probabilityExpected: 2/3,
-      probabilityTestValue: 0,
+      probabilityExpected: '2/3',
+      probabilityTestValue: new Fraction(0, 1),
       type: DEFENSE_COMPONENT_TYPES.COUNTER_MEASURE,
       isActiveExpected: true,
       isActiveTestValue: true,
@@ -196,8 +197,8 @@ const makeTest = new DTest('makeTest', function(params) {
     {
       name: DEFENSE_COMPONENTS.SIGNAL_JAMMING,
       ambits: [],
-      probabilityExpected: 2/3,
-      probabilityTestValue: 1,
+      probabilityExpected: '2/3',
+      probabilityTestValue: new Fraction(1, 1),
       type: DEFENSE_COMPONENT_TYPES.COUNTER_MEASURE,
       isActiveExpected: true,
       isActiveTestValue: true,
@@ -214,8 +215,8 @@ const makeTest = new DTest('makeTest', function(params) {
     {
       name: DEFENSE_COMPONENTS.STEALTH_MODE,
       ambits: [AMBITS.LAND],
-      probabilityExpected: 1,
-      probabilityTestValue: 1,
+      probabilityExpected: '1/1',
+      probabilityTestValue: new Fraction(1, 1),
       type: DEFENSE_COMPONENT_TYPES.AMBIT_DEFENSE,
       isActiveExpected: false,
       isActiveTestValue: true,
@@ -232,8 +233,8 @@ const makeTest = new DTest('makeTest', function(params) {
     {
       name: DEFENSE_COMPONENTS.STEALTH_MODE,
       ambits: [AMBITS.LAND],
-      probabilityExpected: 1,
-      probabilityTestValue: 1,
+      probabilityExpected: '1/1',
+      probabilityTestValue: new Fraction(1, 1),
       type: DEFENSE_COMPONENT_TYPES.AMBIT_DEFENSE,
       isActiveExpected: false,
       isActiveTestValue: false,
@@ -250,8 +251,8 @@ const makeTest = new DTest('makeTest', function(params) {
     {
       name: DEFENSE_COMPONENTS.STEALTH_MODE,
       ambits: [AMBITS.WATER],
-      probabilityExpected: 1,
-      probabilityTestValue: 1,
+      probabilityExpected: '1/1',
+      probabilityTestValue: new Fraction(1, 1),
       type: DEFENSE_COMPONENT_TYPES.AMBIT_DEFENSE,
       isActiveExpected: false,
       isActiveTestValue: true,

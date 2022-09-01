@@ -107,7 +107,7 @@ export class UIStructDetails {
          data-bs-toggle="popover"
          title="Incoming Damage Reduction"
          data-bs-content="The amount incoming damage is reduced by."
-      ><img src="img/icons/icon-damage-down.png" alt="damage-down"></a> -${damageValue}`;
+      ><img src="${IMG.ICONS}icon-damage-down.png" alt="damage-down"></a> -${damageValue}`;
   }
 
   /**
@@ -204,7 +204,7 @@ export class UIStructDetails {
    */
   getCounterMeasureIcons(counterMeasure) {
     const guided = this.getGuidedIcon(counterMeasure.guided);
-    return `${guided} ${counterMeasure.probability}`;
+    return `${guided} ${counterMeasure.probability.toString()}`;
   }
 
   /**
@@ -262,14 +262,14 @@ export class UIStructDetails {
               <div class="col d-grid">
                 <button type="button" class="btn btn-danger btn-sm">
                   Attack
-                  <img src="img/icons/icon-attack-range.png" alt="attack-range">
+                  <img src="${IMG.ICONS}icon-attack-range.png" alt="attack-range">
                   1
                 </button>
               </div>
               <div class="col d-grid">
                 <button type="button" class="btn btn-primary btn-sm">
                   Defend
-                  <img src="img/icons/icon-strength.png" alt="strength">
+                  <img src="${IMG.ICONS}icon-strength.png" alt="strength">
                 </button>
               </div>
             </div>
@@ -277,18 +277,18 @@ export class UIStructDetails {
               <div class="col d-grid">
                 <button type="button" class="btn btn-danger btn-sm">
                   Attack
-                  <img src="img/icons/icon-attack-range.png" alt="attack-range">
+                  <img src="${IMG.ICONS}icon-attack-range.png" alt="attack-range">
                   2
                 </button>
               </div>
               <div class="col d-grid">
                 <!--button type="button" class="btn btn-secondary btn-sm">
                   Activate
-                  <img src="img/icons/icon-invisible.png" alt="invisible">
+                  <img src="${IMG.ICONS}icon-invisible.png" alt="invisible">
                 </button-->
                 <button type="button" class="btn btn-warning btn-sm">
                   Move
-                  <img src="img/icons/icon-speed.png" alt="speed">
+                  <img src="${IMG.ICONS}icon-speed.png" alt="speed">
                 </button>
               </div>
             </div>
@@ -311,7 +311,7 @@ export class UIStructDetails {
                        data-bs-toggle="popover"
                        title="Health"
                        data-bs-content="Current Health / Max Health"
-                    ><img src="img/icons/icon-health.png"
+                    ><img src="${IMG.ICONS}icon-health.png"
                        alt="health"
                     ></a><strong>:</strong> ${this.struct.currentHealth}/${this.struct.maxHealth}
                   </div>
@@ -324,7 +324,7 @@ export class UIStructDetails {
                        data-bs-toggle="popover"
                        title="Struct Position"
                        data-bs-content="This struct's position by ambit and slot number."
-                    ><img src="img/icons/icon-location-pin.png" alt="location-pin"></a><strong>:</strong>
+                    ><img src="${IMG.ICONS}icon-location-pin.png" alt="location-pin"></a><strong>:</strong>
                   </div>
                   <div class="col ps-1">
                     ${this.getAmbitIcon(AMBITS.SPACE)} 1
@@ -335,7 +335,7 @@ export class UIStructDetails {
                     <a href="javascript: void(0)"
                        data-bs-toggle="popover"
                        data-bs-content="Primary Weapon"
-                    ><strong>1</strong> <img src="img/icons/icon-attack-range.png" alt="attack-range"></a><strong>:</strong>
+                    ><strong>1</strong> <img src="${IMG.ICONS}icon-attack-range.png" alt="attack-range"></a><strong>:</strong>
                   </div>
                   <div class="col ps-1">
                     ${this.getManualWeaponIcons(this.struct.manualWeaponPrimary)}
@@ -346,7 +346,7 @@ export class UIStructDetails {
                     <a href="javascript: void(0)"
                        data-bs-toggle="popover"
                        data-bs-content="Secondary Weapon"
-                    ><strong>2</strong> <img src="img/icons/icon-attack-range.png" alt="attack-range"></a><strong>:</strong>
+                    ><strong>2</strong> <img src="${IMG.ICONS}icon-attack-range.png" alt="attack-range"></a><strong>:</strong>
                   </div>
                   <div class="col ps-1">
                     ${this.struct.manualWeaponSecondary ? this.getManualWeaponIcons(this.struct.manualWeaponSecondary) : '--'}
@@ -358,7 +358,7 @@ export class UIStructDetails {
                     <a href="javascript: void(0)"
                        data-bs-toggle="popover"
                        data-bs-content="Counter Attack Capabilities"
-                    ><img src="img/icons/icon-counter-attack.png" alt="counter-attack"></a><strong>:</strong>
+                    ><img src="${IMG.ICONS}icon-counter-attack.png" alt="counter-attack"></a><strong>:</strong>
                   </div>
                   <div class="col ps-1">
                     ${this.struct.passiveWeapon ? this.getPassiveWeaponIcons(this.struct.passiveWeapon) : '--'}
@@ -369,7 +369,7 @@ export class UIStructDetails {
                     <a href="javascript: void(0)"
                        data-bs-toggle="popover"
                        data-bs-content="Defensive Capabilities"
-                    ><img src="img/icons/icon-def-melee.png" alt="def-melee"></a><strong>:</strong>
+                    ><img src="${IMG.ICONS}icon-def-melee.png" alt="def-melee"></a><strong>:</strong>
                   </div>
                   <div class="col ps-1">
                     ${this.getDefensiveComponentIcons(this.struct.defenseComponent)}
@@ -386,13 +386,13 @@ export class UIStructDetails {
                    data-bs-toggle="popover"
                    title="Defending"
                    data-bs-content="The struct this struct is defending."
-                ><img src="img/icons/icon-rook.png" alt="rook"></a>:
+                ><img src="${IMG.ICONS}icon-rook.png" alt="rook"></a>:
               </div>
               <div class="col-auto ps-1">
                 <a href="javascript: void(0)"
                    data-bs-toggle="popover"
                    data-bs-content="Land Ambit"
-                ><img src="img/icons/icon-ambit-land.png" alt="ambit-land"></a> 2
+                ><img src="${IMG.ICONS}icon-ambit-land.png" alt="ambit-land"></a> 2
               </div>
             </div>
             <div class="row">
@@ -401,7 +401,7 @@ export class UIStructDetails {
                    data-bs-toggle="popover"
                    title="Defended By"
                    data-bs-content="The list of structs defending this struct."
-                ><img src="img/icons/icon-strength.png" alt="strength"></a>:
+                ><img src="${IMG.ICONS}icon-strength.png" alt="strength"></a>:
               </div>
               <div class="col ps-1">
                 <div class="row">
@@ -409,13 +409,13 @@ export class UIStructDetails {
                     <a href="javascript: void(0)"
                        data-bs-toggle="popover"
                        data-bs-content="Space Structs"
-                    ><img src="img/icons/icon-ambit-space.png" alt="ambit-space"></a> 1,2,3,4
+                    ><img src="${IMG.ICONS}icon-ambit-space.png" alt="ambit-space"></a> 1,2,3,4
                   </div>
                   <div class="col">
                     <a href="javascript: void(0)"
                        data-bs-toggle="popover"
                        data-bs-content="Sky Structs"
-                    ><img src="img/icons/icon-ambit-sky.png" alt="ambit-sky"></a> 1,2,3,4
+                    ><img src="${IMG.ICONS}icon-ambit-sky.png" alt="ambit-sky"></a> 1,2,3,4
                   </div>
                 </div>
                 <div class="row">
@@ -423,13 +423,13 @@ export class UIStructDetails {
                     <a href="javascript: void(0)"
                        data-bs-toggle="popover"
                        data-bs-content="Land Structs"
-                    ><img src="img/icons/icon-ambit-land.png" alt="ambit-land"></a> 1,2,3,4
+                    ><img src="${IMG.ICONS}icon-ambit-land.png" alt="ambit-land"></a> 1,2,3,4
                   </div>
                   <div class="col">
                     <a href="javascript: void(0)"
                        data-bs-toggle="popover"
                        data-bs-content="Water Structs"
-                    ><img src="img/icons/icon-ambit-water.png" alt="ambit-water"></a> 1,2,3,4
+                    ><img src="${IMG.ICONS}icon-ambit-water.png" alt="ambit-water"></a> 1,2,3,4
                   </div>
                 </div>
               </div>

@@ -8,6 +8,7 @@ import {CounterAttackEvasion} from "../../../js/modules/CounterAttackEvasion.js"
 import {DefendActionDisabledError} from "../../../js/modules/DefendActionDisabledError.js";
 import {InvalidManualWeaponSlotError} from "../../../js/modules/InvalidManualWeaponSlotError.js";
 import {AftermarketEngine} from "../../../js/modules/AftermarketEngine.js";
+import {Fraction} from "../../../js/modules/Fraction.js";
 
 /**
  * @return {Struct}
@@ -311,7 +312,7 @@ const canCounterAttackTest = new DTest('canCounterAttackTest', function(params) 
   attackerOutOfRangeAmbit.operatingAmbit = AMBITS.WATER;
 
   const attackerCounterAttackEvasion = getTestStruct();
-  attackerCounterAttackEvasion.defenseComponent = new CounterAttackEvasion('TEST', 1);
+  attackerCounterAttackEvasion.defenseComponent = new CounterAttackEvasion('TEST', new Fraction(1, 1));
 
   const defender = getTestStruct();
 
@@ -467,7 +468,7 @@ const counterAttackTest = new DTest('counterAttackTest', function() {
   const attackerWrongAmbit = getTestStruct();
   attackerWrongAmbit.operatingAmbit = AMBITS.WATER;
   const attackerEvadeCounterAttack = getTestStruct();
-  attackerEvadeCounterAttack.defenseComponent = new CounterAttackEvasion('Swift Block', 1);
+  attackerEvadeCounterAttack.defenseComponent = new CounterAttackEvasion('Swift Block', new Fraction(1, 1));
   const attackerSameOperatingAmibt = getTestStruct();
   attackerSameOperatingAmibt.maxHealth = 3;
   attackerSameOperatingAmibt.currentHealth = 3;
