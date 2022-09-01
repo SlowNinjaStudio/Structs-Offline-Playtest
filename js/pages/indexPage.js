@@ -11,7 +11,7 @@ const enemyStructs = [];
 const structBuilder = new StructBuilder();
 
 const playerStarFighter = structBuilder.make(UNIT_TYPES.STAR_FIGHTER);
-playerStructs.push(structBuilder.make(UNIT_TYPES.STAR_FIGHTER));
+playerStructs.push(playerStarFighter);
 const playerSpaceFrigate = structBuilder.make(UNIT_TYPES.SPACE_FRIGATE);
 playerSpaceFrigate.currentHealth = 2;
 playerSpaceFrigate.defend(playerStarFighter);

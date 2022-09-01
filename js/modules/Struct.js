@@ -34,12 +34,12 @@ export class Struct {
     this.defending = null;
     this.isDestroyed = false;
     this.canDefend = true;
+    this.image = image;
 
     this.manualWeaponPrimary = manualWeaponPrimary;
     this.manualWeaponSecondary = manualWeaponSecondary;
     this.passiveWeapon = passiveWeapon;
     this.defenseComponent = defenseComponent ? defenseComponent : new DefenseComponent();
-    this.image = image;
     this.util = new Util();
   }
 

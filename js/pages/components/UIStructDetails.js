@@ -1,5 +1,6 @@
-import {AMBITS, IMG} from "../../modules/Constants.js";
+import {AMBITS, DEFENSE_COMPONENT_TYPES, IMG} from "../../modules/Constants.js";
 import {Util} from "../../modules/Util.js";
+import {CounterMeasure} from "../../modules/CounterMeasure.js";
 
 export class UIStructDetails {
 
@@ -18,12 +19,225 @@ export class UIStructDetails {
    * @return {string}
    */
   getAmbitIcon(ambit) {
-    return `
-      <a href="javascript: void(0)"
+    return `<a href="javascript: void(0)"
          data-bs-toggle="popover"
          data-bs-content="${this.util.titleCase(ambit)} Ambit"
-      ><img src="${IMG.ICONS}icon-ambit-${ambit.toLowerCase()}.png" alt="${ambit.toLowerCase()} ambit"></a>
-    `;
+      ><img src="${IMG.ICONS}icon-ambit-${ambit.toLowerCase()}.png" alt="${ambit.toLowerCase()} ambit"></a>`;
+  }
+
+  /**
+   * @param ambits
+   */
+  getIconsForAmbits(ambits) {
+    const icons = ambits.map(ambit => this.getAmbitIcon(ambit));
+    return icons.join(' ');
+  }
+
+  /**
+   * @param {string} damageValue
+   * @return {string}
+   */
+  getDamageIcon(damageValue) {
+    return `<a href="javascript: void(0)"
+         data-bs-toggle="popover"
+         data-bs-content="Damage Value"
+      ><img src="${IMG.ICONS}icon-fire.png" alt="fire"></a> ${damageValue}`;
+  }
+
+  /**
+   * @param {boolean} isGuided
+   */
+  getGuidedIcon(isGuided) {
+    if (isGuided) {
+      return `<a href="javascript: void(0)"
+           data-bs-toggle="popover"
+           data-bs-content="Guided"
+        ><img src="${IMG.ICONS}icon-accuracy.png" alt="guided"></a>`;
+    }
+    return `<a href="javascript: void(0)"
+         data-bs-toggle="popover"
+         data-bs-content="Unguided"
+      ><img src="${IMG.ICONS}icon-unguided.png" alt="unguided"></a>`;
+  }
+
+  /**
+   * @param {array} damageRange
+   * @return {string}
+   */
+  getDamageRangeAsString(damageRange) {
+    if (damageRange.length === 1) {
+      return `${damageRange[0]}`;
+    } else if (damageRange.length > 1) {
+      let sortedDamagedRange = [...damageRange].sort();
+      return `${sortedDamagedRange[0]}-${sortedDamagedRange[sortedDamagedRange.length - 1]}`;
+    } else {
+      return '';
+    }
+  }
+
+  /**
+   * @return {string}
+   */
+  getOnDeathIcon() {
+    return `<a href="javascript: void(0)"
+         data-bs-toggle="popover"
+         title="On Death"
+         data-bs-content="The following attributes only apply on death."
+      ><img src="${IMG.ICONS}icon-skull.png" alt="skull"></a>`;
+  }
+
+  /**
+   * @param {string} damageValue
+   * @return {string}
+   */
+  getSameAmbitDamageIcon(damageValue) {
+    return `<a href="javascript: void(0)"
+         data-bs-toggle="popover"
+         title="Same Ambit Damage Value"
+         data-bs-content="The damage value when the attacker and defender have the same operating ambit."
+      ><img src="${IMG.ICONS}icon-damage-same-ambit.png" alt="same ambit damage"></a> ${damageValue}`;
+  }
+
+  /**
+   * @param {string} damageValue
+   * @return {string}
+   */
+  getDamageReductionIcon(damageValue) {
+    return `<a href="javascript: void(0)"
+         data-bs-toggle="popover"
+         title="Incoming Damage Reduction"
+         data-bs-content="The amount incoming damage is reduced by."
+      ><img src="img/icons/icon-damage-down.png" alt="damage-down"></a> -${damageValue}`;
+  }
+
+  /**
+   * @return {string}
+   */
+  getMoveIcon() {
+    return `<a href="javascript: void(0)"
+         data-bs-toggle="popover"
+         title="Movement Ability"
+         data-bs-content="This struct can change ambits."
+      ><img src="${IMG.ICONS}icon-speed.png" alt="speed"></a>`;
+  }
+
+  /**
+   * @return {string}
+   */
+  getStealthIcon() {
+    return `<a href="javascript: void(0)"
+         data-bs-toggle="popover"
+         title="Stealth Mode"
+         data-bs-content="This struct can hide from attacks from the following ambits."
+      ><img src="${IMG.ICONS}icon-invisible.png" alt="invisible"></a>`;
+  }
+
+  /**
+   * @return {string}
+   */
+  getIndirectCombatIcon() {
+    return `<a href="javascript: void(0)"
+         data-bs-toggle="popover"
+         title="Indirect Combat"
+         data-bs-content="This struct cannot counter attack or be counter attacked."
+      ><img src="${IMG.ICONS}icon-counter-attack-cancel.png" alt="no counter attack"></a>`;
+  }
+
+  /**
+   * @param {ManualWeapon} weapon
+   * @return {string}
+   */
+  getManualWeaponIcons(weapon) {
+    const damageString = this.getDamageRangeAsString(weapon.damageRange);
+    const damage = this.getDamageIcon(damageString);
+    const guided = this.getGuidedIcon(weapon.isGuided);
+    const ambits = this.getIconsForAmbits(weapon.ambits);
+    return `${damage}, ${guided}, ${ambits}`;
+  }
+
+  /**
+   * @param {PassiveWeapon} weapon
+   * @return {string}
+   */
+  getPassiveWeaponIcons(weapon) {
+    const icons = [];
+    if (weapon.probabilityOnDeath === 1) {
+      icons.push(this.getOnDeathIcon());
+    }
+    if (weapon.probability === 1) {
+      icons.push(this.getDamageIcon(`${weapon.damage}`));
+    }
+    if (weapon.damage !== weapon.damageSameAmbit) {
+      icons.push(this.getSameAmbitDamageIcon(`${weapon.damageSameAmbit}`));
+    }
+    return icons.join(', ');
+  }
+
+  /**
+   * @return {string}
+   */
+  getAftermarketEngineIcons() {
+    return this.getMoveIcon();
+  }
+
+  /**
+   * @param {AmbitDefense|DefenseComponent} ambitDefense
+   * @return {string}
+   */
+  getAmbitDefenseIcons(ambitDefense) {
+    const stealth = this.getStealthIcon();
+    const ambits = this.getIconsForAmbits(ambitDefense.ambitsDefendedAgainst);
+    return `${stealth} ${ambits}`;
+  }
+
+  /**
+   * @param {Armour|DefenseComponent} armour
+   * @return {string}
+   */
+  getArmourIcons(armour) {
+    return this.getDamageReductionIcon(`${armour.damageReduction}`)
+  }
+
+  /**
+   * @param {CounterMeasure|DefenseComponent} counterMeasure
+   * @return {string}
+   */
+  getCounterMeasureIcons(counterMeasure) {
+    const guided = this.getGuidedIcon(counterMeasure.guided);
+    return `${guided} ${counterMeasure.probability}`;
+  }
+
+  /**
+   * @return {string}
+   */
+  getEvadeCounterAttackIcons() {
+    return this.getIndirectCombatIcon();
+  }
+
+  /**
+   * @param {DefenseComponent} defenseComponent
+   * @return {string}
+   */
+  getDefensiveComponentIcons(defenseComponent) {
+    let icons = '--';
+    switch(defenseComponent.type) {
+      case DEFENSE_COMPONENT_TYPES.AFTERMARKET_ENGINE:
+        icons = this.getAftermarketEngineIcons();
+        break;
+      case DEFENSE_COMPONENT_TYPES.AMBIT_DEFENSE:
+        icons = this.getAmbitDefenseIcons(defenseComponent);
+        break;
+      case DEFENSE_COMPONENT_TYPES.ARMOUR:
+        icons = this.getArmourIcons(defenseComponent);
+        break;
+      case DEFENSE_COMPONENT_TYPES.COUNTER_MEASURE:
+        icons = this.getCounterMeasureIcons(defenseComponent);
+        break;
+      case DEFENSE_COMPONENT_TYPES.EVADE_COUNTER_ATTACK:
+        icons = this.getEvadeCounterAttackIcons();
+        break;
+    }
+    return icons;
   }
 
   render() {
@@ -82,9 +296,9 @@ export class UIStructDetails {
 
           <div class="attributes-container">
             <div class="row">
-              <div class="col-auto">
+              <div class="col-4">
                 <div class="row">
-                  <div class="col-4">
+                  <div class="col">
                     <img src="${this.struct.image}" style="height:80px" alt="${this.struct.unitType}">
                   </div>
                 </div>
@@ -124,30 +338,7 @@ export class UIStructDetails {
                     ><strong>1</strong> <img src="img/icons/icon-attack-range.png" alt="attack-range"></a><strong>:</strong>
                   </div>
                   <div class="col ps-1">
-                    <a href="javascript: void(0)"
-                       data-bs-toggle="popover"
-                       data-bs-content="Damage Value"
-                    ><img src="img/icons/icon-fire.png" alt="fire"></a> 2,
-                    <a href="javascript: void(0)"
-                       data-bs-toggle="popover"
-                       data-bs-content="Guided"
-                    ><img src="img/icons/icon-accuracy.png" alt="accuracy"></a>,
-                    <a href="javascript: void(0)"
-                       data-bs-toggle="popover"
-                       data-bs-content="Water Ambit"
-                    ><img src="img/icons/icon-ambit-water.png" alt="ambit-water"></a>
-                    <a href="javascript: void(0)"
-                       data-bs-toggle="popover"
-                       data-bs-content="Land Ambit"
-                    ><img src="img/icons/icon-ambit-land.png" alt="ambit-land"></a>
-                    <a href="javascript: void(0)"
-                       data-bs-toggle="popover"
-                       data-bs-content="Sky Ambit"
-                    ><img src="img/icons/icon-ambit-sky.png" alt="ambit-sky"></a>
-                    <a href="javascript: void(0)"
-                       data-bs-toggle="popover"
-                       data-bs-content="Space Ambit"
-                    ><img src="img/icons/icon-ambit-space.png" alt="ambit-space"></a>
+                    ${this.getManualWeaponIcons(this.struct.manualWeaponPrimary)}
                   </div>
                 </div>
                 <div class="row">
@@ -158,32 +349,10 @@ export class UIStructDetails {
                     ><strong>2</strong> <img src="img/icons/icon-attack-range.png" alt="attack-range"></a><strong>:</strong>
                   </div>
                   <div class="col ps-1">
-                    <a href="javascript: void(0)"
-                       data-bs-toggle="popover"
-                       data-bs-content="Damage Value"
-                    ><img src="img/icons/icon-fire.png" alt="fire"></a> 1-3,
-                    <a href="javascript: void(0)"
-                       data-bs-toggle="popover"
-                       data-bs-content="Guided"
-                    ><img src="img/icons/icon-accuracy.png" alt="accuracy"></a>,
-                    <a href="javascript: void(0)"
-                       data-bs-toggle="popover"
-                       data-bs-content="Water Ambit"
-                    ><img src="img/icons/icon-ambit-water.png" alt="ambit-water"></a>
-                    <a href="javascript: void(0)"
-                       data-bs-toggle="popover"
-                       data-bs-content="Land Ambit"
-                    ><img src="img/icons/icon-ambit-land.png" alt="ambit-land"></a>
-                    <a href="javascript: void(0)"
-                       data-bs-toggle="popover"
-                       data-bs-content="Sky Ambit"
-                    ><img src="img/icons/icon-ambit-sky.png" alt="ambit-sky"></a>
-                    <a href="javascript: void(0)"
-                       data-bs-toggle="popover"
-                       data-bs-content="Space Ambit"
-                    ><img src="img/icons/icon-ambit-space.png" alt="ambit-space"></a>
+                    ${this.struct.manualWeaponSecondary ? this.getManualWeaponIcons(this.struct.manualWeaponSecondary) : '--'}
                   </div>
                 </div>
+
                 <div class="row">
                   <div class="col-3 pe-1">
                     <a href="javascript: void(0)"
@@ -192,20 +361,7 @@ export class UIStructDetails {
                     ><img src="img/icons/icon-counter-attack.png" alt="counter-attack"></a><strong>:</strong>
                   </div>
                   <div class="col ps-1">
-                    <a href="javascript: void(0)"
-                       data-bs-toggle="popover"
-                       data-bs-content="Damage Value"
-                    ><img src="img/icons/icon-fire.png" alt="fire"></a> 2,
-                    <a href="javascript: void(0)"
-                       data-bs-toggle="popover"
-                       title="On Death"
-                       data-bs-content="The following attributes only apply on death."
-                    ><img src="img/icons/icon-skull.png" alt="skull"></a>,
-                    <a href="javascript: void(0)"
-                       data-bs-toggle="popover"
-                       title="Same Ambit Damage Value"
-                       data-bs-content="The damage value when the attacker and defender have the same operating ambit."
-                    ><img src="img/icons/icon-damage-same-ambit.png" alt="damage-same-ambit"></a> 3,
+                    ${this.struct.passiveWeapon ? this.getPassiveWeaponIcons(this.struct.passiveWeapon) : '--'}
                   </div>
                 </div>
                 <div class="row">
@@ -216,41 +372,7 @@ export class UIStructDetails {
                     ><img src="img/icons/icon-def-melee.png" alt="def-melee"></a><strong>:</strong>
                   </div>
                   <div class="col ps-1">
-                    <a href="javascript: void(0)"
-                       data-bs-toggle="popover"
-                       data-bs-content="Unguided"
-                    ><img src="img/icons/icon-unguided.png" alt="unguided"></a> 2/3,
-                    <a href="javascript: void(0)"
-                       data-bs-toggle="popover"
-                       title="Incoming Damage Reduction"
-                       data-bs-content="The amount incoming damage is reduced by."
-                    ><img src="img/icons/icon-damage-down.png" alt="damage-down"></a> -1,
-                    <a href="javascript: void(0)"
-                       data-bs-toggle="popover"
-                       title="Stealth Mode"
-                       data-bs-content="This struct can hide from attacks from the following ambits."
-                    ><img src="img/icons/icon-invisible.png" alt="invisible"></a>
-                    <a href="javascript: void(0)"
-                       data-bs-toggle="popover"
-                       data-bs-content="Water Ambit"
-                    ><img src="img/icons/icon-ambit-water.png" alt="ambit-water"></a>
-                    <a href="javascript: void(0)"
-                       data-bs-toggle="popover"
-                       data-bs-content="Land Ambit"
-                    ><img src="img/icons/icon-ambit-land.png" alt="ambit-land"></a>
-                    <a href="javascript: void(0)"
-                       data-bs-toggle="popover"
-                       data-bs-content="Sky Ambit"
-                    ><img src="img/icons/icon-ambit-sky.png" alt="ambit-sky"></a>
-                    <a href="javascript: void(0)"
-                       data-bs-toggle="popover"
-                       data-bs-content="Space Ambit"
-                    ><img src="img/icons/icon-ambit-space.png" alt="ambit-space"></a>,
-                    <a href="javascript: void(0)"
-                       data-bs-toggle="popover"
-                       title="Movement Ability"
-                       data-bs-content="This struct can change ambits."
-                    ><img src="img/icons/icon-speed.png" alt="speed"></a>
+                    ${this.getDefensiveComponentIcons(this.struct.defenseComponent)}
                   </div>
                 </div>
               </div>
