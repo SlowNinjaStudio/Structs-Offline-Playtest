@@ -299,7 +299,7 @@ export class UIStructDetails {
               <div class="col-4">
                 <div class="row">
                   <div class="col">
-                    <img src="${this.struct.image}" style="height:80px" alt="${this.struct.unitType}">
+                    <img src="${this.struct.image}" alt="${this.struct.unitType}" class="struct-image">
                   </div>
                 </div>
                 <div class="row">

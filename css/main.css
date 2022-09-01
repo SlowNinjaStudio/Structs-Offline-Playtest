@@ -405,6 +405,10 @@ body {
   max-width: 500px;
   visibility: visible;
 }
+.offcanvas.structDetails .struct-image {
+  border: 1px solid #cccccc;
+  height: 80px;
+}
 
 /* Bootstrap Overrides - Start */
 
