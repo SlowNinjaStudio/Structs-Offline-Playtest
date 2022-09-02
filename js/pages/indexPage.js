@@ -105,7 +105,7 @@ structElms.forEach(structElm => {
   }
 });
 
-document.getElementById('offcanvasBottom').innerHTML = (new UIStructDetails(structBuilder.make(UNIT_TYPES.CRUISER), OWNER_TYPES.PLAYER)).render();
+document.getElementById('offcanvasBottom').innerHTML = (new UIStructDetails(playerSpaceFrigate, OWNER_TYPES.PLAYER)).render();
 
 
 

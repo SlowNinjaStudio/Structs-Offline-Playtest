@@ -423,7 +423,7 @@ export class UIStructDetails {
                     ><img src="${IMG.ICONS}icon-location-pin.png" alt="location-pin"></a><strong>:</strong>
                   </div>
                   <div class="col ps-1">
-                    ${this.getAmbitIcon(AMBITS.SPACE)} 1
+                    ${this.getAmbitIcon(this.struct.operatingAmbit)} ${this.struct.ambitSlot}
                   </div>
                 </div>
                 <div class="row">
