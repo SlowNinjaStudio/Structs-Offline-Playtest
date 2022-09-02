@@ -1,4 +1,9 @@
-import {AMBITS, DEFENSE_COMPONENTS, FLEET_STRUCT_DEFAULTS} from "./Constants.js";
+import {
+  AMBITS,
+  DEFENSE_COMPONENT_CUSTOM_ACTION_LABELS,
+  DEFENSE_COMPONENTS,
+  FLEET_STRUCT_DEFAULTS
+} from "./Constants.js";
 import {DefenseComponentFactoryError} from "./DefenseComponentFactoryError.js";
 import {Armour} from "./Armour.js";
 import {CounterMeasure} from "./CounterMeasure.js";
@@ -75,10 +80,12 @@ export class DefenseComponentFactory {
    * @return {DefenseComponent}
    */
   makeOmniEngine() {
-    return new AftermarketEngine(
+    const component = new AftermarketEngine(
       DEFENSE_COMPONENTS.OMNI_ENGINE,
       [AMBITS.WATER, AMBITS.LAND, AMBITS.SKY, AMBITS.SPACE],
     );
+    component.actionLabel = DEFENSE_COMPONENT_CUSTOM_ACTION_LABELS.OMNI_ENGINE;
+    return component;
   }
 
   /**

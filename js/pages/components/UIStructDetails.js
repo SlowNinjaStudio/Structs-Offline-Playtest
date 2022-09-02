@@ -1,4 +1,4 @@
-import {AMBITS, DEFENSE_COMPONENT_TYPES, IMG} from "../../modules/Constants.js";
+import {AMBITS, DEFENSE_COMPONENT_TYPES, DEFENSE_COMPONENTS, IMG} from "../../modules/Constants.js";
 import {Util} from "../../modules/Util.js";
 import {CounterMeasure} from "../../modules/CounterMeasure.js";
 
@@ -12,6 +12,66 @@ export class UIStructDetails {
     this.struct = struct;
     this.ownerType = ownerType;
     this.util = new Util();
+  }
+
+  /**
+   * @return {string}
+   */
+  getUnavailableActionButton() {
+    return `<button type="button" class="btn btn-sm btn-secondary" disabled>--</button>`;
+  }
+
+  /**
+   * @return {string}
+   */
+  getActionButtons() {
+    return `
+      <div class="actions-container">
+        <div class="row">
+          <div class="col d-grid">
+          ${this.struct.manualWeaponPrimary ? `
+            <button type="button" class="btn btn-danger btn-sm">
+              ${this.struct.manualWeaponPrimary.getActionLabel()}
+              <img src="${IMG.ICONS}icon-attack-range.png" alt="attack-range">
+              (1)
+            </button>
+          ` : this.getUnavailableActionButton()}
+          </div>
+          <div class="col d-grid">
+          ${this.struct.canDefend ? `
+            <button type="button" class="btn btn-primary btn-sm">
+              Defend
+              <img src="${IMG.ICONS}icon-strength.png" alt="strength">
+            </button>
+          ` : this.getUnavailableActionButton()}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col d-grid">
+          ${this.struct.manualWeaponSecondary ? `
+            <button type="button" class="btn btn-danger btn-sm">
+              ${this.struct.manualWeaponSecondary.getActionLabel()}
+              <img src="${IMG.ICONS}icon-attack-range.png" alt="attack-range">
+              (2)
+            </button>
+          ` : this.getUnavailableActionButton()}
+          </div>
+          <div class="col d-grid">
+          ${this.struct.defenseComponent.name === DEFENSE_COMPONENTS.STEALTH_MODE ? `
+            <button type="button" class="btn btn-secondary btn-sm">
+              ${this.struct.defenseComponent.getActionLabel()}
+              <img src="${IMG.ICONS}icon-invisible.png" alt="invisible">
+            </button>
+          ` : (this.struct.defenseComponent.type === DEFENSE_COMPONENT_TYPES.AFTERMARKET_ENGINE ? `
+            <button type="button" class="btn btn-warning btn-sm">
+              ${this.struct.defenseComponent.getActionLabel()}
+              <img src="${IMG.ICONS}icon-speed.png" alt="speed">
+            </button>
+          ` : this.getUnavailableActionButton())}
+          </div>
+        </div>
+      </div>
+    `;
   }
 
   /**
@@ -328,42 +388,7 @@ export class UIStructDetails {
       <div class="offcanvas-body small">
         <div class="container-fluid">
 
-          <div class="actions-container">
-            <div class="row">
-              <div class="col d-grid">
-                <button type="button" class="btn btn-danger btn-sm">
-                  Attack
-                  <img src="${IMG.ICONS}icon-attack-range.png" alt="attack-range">
-                  1
-                </button>
-              </div>
-              <div class="col d-grid">
-                <button type="button" class="btn btn-primary btn-sm">
-                  Defend
-                  <img src="${IMG.ICONS}icon-strength.png" alt="strength">
-                </button>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col d-grid">
-                <button type="button" class="btn btn-danger btn-sm">
-                  Attack
-                  <img src="${IMG.ICONS}icon-attack-range.png" alt="attack-range">
-                  2
-                </button>
-              </div>
-              <div class="col d-grid">
-                <!--button type="button" class="btn btn-secondary btn-sm">
-                  Activate
-                  <img src="${IMG.ICONS}icon-invisible.png" alt="invisible">
-                </button-->
-                <button type="button" class="btn btn-warning btn-sm">
-                  Move
-                  <img src="${IMG.ICONS}icon-speed.png" alt="speed">
-                </button>
-              </div>
-            </div>
-          </div>
+          ${this.getActionButtons()}
 
           <div class="attributes-container">
             <div class="row">

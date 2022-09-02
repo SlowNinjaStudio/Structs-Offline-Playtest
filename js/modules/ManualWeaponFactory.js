@@ -1,4 +1,4 @@
-import {FLEET_STRUCT_DEFAULTS, MANUAL_WEAPONS} from "./Constants.js";
+import {FLEET_STRUCT_DEFAULTS, MANUAL_WEAPON_CUSTOM_ACTION_LABELS, MANUAL_WEAPONS} from "./Constants.js";
 import {ManualWeapon} from "./ManualWeapon.js";
 import {ManualWeaponFactoryError} from "./ManualWeaponFactoryError.js";
 
@@ -46,12 +46,14 @@ export class ManualWeaponFactory {
    * @return {ManualWeapon}
    */
   makeGuidedWeaponry(ambits) {
-    return new ManualWeapon(
+    const weapon = new ManualWeapon(
       MANUAL_WEAPONS.GUIDED_WEAPONRY,
       [FLEET_STRUCT_DEFAULTS.ATTACK_DAMAGE],
       true,
       ambits
     );
+    weapon.actionLabel = MANUAL_WEAPON_CUSTOM_ACTION_LABELS.GUIDED_WEAPONRY;
+    return weapon;
   }
 
   /**
@@ -59,11 +61,13 @@ export class ManualWeaponFactory {
    * @return {ManualWeapon}
    */
   makeUnguidedWeaponry(ambits) {
-    return new ManualWeapon(
+    const weapon = new ManualWeapon(
       MANUAL_WEAPONS.UNGUIDED_WEAPONRY,
       [FLEET_STRUCT_DEFAULTS.ATTACK_DAMAGE],
       false,
       ambits
     );
+    weapon.actionLabel = MANUAL_WEAPON_CUSTOM_ACTION_LABELS.UNGUIDED_WEAPONRY;
+    return weapon;
   }
 }

@@ -1,5 +1,6 @@
 import {DEFENSE_COMPONENT_TYPES} from "./Constants.js";
 import {Fraction} from "./Fraction.js";
+import {Util} from "./Util.js";
 
 export class DefenseComponent {
 
@@ -17,8 +18,11 @@ export class DefenseComponent {
   ) {
     this.type = type;
     this.name = name;
+    this.actionLabel = this.name;
     this.isActive = isActive;
     this.probability = probability;
+
+    this.util = new Util();
   }
 
   /**
@@ -58,5 +62,12 @@ export class DefenseComponent {
    */
   reduceAttackDamage(incomingDamage, attackingWeapon = null) {
     return incomingDamage;
+  }
+
+  /**
+   * @return {string}
+   */
+  getActionLabel() {
+    return this.util.titleCase(this.actionLabel);
   }
 }

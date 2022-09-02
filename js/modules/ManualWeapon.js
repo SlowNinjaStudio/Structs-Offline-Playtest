@@ -1,3 +1,5 @@
+import {Util} from "./Util.js";
+
 export class ManualWeapon {
   /**
    * @param {string} name
@@ -8,10 +10,13 @@ export class ManualWeapon {
    */
   constructor(name, damageRange, isGuided, ambits, isMultiTarget = false) {
     this.name = name;
+    this.actionLabel = this.name;
     this.damageRange = damageRange;
     this.isGuided = isGuided;
     this.ambits = ambits;
     this.isMultiTarget = isMultiTarget;
+
+    this.util = new Util();
   }
 
   /**
@@ -31,5 +36,12 @@ export class ManualWeapon {
    */
   canTargetAmbit(ambit) {
     return this.ambits.includes(ambit);
+  }
+
+  /**
+   * @return {string}
+   */
+  getActionLabel() {
+    return this.util.titleCase(this.actionLabel);
   }
 }
