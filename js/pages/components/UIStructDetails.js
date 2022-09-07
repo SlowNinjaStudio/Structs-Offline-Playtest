@@ -394,7 +394,7 @@ export class UIStructDetails {
             <div class="row">
               <div class="col-4">
                 <div class="row">
-                  <div class="col">
+                  <div class="col text-center">
                     <img src="${this.struct.image}" alt="${this.struct.unitType}" class="struct-image">
                   </div>
                 </div>

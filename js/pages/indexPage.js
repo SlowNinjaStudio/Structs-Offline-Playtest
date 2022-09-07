@@ -83,6 +83,16 @@ structElms.forEach(structElm => {
 document.getElementById('offcanvasBottom').innerHTML = (new UIStructDetails(playerSpaceFrigate, OWNER_TYPES.PLAYER)).render();
 
 
+document.querySelectorAll('.struct-map-view-btn').forEach(structButton => {
+  structButton.addEventListener('click', function() {
+    const offcanvas = bootstrap.Offcanvas.getOrCreateInstance(document.getElementById('offcanvasBottom'));
+    document.getElementById('offcanvasBottom').innerHTML = (new UIStructDetails(
+      player.fleet.findStructById(structButton.getAttribute('data-struct-id')),
+      OWNER_TYPES.PLAYER
+    )).render();
+    offcanvas.show();
+  });
+});
 
 const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
 popoverTriggerList.map(function (popoverTriggerEl) {

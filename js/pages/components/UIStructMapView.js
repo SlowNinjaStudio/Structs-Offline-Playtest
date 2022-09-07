@@ -45,11 +45,18 @@ export class UIStructMapView {
     }
 
     return `
-      <div class="struct">
-        <div>${this.renderHealthInHearts()}</div>
-        <img src="${this.struct.image}" alt="${this.struct.unitType}">
-        <div>${isDefending}${isDefended}</div>
-      </div>
+      <a
+        class="struct-map-view-btn"
+        data-struct-id="${this.struct.id}"
+        href="javascript: void(0)"
+        role="button"
+      >
+        <div class="struct">
+          <div>${this.renderHealthInHearts()}</div>
+          <img src="${this.struct.image}" alt="${this.struct.unitType}">
+          <div>${isDefending}${isDefended}</div>
+        </div>
+      </a>
     `;
   }
 }
