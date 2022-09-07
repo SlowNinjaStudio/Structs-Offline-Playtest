@@ -9,6 +9,7 @@ export class CommandStruct extends Struct {
    * @param {ManualWeapon} manualWeaponSecondary
    * @param {PassiveWeapon} passiveWeapon
    * @param {DefenseComponent} defenseComponent
+   * @param {string} image
    */
   constructor(
     unitType,
@@ -16,7 +17,8 @@ export class CommandStruct extends Struct {
     manualWeaponPrimary,
     manualWeaponSecondary,
     passiveWeapon = null,
-    defenseComponent = null
+    defenseComponent = null,
+    image = ''
   ) {
     super(
       unitType,
@@ -24,7 +26,8 @@ export class CommandStruct extends Struct {
       manualWeaponPrimary,
       manualWeaponSecondary,
       passiveWeapon,
-      defenseComponent
+      defenseComponent,
+      image
     );
     this.maxHealth = COMMAND_STRUCT_DEFAULTS.MAX_HEALTH;
     this.currentHealth = this.maxHealth;

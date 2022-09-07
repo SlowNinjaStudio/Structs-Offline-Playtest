@@ -16,4 +16,12 @@ export class Util {
     }
     return titleCaseText;
   }
+
+  /**
+   * @param {string[]} original
+   * @return {string[]}
+   */
+  toLowerCaseArray(original) {
+    return [...original].map(element => element.toLowerCase());
+  }
 }

@@ -1,16 +1,16 @@
 import {UINavbar} from "./components/UINavbar.js";
 import {StructBuilder} from "../modules/StructBuilder.js";
 import {OWNER_TYPES, UNIT_TYPES} from "../modules/Constants.js";
-import {UIStructMapView} from "./components/UIStructMapView.js";
 import {UIStructDetails} from "./components/UIStructDetails.js";
 import {Player} from "../modules/Player.js";
+import {UIFleet} from "./components/UIFleet.js";
 
 (new UINavbar()).init('nav-wrapper');
 
-const enemyStructs = [];
 const structBuilder = new StructBuilder();
 
 const player = new Player('Player');
+const enemy = new Player('Enemy');
 
 
 const playerStarFighter = structBuilder.make(UNIT_TYPES.STAR_FIGHTER);
@@ -43,53 +43,28 @@ const playerSub2 = structBuilder.make(UNIT_TYPES.SUB);
 playerSub2.defend(playerSpaceFrigate);
 player.fleet.addStruct(playerSub2);
 
-enemyStructs.push(structBuilder.make(UNIT_TYPES.STAR_FIGHTER));
-enemyStructs.push(structBuilder.make(UNIT_TYPES.SPACE_FRIGATE));
-enemyStructs.push(structBuilder.make(UNIT_TYPES.GALACTIC_BATTLESHIP));
-enemyStructs.push(structBuilder.make(UNIT_TYPES.STAR_FIGHTER));
-enemyStructs.push(structBuilder.make(UNIT_TYPES.FIGHTER_JET));
-enemyStructs.push(structBuilder.make(UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR));
-enemyStructs.push(structBuilder.make(UNIT_TYPES.STEALTH_BOMBER));
-enemyStructs.push(structBuilder.make(UNIT_TYPES.FIGHTER_JET));
-enemyStructs.push(structBuilder.make(UNIT_TYPES.TANK));
-enemyStructs.push(structBuilder.make(UNIT_TYPES.ARTILLERY));
-enemyStructs.push(structBuilder.make(UNIT_TYPES.SAM_LAUNCHER));
-enemyStructs.push(structBuilder.make(UNIT_TYPES.TANK));
-enemyStructs.push(structBuilder.make(UNIT_TYPES.SUB));
-enemyStructs.push(structBuilder.make(UNIT_TYPES.DESTROYER));
-enemyStructs.push(structBuilder.make(UNIT_TYPES.CRUISER));
-enemyStructs.push(structBuilder.make(UNIT_TYPES.SUB));
+enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.STAR_FIGHTER));
+enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.SPACE_FRIGATE));
+enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.GALACTIC_BATTLESHIP));
+enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.STAR_FIGHTER));
+enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.FIGHTER_JET));
+enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR));
+enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.STEALTH_BOMBER));
+enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.FIGHTER_JET));
+enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.TANK));
+enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.ARTILLERY));
+enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.SAM_LAUNCHER));
+enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.TANK));
+enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.SUB));
+enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.DESTROYER));
+enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.CRUISER));
+enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.SUB));
 
-let renderFleet = (structs) => {
-  const ambits = ['space', 'sky', 'land', 'water'];
-  let html = '';
-  let i = 0;
-  for (let j = 0; j < ambits.length; j++) {
-    html += `<div class="ambit ${ambits[j]}">`;
-    for (let k = 0; k < 4 && i < structs.length; k++) {
-      html += (new UIStructMapView(structs[i])).render();
-      i++;
-    }
-    html += `</div>`;
-  }
-  return html;
-}
+const playerFleetUI = new UIFleet(player);
+const enemyFleetUI = new UIFleet(enemy);
+document.getElementById('playerFleet').innerHTML = playerFleetUI.render(player);
+document.getElementById('enemyFleet').innerHTML = enemyFleetUI.render(player);
 
-let renderFromFleet = (fleet) => {
-  const ambits = ['space', 'sky', 'land', 'water'];
-  let html = '';
-  for (let j = 0; j < ambits.length; j++) {
-    html += `<div class="ambit ${ambits[j]}">`;
-    for (let i = 0; i < fleet[ambits[j]].length; i++) {
-      html += (new UIStructMapView(fleet[ambits[j]][i])).render();
-    }
-    html += `</div>`;
-  }
-  return html;
-}
-
-document.getElementById('playerFleetContainer').innerHTML = renderFromFleet(player.fleet);
-document.getElementById('enemyFleetContainer').innerHTML = renderFleet(enemyStructs);
 
 const structElms = document.querySelectorAll('.struct');
 structElms.forEach(structElm => {

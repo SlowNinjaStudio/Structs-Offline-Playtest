@@ -1,4 +1,4 @@
-import {AMBITS, DEFENSE_COMPONENTS, MANUAL_WEAPONS, PASSIVE_WEAPONS, UNIT_TYPES} from "./Constants.js";
+import {AMBITS, DEFENSE_COMPONENTS, IMG, MANUAL_WEAPONS, PASSIVE_WEAPONS, UNIT_TYPES} from "./Constants.js";
 import {Struct} from "./Struct.js";
 import {ManualWeaponFactory} from "./ManualWeaponFactory.js";
 import {PassiveWeaponFactory} from "./PassiveWeaponFactory.js";
@@ -42,7 +42,8 @@ export class CommandStructBuilder {
       ),
       null,
       this.passiveWeaponFactory.make(PASSIVE_WEAPONS.STRONG_COUNTER_ATTACK),
-      this.defenseComponentFactory.make(DEFENSE_COMPONENTS.OMNI_ENGINE)
+      this.defenseComponentFactory.make(DEFENSE_COMPONENTS.OMNI_ENGINE),
+      IMG.STRUCTS + 'command-ship.jpg'
     );
   }
 }
