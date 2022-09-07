@@ -38,6 +38,6 @@ export class CommandStruct extends Struct {
    * @return {boolean}
    */
   isCommandStruct() {
-    return false;
+    return true;
   }
 }

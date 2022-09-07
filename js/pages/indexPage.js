@@ -66,23 +66,6 @@ const enemyFleetUI = new UIFleet(enemy);
 document.getElementById('playerFleet').innerHTML = playerFleetUI.render(player);
 document.getElementById('enemyFleet').innerHTML = enemyFleetUI.render(player);
 
-
-const structElms = document.querySelectorAll('.struct');
-structElms.forEach(structElm => {
-  if (structElm.innerHTML.trim() !== '') {
-    structElm.outerHTML = `
-      <a
-        data-bs-toggle="offcanvas"
-        href="#offcanvasBottom"
-        role="button"
-        aria-controls="offcanvasBottom"
-      >${structElm.outerHTML}</a>
-    `;
-  }
-});
-
-document.getElementById('offcanvasBottom').innerHTML = (new UIStructDetails(playerSpaceFrigate, player)).render();
-
 const players = [player, enemy];
 
 document.querySelectorAll('.struct-map-view-btn').forEach(structButton => {
@@ -90,17 +73,19 @@ document.querySelectorAll('.struct-map-view-btn').forEach(structButton => {
     const domOffcanvas = document.getElementById('offcanvasBottom');
     const bsOffcanvas = bootstrap.Offcanvas.getOrCreateInstance(document.getElementById('offcanvasBottom'));
     const playerId = structButton.getAttribute('data-player-id');
+    const structId = structButton.getAttribute('data-struct-id');
+    const isCommandStruct = !!parseInt(structButton.getAttribute('data-is-command-struct'));
     const player = players.find(player => player.id === playerId);
     const offcanvasClass = (thisPlayer.id === playerId) ? 'player' : 'enemy';
+    const struct = isCommandStruct ? player.commandStruct : player.fleet.findStructById(structId);
+    console.log(player);
+    console.log(struct);
 
     domOffcanvas.classList.remove('player');
     domOffcanvas.classList.remove('enemy');
     domOffcanvas.classList.add(offcanvasClass);
 
-    domOffcanvas.innerHTML = (new UIStructDetails(
-      player.fleet.findStructById(structButton.getAttribute('data-struct-id')),
-      player
-    )).render();
+    domOffcanvas.innerHTML = (new UIStructDetails(struct, player)).render();
 
     bsOffcanvas.show();
   });

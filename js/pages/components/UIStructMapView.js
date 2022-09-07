@@ -51,6 +51,7 @@ export class UIStructMapView {
         class="struct-map-view-btn"
         data-player-id="${this.player.id}"
         data-struct-id="${this.struct.id}"
+        data-is-command-struct="${this.struct.isCommandStruct() ? 1 : 0}"
         href="javascript: void(0)"
         role="button"
       >
