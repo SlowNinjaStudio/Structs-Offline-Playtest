@@ -19,7 +19,10 @@ export class UIFleet {
     for (let j = 0; j < ambits.length; j++) {
       html += `<div class="ambit ${ambits[j]}">`;
       for (let i = 0; i < this.player.fleet[ambits[j]].length; i++) {
-        html += (new UIStructMapView(this.player.fleet[ambits[j]][i])).render();
+        html += (new UIStructMapView(
+          this.player.fleet[ambits[j]][i],
+          this.player
+        )).render();
       }
       html += `</div>`;
     }

@@ -1,6 +1,6 @@
 import {UINavbar} from "./components/UINavbar.js";
 import {StructBuilder} from "../modules/StructBuilder.js";
-import {OWNER_TYPES, UNIT_TYPES} from "../modules/Constants.js";
+import {UNIT_TYPES} from "../modules/Constants.js";
 import {UIStructDetails} from "./components/UIStructDetails.js";
 import {Player} from "../modules/Player.js";
 import {UIFleet} from "./components/UIFleet.js";
@@ -11,6 +11,7 @@ const structBuilder = new StructBuilder();
 
 const player = new Player('Player');
 const enemy = new Player('Enemy');
+const thisPlayer = player;
 
 
 const playerStarFighter = structBuilder.make(UNIT_TYPES.STAR_FIGHTER);
@@ -80,17 +81,28 @@ structElms.forEach(structElm => {
   }
 });
 
-document.getElementById('offcanvasBottom').innerHTML = (new UIStructDetails(playerSpaceFrigate, OWNER_TYPES.PLAYER)).render();
+document.getElementById('offcanvasBottom').innerHTML = (new UIStructDetails(playerSpaceFrigate, player)).render();
 
+const players = [player, enemy];
 
 document.querySelectorAll('.struct-map-view-btn').forEach(structButton => {
   structButton.addEventListener('click', function() {
-    const offcanvas = bootstrap.Offcanvas.getOrCreateInstance(document.getElementById('offcanvasBottom'));
-    document.getElementById('offcanvasBottom').innerHTML = (new UIStructDetails(
+    const domOffcanvas = document.getElementById('offcanvasBottom');
+    const bsOffcanvas = bootstrap.Offcanvas.getOrCreateInstance(document.getElementById('offcanvasBottom'));
+    const playerId = structButton.getAttribute('data-player-id');
+    const player = players.find(player => player.id === playerId);
+    const offcanvasClass = (thisPlayer.id === playerId) ? 'player' : 'enemy';
+
+    domOffcanvas.classList.remove('player');
+    domOffcanvas.classList.remove('enemy');
+    domOffcanvas.classList.add(offcanvasClass);
+
+    domOffcanvas.innerHTML = (new UIStructDetails(
       player.fleet.findStructById(structButton.getAttribute('data-struct-id')),
-      OWNER_TYPES.PLAYER
+      player
     )).render();
-    offcanvas.show();
+
+    bsOffcanvas.show();
   });
 });
 

@@ -17,7 +17,10 @@ export class UIFleetCommand {
     for (let i = 0; i < ambits.length; i++) {
       html += `<div class="ambit ${ambits[i]}">`;
       if (this.player.commandStruct.operatingAmbit === ambits[i].toUpperCase()) {
-        html += (new UIStructMapView(this.player.commandStruct)).render();
+        html += (new UIStructMapView(
+          this.player.commandStruct,
+          this.player
+        )).render();
       } else {
         html += `<div class="struct empty"></div>`;
       }

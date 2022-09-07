@@ -409,6 +409,9 @@ body {
   border: 1px solid #cccccc;
   height: 80px;
 }
+.offcanvas.structDetails.enemy .struct-image {
+  transform: scaleX(-1);
+}
 
 /* Bootstrap Overrides - Start */
 

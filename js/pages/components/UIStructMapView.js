@@ -3,9 +3,11 @@ import {IMG, MAX_HEART_ICONS} from "../../modules/Constants.js";
 export class UIStructMapView {
   /**
    * @param {Struct} struct
+   * @param {Player} player
    */
-  constructor(struct) {
+  constructor(struct, player) {
     this.struct = struct;
+    this.player = player;
   }
 
   renderHealthInHearts() {
@@ -47,6 +49,7 @@ export class UIStructMapView {
     return `
       <a
         class="struct-map-view-btn"
+        data-player-id="${this.player.id}"
         data-struct-id="${this.struct.id}"
         href="javascript: void(0)"
         role="button"

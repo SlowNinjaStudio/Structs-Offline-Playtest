@@ -6,11 +6,11 @@ export class UIStructDetails {
 
   /**
    * @param {Struct} struct
-   * @param {string} ownerType
+   * @param {Player} player
    */
-  constructor(struct, ownerType) {
+  constructor(struct, player) {
     this.struct = struct;
-    this.ownerType = ownerType;
+    this.player = player;
     this.util = new Util();
   }
 
@@ -377,7 +377,7 @@ export class UIStructDetails {
         <div class="container-fluid">
           <div class="row">
             <div class="col text-start">
-              <h5 class="offcanvas-title" id="offcanvasBottomLabel">${this.util.titleCase(this.ownerType)}</h5>
+              <h5 class="offcanvas-title" id="offcanvasBottomLabel">${this.util.titleCase(this.player.name)}</h5>
             </div>
             <div class="col text-end">
               <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
