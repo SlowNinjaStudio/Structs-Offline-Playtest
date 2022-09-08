@@ -68,30 +68,117 @@ document.getElementById('enemyFleet').innerHTML = enemyFleetUI.render(player);
 
 const players = [player, enemy];
 
-window.structsStore = {
-  selectMode: false, // temporary for testing
-  structAction: {
-    type: '', // ATTACK_PRIMARY, ATTACK_SECONDARY, DEFEND, MOVE, STEALTH_MODE_ACTIVATE, STEALTH_MODE_DEACTIVATE
-    source: {
-      playerId: null,
-      structId: null,
-      isCommandStruct: null
-    }
-  }
+
+const STRUCT_ACTION_TYPES = {
+  ATTACK_PRIMARY: 'ATTACK_PRIMARY',
+  ATTACK_SECONDARY: 'ATTACK_SECONDARY',
+  DEFEND: 'DEFEND',
+  MOVE: 'MOVE',
+  STEALTH_MODE: 'STEALTH_MODE'
 };
 
-const targetStruct = { // ATTACK_*, DEFEND
-  playerId: '',
-  structId: '',
-  isCommandStruct: false
+class StructReferenceDTO { // ATTACK_*, DEFEND
+  /**
+   * @param {string} playerId
+   * @param {string} structId
+   * @param {boolean} isCommandStruct
+   */
+  constructor(playerId, structId, isCommandStruct = false) {
+    this.playerId = playerId;
+    this.structId = structId;
+    this.isCommandStruct = isCommandStruct;
+  }
 }
 
-const targetAmbit = {
-  ambit: '' // WATER, LAND, SKY, SPACE
+class StructAction {
+  /**
+   * @param {string} type
+   * @param {StructReferenceDTO} source
+   */
+  constructor(type, source) {
+    this.setType(type);
+    this.source = source;
+    this.data = {};
+  }
+
+  /**
+   * @param {string} type
+   */
+  setType(type) {
+    if (!STRUCT_ACTION_TYPES[type]) {
+      throw new Error(`Invalid struct action type: ${type}`);
+    }
+    this.type = type;
+  }
+
+  /**
+   * @return {string}
+   */
+  getType() {
+    return this.type;
+  }
+
+  dispatchEvent() {
+    window.dispatchEvent(new CustomEvent(
+      this.type,
+      {
+        detail: {
+          source: this.source,
+          data: this.data
+        },
+      }
+    ));
+  }
+}
+
+class StructsGlobalDataStore {
+  constructor() {
+    window.structsStore = window.structsStore || {};
+  }
+
+  /**
+   * @param {string} key
+   * @param {*} value
+   */
+  set(key, value) {
+    window.structsStore[key] = value;
+  }
+
+  /**
+   * @param {string} key
+   * @return {*}
+   */
+  get(key) {
+    return window.structsStore[key];
+  }
+
+  /**
+   * @param {StructAction} action
+   */
+  setStructAction(action) {
+    this.set('structAction', action);
+  }
+
+  /**
+   * @return {StructAction}
+   */
+  getStructAction() {
+    return this.get('structAction');
+  }
+
+  clearStructAction() {
+    this.set('structAction', null);
+  }
 }
 
 document.getElementById('testButton').addEventListener('click', function() {
-  window.structsStore.selectMode = true;
+  (new StructsGlobalDataStore()).setStructAction(new StructAction(
+    STRUCT_ACTION_TYPES.ATTACK_PRIMARY,
+    new StructReferenceDTO(
+      player.id,
+      player.fleet.space[1].id
+    )
+  ));
 });
 
 document.querySelectorAll('.struct-map-view-btn').forEach(structButton => {
@@ -99,14 +186,23 @@ document.querySelectorAll('.struct-map-view-btn').forEach(structButton => {
     const playerId = structButton.getAttribute('data-player-id');
     const structId = structButton.getAttribute('data-struct-id');
     const isCommandStruct = !!parseInt(structButton.getAttribute('data-is-command-struct'));
+    const structsStore = new StructsGlobalDataStore();
+    const action = structsStore.getStructAction();
 
-    if (window.structsStore.selectMode) {
+    if (action && [
+      STRUCT_ACTION_TYPES.ATTACK_PRIMARY,
+      STRUCT_ACTION_TYPES.ATTACK_SECONDARY,
+      STRUCT_ACTION_TYPES.DEFEND
+    ].includes(action.getType())) {
       alert(`
+      action: ${action.getType()}
       player-id: ${playerId},
       struct-id: ${structId},
       is-command-struct: ${isCommandStruct}
       `);
-      window.structsStore.selectMode = false;
+      action.data = new StructReferenceDTO(playerId, structId, isCommandStruct);
+      action.dispatchEvent();
+      structsStore.clearStructAction();
     } else {
       const player = players.find(player => player.id === playerId);
       const struct = isCommandStruct ? player.commandStruct : player.fleet.findStructById(structId);
@@ -131,4 +227,8 @@ popoverTriggerList.map(function (popoverTriggerEl) {
     container: 'body',
     trigger: 'focus'
   });
+});
+
+window.addEventListener(STRUCT_ACTION_TYPES.ATTACK_PRIMARY, function(e) {
+  console.log(e);
 });
