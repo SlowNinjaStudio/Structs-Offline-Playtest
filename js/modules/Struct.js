@@ -279,6 +279,15 @@ export class Struct {
   }
 
   /**
+   * The ambit slot that is shown in the interface.
+   *
+   * @return {string}
+   */
+  getDisplayAmbitSlot() {
+    return this.ambitSlot === null ? 'N/A' : `${this.ambitSlot + 1}`;
+  }
+
+  /**
    * @return {boolean}
    */
   isCommandStruct() {

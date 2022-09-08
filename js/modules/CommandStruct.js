@@ -32,6 +32,7 @@ export class CommandStruct extends Struct {
     this.maxHealth = COMMAND_STRUCT_DEFAULTS.MAX_HEALTH;
     this.currentHealth = this.maxHealth;
     this.canDefend = false;
+    this.ambitSlot = -1;
   }
 
   /**

@@ -316,7 +316,7 @@ export class UIStructDetails {
         </div>
         <div class="col-auto ps-1">
         ${defending ? `
-          ${this.getAmbitIcon(defending.operatingAmbit)} ${defending.ambitSlot}
+          ${this.getAmbitIcon(defending.operatingAmbit)} ${defending.getDisplayAmbitSlot()}
         ` : '--'}
         </div>
       </div>
@@ -330,7 +330,7 @@ export class UIStructDetails {
    */
   getDefendersByAmbit(struct, ambit) {
     const ambitDefenders = struct.defenders.filter(defender => defender.operatingAmbit === ambit);
-    let slots = ambitDefenders.reduce((slotsList, defender) => `${slotsList}, ${defender.getAmbitSlot()}`, '');
+    let slots = ambitDefenders.reduce((slotsList, defender) => `${slotsList}, ${defender.getDisplayAmbitSlot()}`, '');
     slots = slots.length > 2 ? slots.slice(2) : '--';
     return `${this.getAmbitIcon(ambit)} ${slots}`;
   }
@@ -423,7 +423,7 @@ export class UIStructDetails {
                     ><img src="${IMG.ICONS}icon-location-pin.png" alt="location-pin"></a><strong>:</strong>
                   </div>
                   <div class="col ps-1">
-                    ${this.getAmbitIcon(this.struct.operatingAmbit)} ${this.struct.ambitSlot}
+                    ${this.getAmbitIcon(this.struct.operatingAmbit)} ${this.struct.getDisplayAmbitSlot()}
                   </div>
                 </div>
                 <div class="row">
