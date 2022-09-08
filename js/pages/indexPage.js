@@ -68,26 +68,60 @@ document.getElementById('enemyFleet').innerHTML = enemyFleetUI.render(player);
 
 const players = [player, enemy];
 
+window.structsStore = {
+  selectMode: false, // temporary for testing
+  structAction: {
+    type: '', // ATTACK_PRIMARY, ATTACK_SECONDARY, DEFEND, MOVE, STEALTH_MODE_ACTIVATE, STEALTH_MODE_DEACTIVATE
+    source: {
+      playerId: null,
+      structId: null,
+      isCommandStruct: null
+    }
+  }
+};
+
+const targetStruct = { // ATTACK_*, DEFEND
+  playerId: '',
+  structId: '',
+  isCommandStruct: false
+}
+
+const targetAmbit = {
+  ambit: '' // WATER, LAND, SKY, SPACE
+}
+
+document.getElementById('testButton').addEventListener('click', function() {
+  window.structsStore.selectMode = true;
+});
+
 document.querySelectorAll('.struct-map-view-btn').forEach(structButton => {
   structButton.addEventListener('click', function() {
-    const domOffcanvas = document.getElementById('offcanvasBottom');
-    const bsOffcanvas = bootstrap.Offcanvas.getOrCreateInstance(document.getElementById('offcanvasBottom'));
     const playerId = structButton.getAttribute('data-player-id');
     const structId = structButton.getAttribute('data-struct-id');
     const isCommandStruct = !!parseInt(structButton.getAttribute('data-is-command-struct'));
-    const player = players.find(player => player.id === playerId);
-    const offcanvasClass = (thisPlayer.id === playerId) ? 'player' : 'enemy';
-    const struct = isCommandStruct ? player.commandStruct : player.fleet.findStructById(structId);
-    console.log(player);
-    console.log(struct);
 
-    domOffcanvas.classList.remove('player');
-    domOffcanvas.classList.remove('enemy');
-    domOffcanvas.classList.add(offcanvasClass);
+    if (window.structsStore.selectMode) {
+      alert(`
+      player-id: ${playerId},
+      struct-id: ${structId},
+      is-command-struct: ${isCommandStruct}
+      `);
+      window.structsStore.selectMode = false;
+    } else {
+      const player = players.find(player => player.id === playerId);
+      const struct = isCommandStruct ? player.commandStruct : player.fleet.findStructById(structId);
+      const domOffcanvas = document.getElementById('offcanvasBottom');
+      const bsOffcanvas = bootstrap.Offcanvas.getOrCreateInstance(document.getElementById('offcanvasBottom'));
+      const offcanvasClass = (thisPlayer.id === playerId) ? 'player' : 'enemy';
 
-    domOffcanvas.innerHTML = (new UIStructDetails(struct, player)).render();
+      domOffcanvas.classList.remove('player');
+      domOffcanvas.classList.remove('enemy');
+      domOffcanvas.classList.add(offcanvasClass);
 
-    bsOffcanvas.show();
+      domOffcanvas.innerHTML = (new UIStructDetails(struct, player)).render();
+
+      bsOffcanvas.show();
+    }
   });
 });
 
