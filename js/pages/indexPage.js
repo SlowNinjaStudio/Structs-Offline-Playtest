@@ -73,13 +73,7 @@ document.getElementById('testButton').addEventListener('click', function() {
   ));
 });
 
-const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
-popoverTriggerList.map(function (popoverTriggerEl) {
-  return new bootstrap.Popover(popoverTriggerEl, {
-    container: 'body',
-    trigger: 'focus'
-  });
-});
+
 
 window.addEventListener(STRUCT_ACTION_TYPES.ATTACK_PRIMARY, function(e) {
   console.log(e);
