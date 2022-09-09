@@ -1,4 +1,4 @@
-import {STRUCT_ACTION_TYPES} from "./Constants.js";
+import {EVENTS} from "./Constants.js";
 
 export class StructAction {
   /**
@@ -15,7 +15,7 @@ export class StructAction {
    * @param {string} type
    */
   setType(type) {
-    if (!STRUCT_ACTION_TYPES[type]) {
+    if (!EVENTS.ACTIONS[type]) {
       throw new Error(`Invalid struct action type: ${type}`);
     }
     this.type = type;

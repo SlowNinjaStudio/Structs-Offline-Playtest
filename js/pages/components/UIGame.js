@@ -1,5 +1,5 @@
 import {UIFleet} from "./UIFleet.js";
-import {STRUCT_ACTION_TYPES} from "../../modules/Constants.js";
+import {EVENTS} from "../../modules/Constants.js";
 import {UIStructDetails} from "./UIStructDetails.js";
 import {StructsGlobalDataStore} from "../../modules/StructsGlobalDataStore.js";
 import {StructRef} from "../../modules/StructRef.js";
@@ -42,9 +42,9 @@ export class UIGame {
         const action = structsStore.getStructAction();
 
         if (action && [
-          STRUCT_ACTION_TYPES.ATTACK_PRIMARY,
-          STRUCT_ACTION_TYPES.ATTACK_SECONDARY,
-          STRUCT_ACTION_TYPES.DEFEND
+          EVENTS.ACTIONS.ATTACK_PRIMARY,
+          EVENTS.ACTIONS.ATTACK_SECONDARY,
+          EVENTS.ACTIONS.DEFEND
         ].includes(action.getType())) {
           alert(`
       action: ${action.getType()}

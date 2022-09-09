@@ -1,6 +1,6 @@
 import {UINavbar} from "./components/UINavbar.js";
 import {StructBuilder} from "../modules/StructBuilder.js";
-import {MANUAL_WEAPON_SLOTS, STRUCT_ACTION_TYPES, UNIT_TYPES} from "../modules/Constants.js";
+import {EVENTS, MANUAL_WEAPON_SLOTS, UNIT_TYPES} from "../modules/Constants.js";
 import {Player} from "../modules/Player.js";
 import {StructRef} from "../modules/StructRef.js";
 import {StructAction} from "../modules/StructAction.js";
@@ -65,7 +65,7 @@ game.render();
 
 document.getElementById('testButton').addEventListener('click', function() {
   (new StructsGlobalDataStore()).setStructAction(new StructAction(
-    STRUCT_ACTION_TYPES.ATTACK_PRIMARY,
+    EVENTS.ACTIONS.ATTACK_PRIMARY,
     new StructRef(
       player.id,
       player.fleet.space[1].id
@@ -73,9 +73,7 @@ document.getElementById('testButton').addEventListener('click', function() {
   ));
 });
 
-
-
-window.addEventListener(STRUCT_ACTION_TYPES.ATTACK_PRIMARY, function(e) {
+window.addEventListener(EVENTS.ACTIONS.ATTACK_PRIMARY, function(e) {
   console.log(e);
   const sourceStructRef = e.detail.source;
   const targetStructRef = e.detail.data;
