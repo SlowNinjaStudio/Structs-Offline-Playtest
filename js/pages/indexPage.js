@@ -1,6 +1,6 @@
 import {UINavbar} from "./components/UINavbar.js";
 import {StructBuilder} from "../modules/StructBuilder.js";
-import {UNIT_TYPES} from "../modules/Constants.js";
+import {MANUAL_WEAPON_SLOTS, UNIT_TYPES} from "../modules/Constants.js";
 import {UIStructDetails} from "./components/UIStructDetails.js";
 import {Player} from "../modules/Player.js";
 import {UIFleet} from "./components/UIFleet.js";
@@ -77,7 +77,7 @@ const STRUCT_ACTION_TYPES = {
   STEALTH_MODE: 'STEALTH_MODE'
 };
 
-class StructReferenceDTO { // ATTACK_*, DEFEND
+class StructRef { // ATTACK_*, DEFEND
   /**
    * @param {string} playerId
    * @param {string} structId
@@ -93,7 +93,7 @@ class StructReferenceDTO { // ATTACK_*, DEFEND
 class StructAction {
   /**
    * @param {string} type
-   * @param {StructReferenceDTO} source
+   * @param {StructRef} source
    */
   constructor(type, source) {
     this.setType(type);
@@ -174,7 +174,7 @@ class StructsGlobalDataStore {
 document.getElementById('testButton').addEventListener('click', function() {
   (new StructsGlobalDataStore()).setStructAction(new StructAction(
     STRUCT_ACTION_TYPES.ATTACK_PRIMARY,
-    new StructReferenceDTO(
+    new StructRef(
       player.id,
       player.fleet.space[1].id
     )
@@ -200,7 +200,7 @@ document.querySelectorAll('.struct-map-view-btn').forEach(structButton => {
       struct-id: ${structId},
       is-command-struct: ${isCommandStruct}
       `);
-      action.data = new StructReferenceDTO(playerId, structId, isCommandStruct);
+      action.data = new StructRef(playerId, structId, isCommandStruct);
       action.dispatchEvent();
       structsStore.clearStructAction();
     } else {
@@ -231,4 +231,58 @@ popoverTriggerList.map(function (popoverTriggerEl) {
 
 window.addEventListener(STRUCT_ACTION_TYPES.ATTACK_PRIMARY, function(e) {
   console.log(e);
+  const sourceStructRef = e.detail.source;
+  const targetStructRef = e.detail.data;
+  const sourcePlayer = players.find(player => player.id === sourceStructRef.playerId);
+  const targetPlayer = players.find(player => player.id === targetStructRef.playerId);
+  const playerStruct = sourceStructRef.isCommandStruct
+    ? sourcePlayer.commandStruct
+    : sourcePlayer.fleet.findStructById(sourceStructRef.structId);
+  const targetStruct = sourceStructRef.isCommandStruct
+    ? targetPlayer.commandStruct
+    : targetPlayer.fleet.findStructById(targetStructRef.structId);
+  playerStruct.attack(MANUAL_WEAPON_SLOTS.PRIMARY, targetStruct);
+
+  document.getElementById('playerFleet').innerHTML = playerFleetUI.render(player);
+  document.getElementById('enemyFleet').innerHTML = enemyFleetUI.render(player);
+
+  document.querySelectorAll('.struct-map-view-btn').forEach(structButton => {
+    structButton.addEventListener('click', function() {
+      const playerId = structButton.getAttribute('data-player-id');
+      const structId = structButton.getAttribute('data-struct-id');
+      const isCommandStruct = !!parseInt(structButton.getAttribute('data-is-command-struct'));
+      const structsStore = new StructsGlobalDataStore();
+      const action = structsStore.getStructAction();
+
+      if (action && [
+        STRUCT_ACTION_TYPES.ATTACK_PRIMARY,
+        STRUCT_ACTION_TYPES.ATTACK_SECONDARY,
+        STRUCT_ACTION_TYPES.DEFEND
+      ].includes(action.getType())) {
+        alert(`
+      action: ${action.getType()}
+      player-id: ${playerId},
+      struct-id: ${structId},
+      is-command-struct: ${isCommandStruct}
+      `);
+        action.data = new StructRef(playerId, structId, isCommandStruct);
+        action.dispatchEvent();
+        structsStore.clearStructAction();
+      } else {
+        const player = players.find(player => player.id === playerId);
+        const struct = isCommandStruct ? player.commandStruct : player.fleet.findStructById(structId);
+        const domOffcanvas = document.getElementById('offcanvasBottom');
+        const bsOffcanvas = bootstrap.Offcanvas.getOrCreateInstance(document.getElementById('offcanvasBottom'));
+        const offcanvasClass = (thisPlayer.id === playerId) ? 'player' : 'enemy';
+
+        domOffcanvas.classList.remove('player');
+        domOffcanvas.classList.remove('enemy');
+        domOffcanvas.classList.add(offcanvasClass);
+
+        domOffcanvas.innerHTML = (new UIStructDetails(struct, player)).render();
+
+        bsOffcanvas.show();
+      }
+    });
+  });
 });
