@@ -7,7 +7,7 @@ export class StructsGlobalDataStore {
    * @param {string} key
    * @param {*} value
    */
-  set(key, value) {
+  #set(key, value) {
     window.structsStore[key] = value;
   }
 
@@ -15,25 +15,39 @@ export class StructsGlobalDataStore {
    * @param {string} key
    * @return {*}
    */
-  get(key) {
+  #get(key) {
     return window.structsStore[key];
+  }
+
+  /**
+   * @param {UIGame} game
+   */
+  setGame(game) {
+    this.#set('game', game);
+  }
+
+  /**
+   * @return {UIGame}
+   */
+  getGame() {
+    return this.#get('game');
   }
 
   /**
    * @param {StructAction} action
    */
   setStructAction(action) {
-    this.set('structAction', action);
+    this.#set('structAction', action);
   }
 
   /**
    * @return {StructAction}
    */
   getStructAction() {
-    return this.get('structAction');
+    return this.#get('structAction');
   }
 
   clearStructAction() {
-    this.set('structAction', null);
+    this.#set('structAction', null);
   }
 }

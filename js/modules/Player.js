@@ -11,7 +11,7 @@ export class Player {
     this.id = (new IdGenerator()).generate(PLAYER_DEFAULTS.ID_PREFIX);
     this.name = name;
     this.commandStruct = (new CommandStructBuilder()).make(UNIT_TYPES.COMMAND_SHIP);
-    this.fleet = new Fleet();
+    this.fleet = new Fleet(this.id);
   }
 
   /**

@@ -15,7 +15,7 @@ export class StructAction {
    * @param {string} type
    */
   setType(type) {
-    if (!EVENTS.ACTIONS[type]) {
+    if (!EVENTS[type]) {
       throw new Error(`Invalid struct action type: ${type}`);
     }
     this.type = type;

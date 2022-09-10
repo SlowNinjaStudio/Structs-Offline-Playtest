@@ -1,10 +1,11 @@
-import {FLEET_STRUCT_DEFAULTS, MANUAL_WEAPON_SLOTS, STRUCT_DEFAULTS} from "./Constants.js";
+import {EVENTS, FLEET_STRUCT_DEFAULTS, MANUAL_WEAPON_SLOTS, STRUCT_DEFAULTS} from "./Constants.js";
 import {DefenseComponent} from "./DefenseComponent.js";
 import {PassiveWeapon} from "./PassiveWeapon.js";
 import {DefendActionDisabledError} from "./DefendActionDisabledError.js";
 import {InvalidManualWeaponSlotError} from "./InvalidManualWeaponSlotError.js";
 import {IdGenerator} from "./IdGenerator.js";
 import {Util} from "./Util.js";
+import {CombatEvent} from "./CombatEvent.js";
 
 export class Struct {
   /**
@@ -36,6 +37,7 @@ export class Struct {
     this.canDefend = true;
     this.image = image;
     this.ambitSlot = null;
+    this.playerId = '';
 
     this.manualWeaponPrimary = manualWeaponPrimary;
     this.manualWeaponSecondary = manualWeaponSecondary;
@@ -104,17 +106,28 @@ export class Struct {
   /**
    * @param {number} damage
    * @param {Struct} attacker
+   * @return {number}
    */
   takeDamage(damage, attacker = null) {
+    const previousHeath = this.currentHealth;
     this.setCurrentHealth(this.currentHealth - this.defenseComponent.reduceAttackDamage(damage));
+    const damageTaken = previousHeath - this.currentHealth;
     if (this.currentHealth === 0) {
       this.destroyStruct();
 
       // Counter Attack on Death
       if (this.hasPassiveWeapon() && attacker && !attacker.isDestroyed) {
-        attacker.takeDamage(this.passiveWeapon.getDamageOnDeath());
+        const counterDamage = attacker.takeDamage(this.passiveWeapon.getDamageOnDeath());
+        const counterAttackedOnDeathEvent = new CombatEvent(
+          EVENTS.COMBAT_COUNTER_ATTACKED_ON_DEATH,
+          this,
+          attacker,
+          counterDamage
+        );
+        counterAttackedOnDeathEvent.dispatch();
       }
     }
+    return damageTaken;
   }
 
   /**

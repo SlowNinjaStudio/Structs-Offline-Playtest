@@ -65,7 +65,7 @@ game.render();
 
 document.getElementById('testButton').addEventListener('click', function() {
   (new StructsGlobalDataStore()).setStructAction(new StructAction(
-    EVENTS.ACTIONS.ATTACK_PRIMARY,
+    EVENTS.ACTION_ATTACK_PRIMARY,
     new StructRef(
       player.id,
       player.fleet.space[1].id
@@ -73,7 +73,7 @@ document.getElementById('testButton').addEventListener('click', function() {
   ));
 });
 
-window.addEventListener(EVENTS.ACTIONS.ATTACK_PRIMARY, function(e) {
+window.addEventListener(EVENTS.ACTION_ATTACK_PRIMARY, function(e) {
   console.log(e);
   const sourceStructRef = e.detail.source;
   const targetStructRef = e.detail.data;

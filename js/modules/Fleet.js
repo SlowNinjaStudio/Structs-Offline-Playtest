@@ -2,13 +2,16 @@ import {AMBITS, MAX_FLEET_STRUCTS_PER_AMBIT, PLAYER_DEFAULTS} from "./Constants.
 
 export class Fleet {
   /**
+   * @param {string} playerId
    * @param {number} maxStructs
    * @param {Object} maxStructsPerAmbit
    */
   constructor(
+    playerId = '',
     maxStructs = PLAYER_DEFAULTS.MAX_ACTIVE_FLEET_STRUCTS,
     maxStructsPerAmbit = MAX_FLEET_STRUCTS_PER_AMBIT
   ) {
+    this.playerId = playerId;
     this.maxStructs = maxStructs;
     this.maxStructsPerAmbit = maxStructsPerAmbit;
     this.space = [];
@@ -146,6 +149,7 @@ export class Fleet {
   addStruct(struct, index= -1) {
     index = index > -1 ? index : this.findFreeAmbitSlot(struct.operatingAmbit);
     if (this.canAddStruct(struct, index)) {
+      struct.playerId = this.playerId;
       struct.setAmbitSlot(index);
       this[struct.operatingAmbit.toLowerCase()][index] = struct;
       return true;
@@ -163,6 +167,7 @@ export class Fleet {
     if (index < 0) {
       return false;
     }
+    this[ambit.toLowerCase()][index].playerId = '';
     this[ambit.toLowerCase()][index].clearAmbitSlot();
     this[ambit.toLowerCase()][index] = null;
     return true;

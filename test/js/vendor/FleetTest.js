@@ -106,7 +106,7 @@ const ambitCapacityRemainingTest = new DTest('ambitCapacityRemainingTest', funct
 });
 
 const isCapacityRemainingTest = new DTest('isCapacityRemainingTest', function() {
-  const fleet = new Fleet(2);
+  const fleet = new Fleet('', 2);
   const structBuilder = new StructBuilder();
   const structLand1 = structBuilder.make(UNIT_TYPES.TANK);
   const structLand2 = structBuilder.make(UNIT_TYPES.SAM_LAUNCHER);
@@ -145,7 +145,7 @@ const isAmbitCapacityRemainingTest = new DTest('isAmbitCapacityRemainingTest', f
 });
 
 const addStructTest = new DTest('addStructTest', function() {
-  const fleet = new Fleet(4, {
+  const fleet = new Fleet('test', 4, {
     SPACE: 1,
     SKY: 1,
     LAND: 2,
@@ -161,12 +161,14 @@ const addStructTest = new DTest('addStructTest', function() {
 
   this.assertEquals(fleet.addStruct(structLand1), true);
   this.assertEquals(fleet.land[0].getAmbitSlot(), 0);
+  this.assertEquals(fleet.land[0].playerId, 'test');
 
   // Can't add the same struct twice
   this.assertEquals(fleet.addStruct(structLand1), false);
 
   this.assertEquals(fleet.addStruct(structLand2), true);
   this.assertEquals(fleet.land[1].getAmbitSlot(), 1);
+  this.assertEquals(fleet.land[1].playerId, 'test');
 
   // At max structs per land ambit
   this.assertEquals(fleet.addStruct(structLand3), false);
@@ -184,7 +186,7 @@ const addStructTest = new DTest('addStructTest', function() {
 });
 
 const removeStructByAmbitAndIdTest = new DTest('removeStructByAmbitAndIdTest', function() {
-  const fleet = new Fleet();
+  const fleet = new Fleet('test');
   const structBuilder = new StructBuilder();
   const structLand1 = structBuilder.make(UNIT_TYPES.TANK);
   const structLand2 = structBuilder.make(UNIT_TYPES.SAM_LAUNCHER);
@@ -203,7 +205,9 @@ const removeStructByAmbitAndIdTest = new DTest('removeStructByAmbitAndIdTest', f
 
   this.assertEquals(structLand2.getAmbitSlot(), 1);
 
+  this.assertEquals(structLand2.playerId, 'test');
   this.assertEquals(fleet.removeStructByAmbitAndId(AMBITS.LAND, structLand2.id), true);
+  this.assertEquals(structLand2.playerId, '');
 
   this.assertEquals(structLand2.getAmbitSlot(), null);
 

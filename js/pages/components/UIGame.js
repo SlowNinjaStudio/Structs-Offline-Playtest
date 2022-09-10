@@ -5,7 +5,7 @@ import {StructsGlobalDataStore} from "../../modules/StructsGlobalDataStore.js";
 import {StructRef} from "../../modules/StructRef.js";
 
 export class UIGame {
-  constructor(elementId, player, enemy) {
+  constructor(elementId, player, enemy, globalDataStore = new StructsGlobalDataStore()) {
     this.elementId = elementId
     this.player = player;
     this.enemy = enemy;
@@ -13,9 +13,13 @@ export class UIGame {
 
     this.playerFleetUI = new UIFleet(this.player);
     this.enemyFleetUI = new UIFleet(this.enemy);
+    globalDataStore.setGame(this);
   }
 
-  render() {
+  /**
+   * @param {StructsGlobalDataStore} globalDataStore
+   */
+  render(globalDataStore = new StructsGlobalDataStore()) {
     document.getElementById(this.elementId).innerHTML = `
       <div class="container-fluid play-area">
         <div class="row">
@@ -32,7 +36,6 @@ export class UIGame {
       </div>
     `;
 
-    const game = this;
     document.querySelectorAll('.struct-map-view-btn').forEach(structButton => {
       structButton.addEventListener('click', function() {
         const playerId = structButton.getAttribute('data-player-id');
@@ -42,20 +45,21 @@ export class UIGame {
         const action = structsStore.getStructAction();
 
         if (action && [
-          EVENTS.ACTIONS.ATTACK_PRIMARY,
-          EVENTS.ACTIONS.ATTACK_SECONDARY,
-          EVENTS.ACTIONS.DEFEND
+          EVENTS.ACTION_ATTACK_PRIMARY,
+          EVENTS.ACTION_ATTACK_SECONDARY,
+          EVENTS.ACTION_DEFEND
         ].includes(action.getType())) {
           alert(`
-      action: ${action.getType()}
-      player-id: ${playerId},
-      struct-id: ${structId},
-      is-command-struct: ${isCommandStruct}
-      `);
+            action: ${action.getType()}
+            player-id: ${playerId},
+            struct-id: ${structId},
+            is-command-struct: ${isCommandStruct}
+          `);
           action.data = new StructRef(playerId, structId, isCommandStruct);
           action.dispatchEvent();
           structsStore.clearStructAction();
         } else {
+          const game = globalDataStore.getGame();
           const player = game.players.find(player => player.id === playerId);
           const struct = isCommandStruct ? player.commandStruct : player.fleet.findStructById(structId);
           const domOffcanvas = document.getElementById('offcanvasBottom');
