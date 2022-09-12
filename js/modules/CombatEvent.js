@@ -19,16 +19,6 @@ export class CombatEvent extends CustomEvent {
     this.damageAmount = damageAmount;
   }
 
-  /**
-   * @param {CustomEvent} combatEvent
-   */
-  parse(combatEvent) {
-    Object.assign(this, combatEvent);
-    this.sourceStruct = combatEvent.detail.sourceStruct;
-    this.targetPlayer = combatEvent.detail.targetPlayer;
-    this.damageAmount = combatEvent.detail.damageAmount;
-  }
-
   dispatch() {
     window.dispatchEvent(this);
   }

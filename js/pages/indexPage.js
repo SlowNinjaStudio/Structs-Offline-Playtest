@@ -65,7 +65,7 @@ game.render();
 
 document.getElementById('testButton').addEventListener('click', function() {
   (new StructsGlobalDataStore()).setStructAction(new StructAction(
-    EVENTS.ACTION_ATTACK_PRIMARY,
+    EVENTS.ACTIONS.ACTION_ATTACK_PRIMARY,
     new StructRef(
       player.id,
       player.fleet.space[1].id
@@ -73,7 +73,7 @@ document.getElementById('testButton').addEventListener('click', function() {
   ));
 });
 
-window.addEventListener(EVENTS.ACTION_ATTACK_PRIMARY, function(e) {
+window.addEventListener(EVENTS.ACTIONS.ACTION_ATTACK_PRIMARY, function(e) {
   console.log(e);
   const sourceStructRef = e.detail.source;
   const targetStructRef = e.detail.data;
@@ -94,8 +94,7 @@ function combatEventHandler(e) {
   console.log(e);
 }
 
-const combatEventKeys = Object.keys(EVENTS).filter(eventKey => eventKey.startsWith('COMBAT_'));
-combatEventKeys.forEach(combatEventKey => {
-  window.addEventListener(EVENTS[combatEventKey], combatEventHandler);
+Object.keys(EVENTS.COMBAT).forEach(key => {
+  window.addEventListener(EVENTS.COMBAT[key], combatEventHandler);
 });
 

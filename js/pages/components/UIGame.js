@@ -45,9 +45,9 @@ export class UIGame {
         const action = structsStore.getStructAction();
 
         if (action && [
-          EVENTS.ACTION_ATTACK_PRIMARY,
-          EVENTS.ACTION_ATTACK_SECONDARY,
-          EVENTS.ACTION_DEFEND
+          EVENTS.ACTIONS.ACTION_ATTACK_PRIMARY,
+          EVENTS.ACTIONS.ACTION_ATTACK_SECONDARY,
+          EVENTS.ACTIONS.ACTION_DEFEND
         ].includes(action.getType())) {
           alert(`
             action: ${action.getType()}

@@ -120,7 +120,7 @@ export class Struct {
       if (this.hasPassiveWeapon() && attacker && !attacker.isDestroyed) {
         const damage = attacker.takeDamage(this.passiveWeapon.getDamageOnDeath());
         this.combatEventDispatcher.dispatch(
-          EVENTS.COMBAT_COUNTER_ATTACKED_ON_DEATH,
+          EVENTS.COMBAT.COMBAT_COUNTER_ATTACKED_ON_DEATH,
           this,
           attacker,
           damage
@@ -204,7 +204,7 @@ export class Struct {
     if (this.canTakeDamageFor(target)) {
       const damage = this.takeDamage(attackingWeapon.getDamage(), attacker);
       this.combatEventDispatcher.dispatch(
-        EVENTS.COMBAT_DEFENDER_BLOCKED,
+        EVENTS.COMBAT.COMBAT_DEFENDER_BLOCKED,
         this,
         attacker,
         damage
@@ -225,7 +225,7 @@ export class Struct {
         this
       );
       this.combatEventDispatcher.dispatch(
-        isDefenderCounter ? EVENTS.COMBAT_DEFENDER_COUNTERED : EVENTS.COMBAT_COUNTER_ATTACKED,
+        isDefenderCounter ? EVENTS.COMBAT.COMBAT_DEFENDER_COUNTERED : EVENTS.COMBAT.COMBAT_COUNTER_ATTACKED,
         this,
         target,
         damage
@@ -247,7 +247,7 @@ export class Struct {
       return;
     }
 
-    this.combatEventDispatcher.dispatch(EVENTS.COMBAT_TARGETED, this, target);
+    this.combatEventDispatcher.dispatch(EVENTS.COMBAT.COMBAT_TARGETED, this, target);
 
     for (let i = 0; i < target.defenders.length; i++) {
       // Defender Block
@@ -267,7 +267,7 @@ export class Struct {
     if (!attackBlocked) {
       const damage = target.takeDamage(attackingWeapon.getDamage(), this);
       this.combatEventDispatcher.dispatch(
-        EVENTS.COMBAT_ATTACKED,
+        EVENTS.COMBAT.COMBAT_ATTACKED,
         this,
         target,
         damage
@@ -277,7 +277,7 @@ export class Struct {
     // Counter Attack
     target.counterAttack(this);
 
-    this.combatEventDispatcher.dispatch(EVENTS.COMBAT_ENDED, this, target);
+    this.combatEventDispatcher.dispatch(EVENTS.COMBAT.COMBAT_ENDED, this, target);
   }
 
   /**
