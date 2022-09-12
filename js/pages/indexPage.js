@@ -89,3 +89,13 @@ window.addEventListener(EVENTS.ACTION_ATTACK_PRIMARY, function(e) {
 
   game.render();
 });
+
+function combatEventHandler(e) {
+  console.log(e);
+}
+
+const combatEventKeys = Object.keys(EVENTS).filter(eventKey => eventKey.startsWith('COMBAT_'));
+combatEventKeys.forEach(combatEventKey => {
+  window.addEventListener(EVENTS[combatEventKey], combatEventHandler);
+});
+
