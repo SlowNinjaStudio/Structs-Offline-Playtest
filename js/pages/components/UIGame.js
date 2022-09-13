@@ -49,12 +49,6 @@ export class UIGame {
           EVENTS.ACTIONS.ACTION_ATTACK_SECONDARY,
           EVENTS.ACTIONS.ACTION_DEFEND
         ].includes(action.getType())) {
-          alert(`
-            action: ${action.getType()}
-            player-id: ${playerId},
-            struct-id: ${structId},
-            is-command-struct: ${isCommandStruct}
-          `);
           action.data = new StructRef(playerId, structId, isCommandStruct);
           action.dispatchEvent();
           structsStore.clearStructAction();

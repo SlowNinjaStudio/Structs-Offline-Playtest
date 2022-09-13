@@ -400,6 +400,25 @@ body {
   padding-top: 8px;
 }
 
+.flip-img-x img {
+  transform: scaleX(-1);
+}
+
+.combat-events {
+  font-size: 16px;
+  overflow-y: scroll;
+}
+.combat-event-row {
+  border-bottom: 1px solid #cccccc;
+}
+.combat-event-struct-image {
+  max-width: 80px;
+}
+.combat-event-icon img {
+  max-width: 80px;
+}
+
+
 .offcanvas.structDetails {
   margin: 0 auto;
   max-width: 500px;
