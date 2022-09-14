@@ -168,7 +168,7 @@ class UICombatEventViewer {
         </div>
         <div class="row">
           <div class="col text-center">
-            <img class="combat-event-struct-image" src="${struct.image}" alt="${struct.unitType}">
+            <img class="combat-event-struct-image img-thumbnail" src="${struct.image}" alt="${struct.unitType}">
           </div>
         </div>
         <div class="row">
@@ -261,10 +261,27 @@ class UICombatEventViewer {
     `;
   }
 
+  /**
+   * @return {string}
+   */
+  renderEndRow() {
+    return `
+      <div class="row py-4 px-1 combat-event-row">
+        <div class="col text-center">
+            <button type="button" class="btn btn-success" data-bs-dismiss="offcanvas">Close</button>
+        </div>
+      </div>
+    `;
+  }
+
   render() {
     let eventRowsHtml = '';
     for (let i = 0; i < this.events.length; i++) {
-      eventRowsHtml += this.renderEventRow(this.events[i]);
+      if (this.events[i].type === EVENTS.COMBAT.COMBAT_ENDED) {
+        eventRowsHtml += this.renderEndRow();
+      } else {
+        eventRowsHtml += this.renderEventRow(this.events[i]);
+      }
     }
 
     document.getElementById(this.offcanvasId).innerHTML = `

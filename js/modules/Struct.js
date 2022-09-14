@@ -119,12 +119,14 @@ export class Struct {
       // Counter Attack on Death
       if (this.hasPassiveWeapon() && attacker && !attacker.isDestroyed) {
         const damage = attacker.takeDamage(this.passiveWeapon.getDamageOnDeath());
-        this.combatEventDispatcher.dispatch(
-          EVENTS.COMBAT.COMBAT_COUNTER_ATTACKED_ON_DEATH,
-          this,
-          attacker,
-          damage
-        );
+        if (damage > 0) {
+          this.combatEventDispatcher.dispatch(
+            EVENTS.COMBAT.COMBAT_COUNTER_ATTACKED_ON_DEATH,
+            this,
+            attacker,
+            damage
+          );
+        }
       }
     }
     return damageTaken;
