@@ -64,7 +64,9 @@ export class UIGame {
           domOffcanvas.classList.remove('enemy');
           domOffcanvas.classList.add(offcanvasClass);
 
-          domOffcanvas.innerHTML = (new UIStructDetails(struct, player)).render();
+          const uiStructDetails = new UIStructDetails(struct, player, 'offcanvasBottom');
+          domOffcanvas.innerHTML = uiStructDetails.render();
+          uiStructDetails.initListeners();
 
           const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
           popoverTriggerList.map(function (popoverTriggerEl) {

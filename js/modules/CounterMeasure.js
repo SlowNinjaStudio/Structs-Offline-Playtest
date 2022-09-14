@@ -18,7 +18,10 @@ export class CounterMeasure extends DefenseComponent {
    * @return {number}
    */
   reduceAttackDamage(incomingDamage , attackingWeapon) {
-    return (attackingWeapon.isGuided === this.guided && Math.random() < this.probability.toDecimal())
-      ? 0 : incomingDamage;
+    return (
+      attackingWeapon !== null
+      && attackingWeapon.isGuided === this.guided
+      && Math.random() < this.probability.toDecimal()
+    ) ? 0 : incomingDamage;
   }
 }

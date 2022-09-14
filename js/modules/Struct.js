@@ -107,11 +107,12 @@ export class Struct {
   /**
    * @param {number} damage
    * @param {Struct} attacker
+   * @param {ManualWeapon} attackingWeapon
    * @return {number}
    */
-  takeDamage(damage, attacker = null) {
+  takeDamage(damage, attacker = null, attackingWeapon = null) {
     const previousHeath = this.currentHealth;
-    this.setCurrentHealth(this.currentHealth - this.defenseComponent.reduceAttackDamage(damage));
+    this.setCurrentHealth(this.currentHealth - this.defenseComponent.reduceAttackDamage(damage, attackingWeapon));
     const damageTaken = previousHeath - this.currentHealth;
     if (this.currentHealth === 0) {
       this.destroyStruct();
@@ -261,13 +262,14 @@ export class Struct {
       target.defenders[i].counterAttack(this);
 
       if (this.isDestroyed) {
+        this.combatEventDispatcher.dispatch(EVENTS.COMBAT.COMBAT_ENDED, this, target);
         return;
       }
     }
 
     // Attack
     if (!attackBlocked) {
-      const damage = target.takeDamage(attackingWeapon.getDamage(), this);
+      const damage = target.takeDamage(attackingWeapon.getDamage(), this, attackingWeapon);
       this.combatEventDispatcher.dispatch(
         EVENTS.COMBAT.COMBAT_ATTACKED,
         this,

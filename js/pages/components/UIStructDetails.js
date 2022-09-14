@@ -1,17 +1,89 @@
-import {AMBITS, DEFENSE_COMPONENT_TYPES, DEFENSE_COMPONENTS, IMG} from "../../modules/Constants.js";
+import {AMBITS, DEFENSE_COMPONENT_TYPES, DEFENSE_COMPONENTS, EVENTS, IMG} from "../../modules/Constants.js";
 import {Util} from "../../modules/Util.js";
 import {CounterMeasure} from "../../modules/CounterMeasure.js";
+import {StructsGlobalDataStore} from "../../modules/StructsGlobalDataStore.js";
+import {StructAction} from "../../modules/StructAction.js";
+import {StructRef} from "../../modules/StructRef.js";
 
 export class UIStructDetails {
 
   /**
    * @param {Struct} struct
    * @param {Player} player
+   * @param {string} offcanvasId
    */
-  constructor(struct, player) {
+  constructor(struct, player, offcanvasId) {
     this.struct = struct;
     this.player = player;
+    this.offcanvasId = offcanvasId;
     this.util = new Util();
+    this.primaryAttackButtonId = 'primaryAttackButton';
+    this.secondaryAttackButtonId = 'secondaryAttackButton';
+    this.defendButtonId = 'defendButton';
+    this.defenseComponentButtonId = 'defenseComponentButton';
+  }
+
+  /**
+   * @param {string} eventType
+   * @param {string} actionButtonId
+   * @param {string} offcanvasId
+   * @return {function}
+   */
+  getActionFunction(eventType, actionButtonId, offcanvasId) {
+    const actionButton = document.getElementById(actionButtonId);
+    const domOffcanvas = document.getElementById(offcanvasId);
+    const bsOffcanvas = bootstrap.Offcanvas.getOrCreateInstance(domOffcanvas);
+    return function() {
+      bsOffcanvas.hide();
+      const playerId = actionButton.getAttribute('data-player-id');
+      const structId = actionButton.getAttribute('data-struct-id');
+      (new StructsGlobalDataStore()).setStructAction(new StructAction(
+        eventType,
+        new StructRef(
+          playerId,
+          structId
+        )
+      ));
+    }
+  }
+
+  initPrimaryAttackListener() {
+    const primaryAttackButton = document.getElementById(this.primaryAttackButtonId);
+    if (primaryAttackButton) {
+      primaryAttackButton.addEventListener('click', this.getActionFunction(
+        EVENTS.ACTIONS.ACTION_ATTACK_PRIMARY,
+        this.primaryAttackButtonId,
+        this.offcanvasId
+      ));
+    }
+  }
+
+  initSecondaryAttackListener() {
+    const secondaryAttackButton = document.getElementById(this.secondaryAttackButtonId);
+    if (secondaryAttackButton) {
+      secondaryAttackButton.addEventListener('click', this.getActionFunction(
+        EVENTS.ACTIONS.ACTION_ATTACK_SECONDARY,
+        this.secondaryAttackButtonId,
+        this.offcanvasId
+      ));
+    }
+  }
+
+  initDefendListener() {
+    const defendButton = document.getElementById(this.defendButtonId);
+    if (defendButton) {
+      defendButton.addEventListener('click', this.getActionFunction(
+        EVENTS.ACTIONS.ACTION_DEFEND,
+        this.defendButtonId,
+        this.offcanvasId
+      ));
+    }
+  }
+
+  initListeners() {
+    this.initPrimaryAttackListener();
+    this.initSecondaryAttackListener();
+    this.initDefendListener();
   }
 
   /**
@@ -30,7 +102,13 @@ export class UIStructDetails {
         <div class="row">
           <div class="col d-grid">
           ${this.struct.manualWeaponPrimary ? `
-            <button type="button" class="btn btn-danger btn-sm">
+            <button
+              id="primaryAttackButton"
+              type="button"
+              class="btn btn-danger btn-sm"
+              data-player-id="${this.player.id}"
+              data-struct-id="${this.struct.id}"
+            >
               ${this.struct.manualWeaponPrimary.getActionLabel()}
               <img src="${IMG.ICONS}icon-attack-range.png" alt="attack-range">
               (1)
@@ -39,7 +117,13 @@ export class UIStructDetails {
           </div>
           <div class="col d-grid">
           ${this.struct.canDefend ? `
-            <button type="button" class="btn btn-primary btn-sm">
+            <button
+              id="defendButton"
+              type="button"
+              class="btn btn-primary btn-sm"
+              data-player-id="${this.player.id}"
+              data-struct-id="${this.struct.id}"
+            >
               Defend
               <img src="${IMG.ICONS}icon-strength.png" alt="strength">
             </button>
@@ -49,7 +133,13 @@ export class UIStructDetails {
         <div class="row">
           <div class="col d-grid">
           ${this.struct.manualWeaponSecondary ? `
-            <button type="button" class="btn btn-danger btn-sm">
+            <button
+              id="secondaryAttackButton"
+              type="button"
+              class="btn btn-danger btn-sm"
+              data-player-id="${this.player.id}"
+              data-struct-id="${this.struct.id}"
+            >
               ${this.struct.manualWeaponSecondary.getActionLabel()}
               <img src="${IMG.ICONS}icon-attack-range.png" alt="attack-range">
               (2)
