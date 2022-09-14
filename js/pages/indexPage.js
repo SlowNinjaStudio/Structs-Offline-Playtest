@@ -168,7 +168,10 @@ class UICombatEventViewer {
         </div>
         <div class="row">
           <div class="col text-center">
-            <img class="combat-event-struct-image img-thumbnail" src="${struct.image}" alt="${struct.unitType}">
+            <div class="combat-event-struct-image-wrapper">
+              <img class="combat-event-struct-image img-thumbnail" src="${struct.image}" alt="${struct.unitType}">
+              <div class="combat-event-struct-image-overlay ${newHealth === 0 ? 'destroyed' : ''}"></div>
+            </div>
           </div>
         </div>
         <div class="row">

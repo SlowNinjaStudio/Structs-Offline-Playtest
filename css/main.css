@@ -415,8 +415,25 @@ body {
 .combat-event-row {
   border-bottom: 1px solid #cccccc;
 }
+.combat-event-struct-image-wrapper {
+  display: inline-block;
+  position: relative;
+}
 .combat-event-struct-image {
   max-width: 80px;
+  position: relative;
+}
+.combat-event-struct-image-overlay {
+  border-radius: 4px;
+  height: 80px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 80px;
+  z-index: 2;
+}
+.destroyed {
+  background: rgba(255,0,0,0.5);
 }
 .combat-event-icon img {
   max-width: 80px;
