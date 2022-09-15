@@ -114,6 +114,34 @@ export class UIStructDetails {
   }
 
   /**
+   * @return {boolean}
+   */
+  isPrimaryAttackEnabled() {
+    return !this.struct.isHidden();
+  }
+
+  /**
+   * @return {boolean}
+   */
+  isSecondaryAttackEnabled() {
+    return !this.struct.isHidden();
+  }
+
+  /**
+   * @return {boolean}
+   */
+  isDefendEnabled() {
+    return !this.struct.isHidden();
+  }
+
+  /**
+   * @return {boolean}
+   */
+  isDefenseComponentEnabled() {
+    return true;
+  }
+
+  /**
    * @return {string}
    */
   getActionButtons() {
@@ -128,6 +156,7 @@ export class UIStructDetails {
               class="btn btn-danger btn-sm"
               data-player-id="${this.player.id}"
               data-struct-id="${this.struct.id}"
+              ${this.isPrimaryAttackEnabled() ? '' : 'disabled'}
             >
               ${this.struct.manualWeaponPrimary.getActionLabel()}
               <img src="${IMG.ICONS}icon-attack-range.png" alt="attack-range">
@@ -143,6 +172,7 @@ export class UIStructDetails {
               class="btn btn-primary btn-sm"
               data-player-id="${this.player.id}"
               data-struct-id="${this.struct.id}"
+              ${this.isDefendEnabled() ? '' : 'disabled'}
             >
               Defend
               <img src="${IMG.ICONS}icon-strength.png" alt="strength">
@@ -159,6 +189,7 @@ export class UIStructDetails {
               class="btn btn-danger btn-sm"
               data-player-id="${this.player.id}"
               data-struct-id="${this.struct.id}"
+              ${this.isSecondaryAttackEnabled() ? '' : 'disabled'}
             >
               ${this.struct.manualWeaponSecondary.getActionLabel()}
               <img src="${IMG.ICONS}icon-attack-range.png" alt="attack-range">
@@ -171,9 +202,10 @@ export class UIStructDetails {
             <button
               id="${this.defenseComponentButtonId}"
               type="button"
-              class="btn btn-secondary btn-sm ${this.struct.defenseComponent.isActive ? 'btn-secondary' : 'btn-dark'}"
+              class="btn btn-secondary btn-sm btn-dark"
               data-player-id="${this.player.id}"
               data-struct-id="${this.struct.id}"
+              ${this.isDefenseComponentEnabled() ? '' : 'disabled'}
             >
               ${this.struct.defenseComponent.getActionLabel()}
               ${this.struct.defenseComponent.isActive ? `

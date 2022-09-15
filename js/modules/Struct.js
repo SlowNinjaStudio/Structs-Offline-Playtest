@@ -1,4 +1,4 @@
-import {EVENTS, FLEET_STRUCT_DEFAULTS, MANUAL_WEAPON_SLOTS, STRUCT_DEFAULTS} from "./Constants.js";
+import {DEFENSE_COMPONENTS, EVENTS, FLEET_STRUCT_DEFAULTS, MANUAL_WEAPON_SLOTS, STRUCT_DEFAULTS} from "./Constants.js";
 import {DefenseComponent} from "./DefenseComponent.js";
 import {PassiveWeapon} from "./PassiveWeapon.js";
 import {DefendActionDisabledError} from "./DefendActionDisabledError.js";
@@ -335,5 +335,12 @@ export class Struct {
    */
   isCommandStruct() {
     return false;
+  }
+
+  /**
+   * @return {boolean}
+   */
+  isHidden() {
+    return this.defenseComponent.name === DEFENSE_COMPONENTS.STEALTH_MODE && this.defenseComponent.isActive;
   }
 }
