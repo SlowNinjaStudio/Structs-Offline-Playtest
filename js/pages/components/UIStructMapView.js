@@ -1,4 +1,4 @@
-import {IMG, MAX_HEART_ICONS} from "../../modules/Constants.js";
+import {DEFENSE_COMPONENTS, IMG, MAX_HEART_ICONS} from "../../modules/Constants.js";
 
 export class UIStructMapView {
   /**
@@ -37,6 +37,7 @@ export class UIStructMapView {
   render() {
     let isDefending = '';
     let isDefended = '';
+    let isHidden = '';
 
     if (this.struct.defending) {
       isDefending = `<img src="${IMG.ICONS}icon-rook.png" alt="rook">`;
@@ -44,6 +45,12 @@ export class UIStructMapView {
 
     if (this.struct.defenders.length > 0) {
       isDefended = `<img src="${IMG.ICONS}icon-strength.png" alt="strength">`;
+    }
+
+    if (this.struct.defenseComponent.name === DEFENSE_COMPONENTS.STEALTH_MODE) {
+      isHidden = this.struct.defenseComponent.isActive
+        ? `<img src="${IMG.ICONS}icon-invisible.png" alt="invisible">`
+        : `<img src="${IMG.ICONS}icon-visible.png" alt="visible">`;
     }
 
     return `
@@ -58,7 +65,7 @@ export class UIStructMapView {
         <div class="struct">
           <div>${this.renderHealthInHearts()}</div>
           <img src="${this.struct.image}" alt="${this.struct.unitType}">
-          <div>${isDefending}${isDefended}</div>
+          <div>${isDefending}${isDefended}${isHidden}</div>
         </div>
       </a>
     `;

@@ -27,9 +27,10 @@ export class UIStructDetails {
    * @param {string} eventType
    * @param {string} actionButtonId
    * @param {string} offcanvasId
+   * @param {boolean} selfDispatch
    * @return {function}
    */
-  getActionFunction(eventType, actionButtonId, offcanvasId) {
+  getActionFunction(eventType, actionButtonId, offcanvasId, selfDispatch = false) {
     const actionButton = document.getElementById(actionButtonId);
     const domOffcanvas = document.getElementById(offcanvasId);
     const bsOffcanvas = bootstrap.Offcanvas.getOrCreateInstance(domOffcanvas);
@@ -37,13 +38,19 @@ export class UIStructDetails {
       bsOffcanvas.hide();
       const playerId = actionButton.getAttribute('data-player-id');
       const structId = actionButton.getAttribute('data-struct-id');
-      (new StructsGlobalDataStore()).setStructAction(new StructAction(
+      const action = new StructAction(
         eventType,
         new StructRef(
           playerId,
           structId
         )
-      ));
+      );
+
+      if (selfDispatch) {
+        action.dispatchEvent();
+      } else {
+        (new StructsGlobalDataStore()).setStructAction(action);
+      }
     }
   }
 
@@ -80,10 +87,23 @@ export class UIStructDetails {
     }
   }
 
+  initStealthModeListener() {
+    const defenseComponentButton = document.getElementById(this.defenseComponentButtonId);
+    if (defenseComponentButton) {
+      defenseComponentButton.addEventListener('click', this.getActionFunction(
+        EVENTS.ACTIONS.ACTION_STEALTH_MODE,
+        this.defenseComponentButtonId,
+        this.offcanvasId,
+        true
+      ));
+    }
+  }
+
   initListeners() {
     this.initPrimaryAttackListener();
     this.initSecondaryAttackListener();
     this.initDefendListener();
+    this.initStealthModeListener();
   }
 
   /**
@@ -103,7 +123,7 @@ export class UIStructDetails {
           <div class="col d-grid">
           ${this.struct.manualWeaponPrimary ? `
             <button
-              id="primaryAttackButton"
+              id="${this.primaryAttackButtonId}"
               type="button"
               class="btn btn-danger btn-sm"
               data-player-id="${this.player.id}"
@@ -118,7 +138,7 @@ export class UIStructDetails {
           <div class="col d-grid">
           ${this.struct.canDefend ? `
             <button
-              id="defendButton"
+              id="${this.defendButtonId}"
               type="button"
               class="btn btn-primary btn-sm"
               data-player-id="${this.player.id}"
@@ -134,7 +154,7 @@ export class UIStructDetails {
           <div class="col d-grid">
           ${this.struct.manualWeaponSecondary ? `
             <button
-              id="secondaryAttackButton"
+              id="${this.secondaryAttackButtonId}"
               type="button"
               class="btn btn-danger btn-sm"
               data-player-id="${this.player.id}"
@@ -148,9 +168,19 @@ export class UIStructDetails {
           </div>
           <div class="col d-grid">
           ${this.struct.defenseComponent.name === DEFENSE_COMPONENTS.STEALTH_MODE ? `
-            <button type="button" class="btn btn-secondary btn-sm">
+            <button
+              id="${this.defenseComponentButtonId}"
+              type="button"
+              class="btn btn-secondary btn-sm ${this.struct.defenseComponent.isActive ? 'btn-secondary' : 'btn-dark'}"
+              data-player-id="${this.player.id}"
+              data-struct-id="${this.struct.id}"
+            >
               ${this.struct.defenseComponent.getActionLabel()}
+              ${this.struct.defenseComponent.isActive ? `
+              <img src="${IMG.ICONS}icon-visible.png" alt="visible">
+              `: `
               <img src="${IMG.ICONS}icon-invisible.png" alt="invisible">
+              `}
             </button>
           ` : (this.struct.defenseComponent.type === DEFENSE_COMPONENT_TYPES.AFTERMARKET_ENGINE ? `
             <button type="button" class="btn btn-warning btn-sm">

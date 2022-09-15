@@ -1,4 +1,3 @@
-import {Util} from "../../modules/Util.js";
 import {COMBAT_EVENT_LABELS, EVENTS, IMG} from "../../modules/Constants.js";
 
 export class UICombatEventViewer {
@@ -13,8 +12,6 @@ export class UICombatEventViewer {
     this.enemy = enemy;
     this.events = [];
     this.playerLeft = null;
-
-    this.util = new Util();
   }
 
   initListeners() {
@@ -44,10 +41,7 @@ export class UICombatEventViewer {
    * @return {string}
    */
   getAmbitIcon(ambit) {
-    return `<a href="javascript: void(0)"
-         data-bs-toggle="popover"
-         data-bs-content="${this.util.titleCase(ambit)} Ambit"
-      ><img src="${IMG.ICONS}icon-ambit-${ambit.toLowerCase()}.png" alt="${ambit.toLowerCase()} ambit"></a>`;
+    return `<img src="${IMG.ICONS}icon-ambit-${ambit.toLowerCase()}.png" alt="${ambit.toLowerCase()} ambit">`;
   }
 
   /**
@@ -68,11 +62,7 @@ export class UICombatEventViewer {
       <div class="col">
         <div class="row">
           <div class="col text-center">
-            <a href="javascript: void(0)"
-               data-bs-toggle="popover"
-               title="Struct Position"
-               data-bs-content="This struct's position by ambit and slot number."
-            ><img src="${IMG.ICONS}icon-location-pin.png" alt="location-pin"></a><strong>:</strong>
+            <img src="${IMG.ICONS}icon-location-pin.png" alt="location-pin"><strong>:</strong>
             ${this.getAmbitIcon(struct.operatingAmbit)} ${struct.getDisplayAmbitSlot()}
           </div>
         </div>
@@ -87,13 +77,9 @@ export class UICombatEventViewer {
         <div class="row">
           <div class="col">
             <div class="col text-center">
-              <a href="javascript: void(0)"
-                 data-bs-toggle="popover"
-                 title="Health"
-                 data-bs-content="Current Health / Max Health"
-              ><img src="${IMG.ICONS}icon-health.png"
+              <img src="${IMG.ICONS}icon-health.png"
                  alt="health"
-              ></a><strong>:</strong>
+              ><strong>:</strong>
               ${this.renderHealth(previousHealth, newHealth, struct.maxHealth)}
             </div>
           </div>
@@ -159,10 +145,7 @@ export class UICombatEventViewer {
             ${damageAmount !== null ? `
             <div class="row">
               <div class="col combat-event-damage">
-                <a href="javascript: void(0)"
-                   data-bs-toggle="popover"
-                   data-bs-content="Damage Value"
-                ><img src="${IMG.ICONS}icon-fire.png" alt="fire"></a> ${damageAmount}
+                <img src="${IMG.ICONS}icon-fire.png" alt="fire"> ${damageAmount}
               </div>
             </div>
             ` : ''}

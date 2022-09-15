@@ -2,10 +2,7 @@ import {UINavbar} from "./components/UINavbar.js";
 import {StructBuilder} from "../modules/StructBuilder.js";
 import {EVENTS, MANUAL_WEAPON_SLOTS, UNIT_TYPES} from "../modules/Constants.js";
 import {Player} from "../modules/Player.js";
-import {StructRef} from "../modules/StructRef.js";
-import {StructAction} from "../modules/StructAction.js";
 import {UIGame} from "./components/UIGame.js";
-import {StructsGlobalDataStore} from "../modules/StructsGlobalDataStore.js";
 import {UICombatEventViewer} from "./components/UICombatEventViewer.js";
 
 (new UINavbar()).init('nav-wrapper');
@@ -64,16 +61,6 @@ enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.DESTROYER));
 const game = new UIGame('main-content-wrapper', player, enemy);
 game.render();
 
-document.getElementById('testButton').addEventListener('click', function() {
-  (new StructsGlobalDataStore()).setStructAction(new StructAction(
-    EVENTS.ACTIONS.ACTION_ATTACK_PRIMARY,
-    new StructRef(
-      player.id,
-      player.fleet.space[1].id
-    )
-  ));
-});
-
 window.addEventListener(EVENTS.ACTIONS.ACTION_ATTACK_PRIMARY, function(e) {
   const sourceStructRef = e.detail.source;
   const targetStructRef = e.detail.data;
@@ -118,6 +105,22 @@ window.addEventListener(EVENTS.ACTIONS.ACTION_DEFEND, function(e) {
     ? targetPlayer.commandStruct
     : targetPlayer.fleet.findStructById(targetStructRef.structId);
   playerStruct.defend(targetStruct);
+
+  game.render();
+});
+
+window.addEventListener(EVENTS.ACTIONS.ACTION_STEALTH_MODE, function(e) {
+  const sourceStructRef = e.detail.source;
+  // const targetStructRef = e.detail.data;
+  const sourcePlayer = game.players.find(player => player.id === sourceStructRef.playerId);
+  // const targetPlayer = game.players.find(player => player.id === targetStructRef.playerId);
+  const playerStruct = sourceStructRef.isCommandStruct
+    ? sourcePlayer.commandStruct
+    : sourcePlayer.fleet.findStructById(sourceStructRef.structId);
+  // const targetStruct = sourceStructRef.isCommandStruct
+  //   ? targetPlayer.commandStruct
+  //   : targetPlayer.fleet.findStructById(targetStructRef.structId);
+  playerStruct.defenseComponent.isActive = !playerStruct.defenseComponent.isActive;
 
   game.render();
 });

@@ -18,4 +18,12 @@ export class AmbitDefense extends DefenseComponent {
   blocksTargeting(attacker) {
     return this.isActive && this.ambitsDefendedAgainst.includes(attacker.operatingAmbit);
   }
+
+  /**
+   * @return {string}
+   */
+  getActionLabel() {
+    const activateDeactivate = this.isActive ? 'Deactivate' : 'Activate';
+    return this.util.titleCase(`${activateDeactivate} ${this.actionLabel}`);
+  }
 }
