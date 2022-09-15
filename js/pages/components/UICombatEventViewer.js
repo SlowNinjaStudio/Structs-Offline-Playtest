@@ -57,7 +57,14 @@ export class UICombatEventViewer {
     return `${previousHealth}/${maxHealth} => ${newHealth}/${maxHealth}`;
   }
 
-  renderStruct(struct, previousHealth, newHealth) {
+  /**
+   * @param {string} side (LEFT|RIGHT)
+   * @param {Struct} struct
+   * @param {number} previousHealth
+   * @param {number} newHealth
+   * @return {string}
+   */
+  renderStruct(side, struct, previousHealth, newHealth) {
     return `
       <div class="col">
         <div class="row">
@@ -68,8 +75,12 @@ export class UICombatEventViewer {
         </div>
         <div class="row">
           <div class="col text-center">
-            <div class="combat-event-struct-image-wrapper">
-              <img class="combat-event-struct-image img-thumbnail" src="${struct.image}" alt="${struct.unitType}">
+            <div class="combat-event-struct-image-wrapper ${side === 'LEFT' ? '' : 'flip-img-x'}">
+              <img
+                class="combat-event-struct-image img-thumbnail"
+                src="${struct.image}"
+                alt="${struct.unitType}"
+              >
               <div class="combat-event-struct-image-overlay ${newHealth === 0 ? 'destroyed' : ''}"></div>
             </div>
           </div>
@@ -129,7 +140,7 @@ export class UICombatEventViewer {
     return `
       <div class="row py-4 px-1 combat-event-row">
 
-          ${this.renderStruct(leftStruct, leftStructPreviousHealth, leftStructNewHealth)}
+          ${this.renderStruct('LEFT', leftStruct, leftStructPreviousHealth, leftStructNewHealth)}
 
           <div class="col">
             <div class="row">
@@ -151,7 +162,7 @@ export class UICombatEventViewer {
             ` : ''}
           </div>
 
-          ${this.renderStruct(rightStruct, rightStructPreviousHealth, rightStructNewHealth)}
+          ${this.renderStruct('RIGHT', rightStruct, rightStructPreviousHealth, rightStructNewHealth)}
 
         </div>
     `;

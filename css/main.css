@@ -459,9 +459,11 @@ body {
 }
 .offcanvas.player {
   border: 4px solid #00bfff;
+  border-radius: 8px;
 }
 .offcanvas.enemy {
   border: 4px solid #ff3000;
+  border-radius: 8px;
 }
 .offcanvas-header {
   font-size: 14px;
