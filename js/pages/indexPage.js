@@ -69,7 +69,7 @@ window.addEventListener(EVENTS.ACTIONS.ACTION_ATTACK_PRIMARY, function(e) {
   const playerStruct = sourceStructRef.isCommandStruct
     ? sourcePlayer.commandStruct
     : sourcePlayer.fleet.findStructById(sourceStructRef.structId);
-  const targetStruct = sourceStructRef.isCommandStruct
+  const targetStruct = targetStructRef.isCommandStruct
     ? targetPlayer.commandStruct
     : targetPlayer.fleet.findStructById(targetStructRef.structId);
   playerStruct.attack(MANUAL_WEAPON_SLOTS.PRIMARY, targetStruct);
@@ -85,7 +85,7 @@ window.addEventListener(EVENTS.ACTIONS.ACTION_ATTACK_SECONDARY, function(e) {
   const playerStruct = sourceStructRef.isCommandStruct
     ? sourcePlayer.commandStruct
     : sourcePlayer.fleet.findStructById(sourceStructRef.structId);
-  const targetStruct = sourceStructRef.isCommandStruct
+  const targetStruct = targetStructRef.isCommandStruct
     ? targetPlayer.commandStruct
     : targetPlayer.fleet.findStructById(targetStructRef.structId);
   playerStruct.attack(MANUAL_WEAPON_SLOTS.SECONDARY, targetStruct);
@@ -101,7 +101,7 @@ window.addEventListener(EVENTS.ACTIONS.ACTION_DEFEND, function(e) {
   const playerStruct = sourceStructRef.isCommandStruct
     ? sourcePlayer.commandStruct
     : sourcePlayer.fleet.findStructById(sourceStructRef.structId);
-  const targetStruct = sourceStructRef.isCommandStruct
+  const targetStruct = targetStructRef.isCommandStruct
     ? targetPlayer.commandStruct
     : targetPlayer.fleet.findStructById(targetStructRef.structId);
   playerStruct.defend(targetStruct);
@@ -117,7 +117,7 @@ window.addEventListener(EVENTS.ACTIONS.ACTION_STEALTH_MODE, function(e) {
   const playerStruct = sourceStructRef.isCommandStruct
     ? sourcePlayer.commandStruct
     : sourcePlayer.fleet.findStructById(sourceStructRef.structId);
-  // const targetStruct = sourceStructRef.isCommandStruct
+  // const targetStruct = targetStructRef.isCommandStruct
   //   ? targetPlayer.commandStruct
   //   : targetPlayer.fleet.findStructById(targetStructRef.structId);
   playerStruct.defenseComponent.isActive = !playerStruct.defenseComponent.isActive;

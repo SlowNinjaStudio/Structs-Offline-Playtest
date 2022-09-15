@@ -38,11 +38,13 @@ export class UIStructDetails {
       bsOffcanvas.hide();
       const playerId = actionButton.getAttribute('data-player-id');
       const structId = actionButton.getAttribute('data-struct-id');
+      const isCommandStruct = !!parseInt(actionButton.getAttribute('data-is-command-struct'));
       const action = new StructAction(
         eventType,
         new StructRef(
           playerId,
-          structId
+          structId,
+          isCommandStruct
         )
       );
 
@@ -156,6 +158,7 @@ export class UIStructDetails {
               class="btn btn-danger btn-sm"
               data-player-id="${this.player.id}"
               data-struct-id="${this.struct.id}"
+              data-is-command-struct="${this.struct.isCommandStruct() ? 1: 0}"
               ${this.isPrimaryAttackEnabled() ? '' : 'disabled'}
             >
               ${this.struct.manualWeaponPrimary.getActionLabel()}
@@ -172,6 +175,7 @@ export class UIStructDetails {
               class="btn btn-primary btn-sm"
               data-player-id="${this.player.id}"
               data-struct-id="${this.struct.id}"
+              data-is-command-struct="${this.struct.isCommandStruct() ? 1: 0}"
               ${this.isDefendEnabled() ? '' : 'disabled'}
             >
               Defend
@@ -189,6 +193,7 @@ export class UIStructDetails {
               class="btn btn-danger btn-sm"
               data-player-id="${this.player.id}"
               data-struct-id="${this.struct.id}"
+              data-is-command-struct="${this.struct.isCommandStruct() ? 1: 0}"
               ${this.isSecondaryAttackEnabled() ? '' : 'disabled'}
             >
               ${this.struct.manualWeaponSecondary.getActionLabel()}
@@ -205,6 +210,7 @@ export class UIStructDetails {
               class="btn btn-secondary btn-sm btn-dark"
               data-player-id="${this.player.id}"
               data-struct-id="${this.struct.id}"
+              data-is-command-struct="${this.struct.isCommandStruct() ? 1: 0}"
               ${this.isDefenseComponentEnabled() ? '' : 'disabled'}
             >
               ${this.struct.defenseComponent.getActionLabel()}
