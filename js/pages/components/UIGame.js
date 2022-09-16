@@ -1,8 +1,10 @@
 import {UIFleet} from "./UIFleet.js";
-import {EVENTS} from "../../modules/Constants.js";
+import {EVENTS, MANUAL_WEAPON_SLOTS} from "../../modules/Constants.js";
 import {UIStructDetails} from "./UIStructDetails.js";
 import {StructsGlobalDataStore} from "../../modules/StructsGlobalDataStore.js";
 import {StructRef} from "../../modules/StructRef.js";
+import {SlotRef} from "../../modules/SlotRef.js";
+import {ActionActor} from "../../modules/ActionActor.js";
 
 export class UIGame {
   constructor(elementId, player, enemy, globalDataStore = new StructsGlobalDataStore()) {
@@ -16,26 +18,26 @@ export class UIGame {
     globalDataStore.setGame(this);
   }
 
-  /**
-   * @param {StructsGlobalDataStore} globalDataStore
-   */
-  render(globalDataStore = new StructsGlobalDataStore()) {
-    document.getElementById(this.elementId).innerHTML = `
-      <div class="container-fluid play-area">
-        <div class="row">
+  initEmptyCommandSlotListeners() {
+    document.querySelectorAll('.empty-slot.command').forEach(commandSlot => {
+      commandSlot.addEventListener('click', function() {
+        const playerId = commandSlot.getAttribute('data-player-id');
+        const ambit = commandSlot.getAttribute('data-ambit');
+        const ambitSlot = parseInt(commandSlot.getAttribute('data-ambit-slot'));
+        const isCommandSlot = !!parseInt(commandSlot.getAttribute('data-is-command-slot'));
+        const structsStore = new StructsGlobalDataStore();
+        const action = structsStore.getStructAction();
 
-          <div id="playerFleet" class="col">${this.playerFleetUI.render(this.player)}</div>
+        if (action && EVENTS.ACTIONS.ACTION_MOVE === action.getType()) {
+          action.data = new SlotRef(playerId, ambit, ambitSlot, isCommandSlot);
+          action.dispatchEvent();
+          structsStore.clearStructAction();
+        }
+      })
+    })
+  }
 
-          <div class="col-lg-2">
-            <div class="vs">VS</div><div class="vertical-align-helper"></div>
-          </div>
-
-          <div id="enemyFleet" class="col">${this.enemyFleetUI.render(this.player)}</div>
-
-        </div>
-      </div>
-    `;
-
+  initStructListeners() {
     document.querySelectorAll('.struct-map-view-btn').forEach(structButton => {
       structButton.addEventListener('click', function() {
         const playerId = structButton.getAttribute('data-player-id');
@@ -53,7 +55,7 @@ export class UIGame {
           action.dispatchEvent();
           structsStore.clearStructAction();
         } else {
-          const game = globalDataStore.getGame();
+          const game = structsStore.getGame();
           const player = game.players.find(player => player.id === playerId);
           const struct = isCommandStruct ? player.commandStruct : player.fleet.findStructById(structId);
           const domOffcanvas = document.getElementById('offcanvasBottom');
@@ -80,5 +82,99 @@ export class UIGame {
         }
       });
     });
+  }
+
+  initListenersPerRender() {
+    this.initEmptyCommandSlotListeners();
+    this.initStructListeners();
+  }
+
+  initActionAttackPrimaryListener() {
+    const game = this;
+    window.addEventListener(EVENTS.ACTIONS.ACTION_ATTACK_PRIMARY, function (e) {
+      const player = new ActionActor(e.detail.source, game.players);
+      const enemy = new ActionActor(e.detail.data, game.players);
+
+      player.struct.attack(MANUAL_WEAPON_SLOTS.PRIMARY, enemy.struct);
+
+      game.render();
+    });
+  }
+
+  initActionAttackSecondaryListener() {
+    const game = this;
+    window.addEventListener(EVENTS.ACTIONS.ACTION_ATTACK_SECONDARY, function (e) {
+      const player = new ActionActor(e.detail.source, game.players);
+      const enemy = new ActionActor(e.detail.data, game.players);
+
+      player.struct.attack(MANUAL_WEAPON_SLOTS.SECONDARY, enemy.struct);
+
+      game.render();
+    });
+  }
+
+  initActionDefendListener() {
+    const game = this;
+    window.addEventListener(EVENTS.ACTIONS.ACTION_DEFEND, function (e) {
+      const player = new ActionActor(e.detail.source, game.players);
+      const target = new ActionActor(e.detail.data, game.players);
+
+      player.struct.defend(target.struct);
+
+      game.render();
+    });
+  }
+
+  initActionStealthModeListener() {
+    const game = this;
+    window.addEventListener(EVENTS.ACTIONS.ACTION_STEALTH_MODE, function (e) {
+      const player = new ActionActor(e.detail.source, game.players);
+
+      player.struct.defenseComponent.isActive = !player.struct.defenseComponent.isActive;
+
+      game.render();
+    });
+  }
+
+  initActionMoveListener() {
+    const game = this;
+    window.addEventListener(EVENTS.ACTIONS.ACTION_MOVE, function(e) {
+      const player = new ActionActor(e.detail.source, game.players);
+
+      const slotRef = e.detail.data;
+      if (player.struct.defenseComponent.canChangeAmbit(player.struct.operatingAmbit, slotRef.ambit)) {
+        player.struct.operatingAmbit = slotRef.ambit;
+      }
+
+      game.render();
+    });
+  }
+
+  initOneTimeListeners() {
+    this.initActionAttackPrimaryListener();
+    this.initActionAttackSecondaryListener();
+    this.initActionDefendListener();
+    this.initActionStealthModeListener();
+    this.initActionMoveListener();
+  }
+
+  render() {
+    document.getElementById(this.elementId).innerHTML = `
+      <div class="container-fluid play-area">
+        <div class="row">
+
+          <div id="playerFleet" class="col">${this.playerFleetUI.render(this.player)}</div>
+
+          <div class="col-lg-2">
+            <div class="vs">VS</div><div class="vertical-align-helper"></div>
+          </div>
+
+          <div id="enemyFleet" class="col">${this.enemyFleetUI.render(this.player)}</div>
+
+        </div>
+      </div>
+    `;
+
+    this.initListenersPerRender();
   }
 }

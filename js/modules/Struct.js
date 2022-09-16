@@ -259,7 +259,9 @@ export class Struct {
       }
 
       // Defender Counter Attack
-      target.defenders[i].counterAttack(this);
+      if (target.defenders[i]) { // May have been destroyed
+        target.defenders[i].counterAttack(this);
+      }
 
       if (this.isDestroyed) {
         this.combatEventDispatcher.dispatch(EVENTS.COMBAT.COMBAT_ENDED, this, target);

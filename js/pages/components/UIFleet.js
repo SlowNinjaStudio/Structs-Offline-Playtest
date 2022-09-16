@@ -1,6 +1,7 @@
 import {UIFleetCommand} from "./UIFleetCommand.js";
 import {UIStructMapView} from "./UIStructMapView.js";
 import {AmbitsUtil} from "../../modules/AmbitsUtil.js";
+import {UIEmptyMapSlot} from "./UIEmptyMapSlot.js";
 
 export class UIFleet {
   /**
@@ -25,7 +26,12 @@ export class UIFleet {
             this.player
           )).render();
         } else {
-          html += `<div class="struct empty"></div>`;
+          html += (new UIEmptyMapSlot(
+            this.player,
+            ambits[j].toUpperCase(),
+            i,
+            false
+          )).render();
         }
       }
       html += `</div>`;

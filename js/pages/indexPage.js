@@ -1,6 +1,6 @@
 import {UINavbar} from "./components/UINavbar.js";
 import {StructBuilder} from "../modules/StructBuilder.js";
-import {EVENTS, MANUAL_WEAPON_SLOTS, UNIT_TYPES} from "../modules/Constants.js";
+import {UNIT_TYPES} from "../modules/Constants.js";
 import {Player} from "../modules/Player.js";
 import {UIGame} from "./components/UIGame.js";
 import {UICombatEventViewer} from "./components/UICombatEventViewer.js";
@@ -60,70 +60,7 @@ enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.DESTROYER));
 
 const game = new UIGame('main-content-wrapper', player, enemy);
 game.render();
-
-window.addEventListener(EVENTS.ACTIONS.ACTION_ATTACK_PRIMARY, function(e) {
-  const sourceStructRef = e.detail.source;
-  const targetStructRef = e.detail.data;
-  const sourcePlayer = game.players.find(player => player.id === sourceStructRef.playerId);
-  const targetPlayer = game.players.find(player => player.id === targetStructRef.playerId);
-  const playerStruct = sourceStructRef.isCommandStruct
-    ? sourcePlayer.commandStruct
-    : sourcePlayer.fleet.findStructById(sourceStructRef.structId);
-  const targetStruct = targetStructRef.isCommandStruct
-    ? targetPlayer.commandStruct
-    : targetPlayer.fleet.findStructById(targetStructRef.structId);
-  playerStruct.attack(MANUAL_WEAPON_SLOTS.PRIMARY, targetStruct);
-
-  game.render();
-});
-
-window.addEventListener(EVENTS.ACTIONS.ACTION_ATTACK_SECONDARY, function(e) {
-  const sourceStructRef = e.detail.source;
-  const targetStructRef = e.detail.data;
-  const sourcePlayer = game.players.find(player => player.id === sourceStructRef.playerId);
-  const targetPlayer = game.players.find(player => player.id === targetStructRef.playerId);
-  const playerStruct = sourceStructRef.isCommandStruct
-    ? sourcePlayer.commandStruct
-    : sourcePlayer.fleet.findStructById(sourceStructRef.structId);
-  const targetStruct = targetStructRef.isCommandStruct
-    ? targetPlayer.commandStruct
-    : targetPlayer.fleet.findStructById(targetStructRef.structId);
-  playerStruct.attack(MANUAL_WEAPON_SLOTS.SECONDARY, targetStruct);
-
-  game.render();
-});
-
-window.addEventListener(EVENTS.ACTIONS.ACTION_DEFEND, function(e) {
-  const sourceStructRef = e.detail.source;
-  const targetStructRef = e.detail.data;
-  const sourcePlayer = game.players.find(player => player.id === sourceStructRef.playerId);
-  const targetPlayer = game.players.find(player => player.id === targetStructRef.playerId);
-  const playerStruct = sourceStructRef.isCommandStruct
-    ? sourcePlayer.commandStruct
-    : sourcePlayer.fleet.findStructById(sourceStructRef.structId);
-  const targetStruct = targetStructRef.isCommandStruct
-    ? targetPlayer.commandStruct
-    : targetPlayer.fleet.findStructById(targetStructRef.structId);
-  playerStruct.defend(targetStruct);
-
-  game.render();
-});
-
-window.addEventListener(EVENTS.ACTIONS.ACTION_STEALTH_MODE, function(e) {
-  const sourceStructRef = e.detail.source;
-  // const targetStructRef = e.detail.data;
-  const sourcePlayer = game.players.find(player => player.id === sourceStructRef.playerId);
-  // const targetPlayer = game.players.find(player => player.id === targetStructRef.playerId);
-  const playerStruct = sourceStructRef.isCommandStruct
-    ? sourcePlayer.commandStruct
-    : sourcePlayer.fleet.findStructById(sourceStructRef.structId);
-  // const targetStruct = targetStructRef.isCommandStruct
-  //   ? targetPlayer.commandStruct
-  //   : targetPlayer.fleet.findStructById(targetStructRef.structId);
-  playerStruct.defenseComponent.isActive = !playerStruct.defenseComponent.isActive;
-
-  game.render();
-});
+game.initOneTimeListeners();
 
 const combatEventViewer = new UICombatEventViewer('offcanvasBottom', player, enemy);
 combatEventViewer.initListeners();

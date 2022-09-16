@@ -101,11 +101,23 @@ export class UIStructDetails {
     }
   }
 
+  initMoveListener() {
+    const defenseComponentButton = document.getElementById(this.defenseComponentButtonId);
+    if (defenseComponentButton) {
+      defenseComponentButton.addEventListener('click', this.getActionFunction(
+        EVENTS.ACTIONS.ACTION_MOVE,
+        this.defenseComponentButtonId,
+        this.offcanvasId
+      ));
+    }
+  }
+
   initListeners() {
     this.initPrimaryAttackListener();
     this.initSecondaryAttackListener();
     this.initDefendListener();
     this.initStealthModeListener();
+    this.initMoveListener();
   }
 
   /**
@@ -221,7 +233,14 @@ export class UIStructDetails {
               `}
             </button>
           ` : (this.struct.defenseComponent.type === DEFENSE_COMPONENT_TYPES.AFTERMARKET_ENGINE ? `
-            <button type="button" class="btn btn-warning btn-sm">
+            <button
+              id="${this.defenseComponentButtonId}"
+              type="button"
+              class="btn btn-warning btn-sm"
+              data-player-id="${this.player.id}"
+              data-struct-id="${this.struct.id}"
+              data-is-command-struct="${this.struct.isCommandStruct() ? 1: 0}"
+            >
               ${this.struct.defenseComponent.getActionLabel()}
               <img src="${IMG.ICONS}icon-speed.png" alt="speed">
             </button>
