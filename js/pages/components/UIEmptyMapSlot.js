@@ -1,3 +1,6 @@
+import {StructsGlobalDataStore} from "../../modules/StructsGlobalDataStore.js";
+import {EVENTS} from "../../modules/Constants.js";
+
 export class UIEmptyMapSlot {
 
   /**
@@ -11,13 +14,30 @@ export class UIEmptyMapSlot {
     this.ambit = ambit;
     this.ambitSlot = ambitSlot;
     this.isCommandSlot = isCommandSlot;
+
+    this.dataStore = new StructsGlobalDataStore();
+  }
+
+  /**
+   * @return {boolean}
+   */
+  isSelectableSlot() {
+    const action = this.dataStore.getStructAction();
+    return !action
+      || (
+        action.getType() === EVENTS.ACTIONS.ACTION_MOVE
+        && action.source.playerId === this.player.id
+        && this.isCommandSlot
+      );
   }
 
   /**
    * @return {string}
    */
   render() {
+    const isSelectable = this.isSelectableSlot();
     return `
+      ${isSelectable ? `
       <a
         class="empty-slot ${this.isCommandSlot ? 'command' : 'fleet'}"
         data-player-id="${this.player.id}"
@@ -27,8 +47,11 @@ export class UIEmptyMapSlot {
         href="javascript: void(0)"
         role="button"
       >
-        <div class="struct empty"></div>
+      ` : ''}
+        <div class="struct empty ${isSelectable ? '' : 'unselectable'}"></div>
+      ${isSelectable ? `
       </a>
+      ` : ''}
     `;
   }
 }

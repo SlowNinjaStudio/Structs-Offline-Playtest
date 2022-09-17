@@ -107,7 +107,7 @@ export class UIStructMapView {
         role="button"
       >
       `}
-        <div class="struct ${(this.struct.isDestroyed || !isSelectable) ? 'destroyed' : ''}">
+        <div class="struct ${(this.struct.isDestroyed || !isSelectable) ? 'unselectable' : ''}">
           <div>${this.renderHealthInHearts()}</div>
           <img src="${this.struct.image}" alt="${this.struct.unitType}">
           <div>${this.renderStatusIcons()}</div>

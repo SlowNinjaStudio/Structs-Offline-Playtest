@@ -101,6 +101,8 @@ export class UIGame {
     window.addEventListener(EVENTS.ACTIONS.ACTION_ATTACK_PRIMARY, function (e) {
       const player = new ActionActor(e.detail.source, game.players);
       const enemy = new ActionActor(e.detail.data, game.players);
+      const dataStore = new StructsGlobalDataStore();
+      dataStore.clearStructAction();
 
       player.struct.attack(MANUAL_WEAPON_SLOTS.PRIMARY, enemy.struct);
 
@@ -113,6 +115,8 @@ export class UIGame {
     window.addEventListener(EVENTS.ACTIONS.ACTION_ATTACK_SECONDARY, function (e) {
       const player = new ActionActor(e.detail.source, game.players);
       const enemy = new ActionActor(e.detail.data, game.players);
+      const dataStore = new StructsGlobalDataStore();
+      dataStore.clearStructAction();
 
       player.struct.attack(MANUAL_WEAPON_SLOTS.SECONDARY, enemy.struct);
 
@@ -125,6 +129,8 @@ export class UIGame {
     window.addEventListener(EVENTS.ACTIONS.ACTION_DEFEND, function (e) {
       const player = new ActionActor(e.detail.source, game.players);
       const target = new ActionActor(e.detail.data, game.players);
+      const dataStore = new StructsGlobalDataStore();
+      dataStore.clearStructAction();
 
       player.struct.defend(target.struct);
 
@@ -147,6 +153,8 @@ export class UIGame {
     const game = this;
     window.addEventListener(EVENTS.ACTIONS.ACTION_MOVE, function(e) {
       const player = new ActionActor(e.detail.source, game.players);
+      const dataStore = new StructsGlobalDataStore();
+      dataStore.clearStructAction();
 
       const slotRef = e.detail.data;
       if (player.struct.defenseComponent.canChangeAmbit(player.struct.operatingAmbit, slotRef.ambit)) {

@@ -99,6 +99,14 @@ export class UIStructDetails {
     return this.player.id === targetStruct.playerId;
   }
 
+  /**
+   * @param {Struct} targetStruct
+   * @return {boolean}
+   */
+  moveStructFilter(targetStruct) {
+    return false;
+  }
+
   initPrimaryAttackListener() {
     const primaryAttackButton = document.getElementById(this.primaryAttackButtonId);
     if (primaryAttackButton) {
@@ -156,7 +164,9 @@ export class UIStructDetails {
       defenseComponentButton.addEventListener('click', this.getActionFunction(
         EVENTS.ACTIONS.ACTION_MOVE,
         this.defenseComponentButtonId,
-        this.offcanvasId
+        this.offcanvasId,
+        false,
+        this.moveStructFilter
       ));
     }
   }

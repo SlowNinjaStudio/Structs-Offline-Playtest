@@ -316,7 +316,7 @@ body {
 }
 .struct.empty {
   background: rgba(255, 255, 255, 0.25);
-  border: 4px dashed #cccccc;
+  border: 1px dashed #cccccc;
 }
 .struct.selected {
   border: 4px solid #00bfff;
@@ -327,10 +327,8 @@ body {
 .struct.critical {
   background: #ff9780;
 }
-.struct.destroyed {
-  filter: brightness(0.5);
-}
-.struct.unselectable {
+.struct.unselectable, .struct.unselectable:hover {
+  border: 1px solid #454545;
   filter: brightness(0.5);
 }
 .struct-map-view-btn {
