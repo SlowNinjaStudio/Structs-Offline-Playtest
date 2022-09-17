@@ -9,6 +9,7 @@ export class StructAction {
     this.setType(type);
     this.source = source;
     this.data = {};
+    this.applicableStructsFilter = () => true;
   }
 
   /**

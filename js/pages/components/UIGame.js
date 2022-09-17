@@ -7,6 +7,13 @@ import {SlotRef} from "../../modules/SlotRef.js";
 import {ActionActor} from "../../modules/ActionActor.js";
 
 export class UIGame {
+
+  /**
+   * @param {string} elementId
+   * @param {Player} player
+   * @param {Player} enemy
+   * @param {StructsGlobalDataStore} globalDataStore
+   */
   constructor(elementId, player, enemy, globalDataStore = new StructsGlobalDataStore()) {
     this.elementId = elementId
     this.player = player;
@@ -51,9 +58,9 @@ export class UIGame {
           EVENTS.ACTIONS.ACTION_ATTACK_SECONDARY,
           EVENTS.ACTIONS.ACTION_DEFEND
         ].includes(action.getType())) {
+          structsStore.clearStructAction();
           action.data = new StructRef(playerId, structId, isCommandStruct);
           action.dispatchEvent();
-          structsStore.clearStructAction();
         } else {
           const game = structsStore.getGame();
           const player = game.players.find(player => player.id === playerId);

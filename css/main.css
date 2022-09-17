@@ -330,6 +330,9 @@ body {
 .struct.destroyed {
   filter: brightness(0.5);
 }
+.struct.unselectable {
+  filter: brightness(0.5);
+}
 .struct-map-view-btn {
   display: inline-block;
 }

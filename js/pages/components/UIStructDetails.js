@@ -1,4 +1,11 @@
-import {AMBITS, DEFENSE_COMPONENT_TYPES, DEFENSE_COMPONENTS, EVENTS, IMG} from "../../modules/Constants.js";
+import {
+  AMBITS,
+  DEFENSE_COMPONENT_TYPES,
+  DEFENSE_COMPONENTS,
+  EVENTS,
+  IMG,
+  MANUAL_WEAPON_SLOTS
+} from "../../modules/Constants.js";
 import {Util} from "../../modules/Util.js";
 import {CounterMeasure} from "../../modules/CounterMeasure.js";
 import {StructsGlobalDataStore} from "../../modules/StructsGlobalDataStore.js";
@@ -28,14 +35,22 @@ export class UIStructDetails {
    * @param {string} actionButtonId
    * @param {string} offcanvasId
    * @param {boolean} selfDispatch
+   * @param {function} applicableStructsFn
    * @return {function}
    */
-  getActionFunction(eventType, actionButtonId, offcanvasId, selfDispatch = false) {
+  getActionFunction(
+    eventType,
+    actionButtonId,
+    offcanvasId,
+    selfDispatch = false,
+    applicableStructsFn = () => true
+  ) {
     const actionButton = document.getElementById(actionButtonId);
     const domOffcanvas = document.getElementById(offcanvasId);
     const bsOffcanvas = bootstrap.Offcanvas.getOrCreateInstance(domOffcanvas);
     return function() {
       bsOffcanvas.hide();
+      const dataStore = new StructsGlobalDataStore();
       const playerId = actionButton.getAttribute('data-player-id');
       const structId = actionButton.getAttribute('data-struct-id');
       const isCommandStruct = !!parseInt(actionButton.getAttribute('data-is-command-struct'));
@@ -47,13 +62,41 @@ export class UIStructDetails {
           isCommandStruct
         )
       );
+      action.applicableStructsFilter = applicableStructsFn;
 
       if (selfDispatch) {
+        dataStore.clearStructAction();
         action.dispatchEvent();
       } else {
-        (new StructsGlobalDataStore()).setStructAction(action);
+        dataStore.setStructAction(action);
+        const game = dataStore.getGame();
+        game.render();
       }
     }
+  }
+
+  /**
+   * @param {Struct} targetStruct
+   */
+  primaryAttackStructFilter(targetStruct) {
+    return this.player.id !== targetStruct.playerId
+      && this.struct.canAttack(this.struct.getManualWeapon(MANUAL_WEAPON_SLOTS.PRIMARY), targetStruct);
+  }
+
+  /**
+   * @param {Struct} targetStruct
+   */
+  secondaryAttackStructFilter(targetStruct) {
+    return this.player.id !== targetStruct.playerId
+      && this.struct.canAttack(this.struct.getManualWeapon(MANUAL_WEAPON_SLOTS.SECONDARY), targetStruct);
+  }
+
+  /**
+   * @param {Struct} targetStruct
+   * @return {boolean}
+   */
+  defendStructFilter(targetStruct) {
+    return this.player.id === targetStruct.playerId;
   }
 
   initPrimaryAttackListener() {
@@ -62,7 +105,9 @@ export class UIStructDetails {
       primaryAttackButton.addEventListener('click', this.getActionFunction(
         EVENTS.ACTIONS.ACTION_ATTACK_PRIMARY,
         this.primaryAttackButtonId,
-        this.offcanvasId
+        this.offcanvasId,
+        false,
+        this.primaryAttackStructFilter.bind(this)
       ));
     }
   }
@@ -73,7 +118,9 @@ export class UIStructDetails {
       secondaryAttackButton.addEventListener('click', this.getActionFunction(
         EVENTS.ACTIONS.ACTION_ATTACK_SECONDARY,
         this.secondaryAttackButtonId,
-        this.offcanvasId
+        this.offcanvasId,
+        false,
+        this.secondaryAttackStructFilter.bind(this)
       ));
     }
   }
@@ -84,7 +131,9 @@ export class UIStructDetails {
       defendButton.addEventListener('click', this.getActionFunction(
         EVENTS.ACTIONS.ACTION_DEFEND,
         this.defendButtonId,
-        this.offcanvasId
+        this.offcanvasId,
+        false,
+        this.defendStructFilter.bind(this)
       ));
     }
   }
