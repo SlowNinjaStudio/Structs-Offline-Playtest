@@ -451,6 +451,19 @@ body {
   max-width: 80px;
 }
 
+.game-over-msg {
+  font-size: 32px;
+}
+.player .game-over-msg {
+  background: #00bfff;
+  color: #212529;
+  font-weight: bold;
+}
+.enemy .game-over-msg {
+  background: #ff3000;
+  color: #000000;
+  font-weight: bold;
+}
 
 .offcanvas.structDetails {
   margin: 0 auto;

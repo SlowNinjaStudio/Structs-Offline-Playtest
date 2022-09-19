@@ -5,6 +5,8 @@ import {StructsGlobalDataStore} from "../../modules/StructsGlobalDataStore.js";
 import {StructRef} from "../../modules/StructRef.js";
 import {SlotRef} from "../../modules/SlotRef.js";
 import {ActionActor} from "../../modules/ActionActor.js";
+import {UIGameOverModal} from "./UIGameOverModal.js";
+import {UICombatEventViewer} from "./UICombatEventViewer.js";
 
 export class UIGame {
 
@@ -12,14 +14,27 @@ export class UIGame {
    * @param {string} elementId
    * @param {Player} player
    * @param {Player} enemy
+   * @param {string} modalContainerId
+   * @param {string} offcanvasId
    * @param {StructsGlobalDataStore} globalDataStore
    */
-  constructor(elementId, player, enemy, globalDataStore = new StructsGlobalDataStore()) {
+  constructor(
+    player,
+    enemy,
+    elementId,
+    modalContainerId,
+    offcanvasId,
+    globalDataStore = new StructsGlobalDataStore()
+  ) {
     this.elementId = elementId
     this.player = player;
     this.enemy = enemy;
     this.players = [this.player, this.enemy];
+    this.modalContainerId = modalContainerId;
+    this.offcanvasId = offcanvasId;
 
+    this.gameOverModal = new UIGameOverModal(this.modalContainerId, this.player, this.enemy);
+    this.combatEventViewer = new UICombatEventViewer(this.offcanvasId, player, enemy);
     this.playerFleetUI = new UIFleet(this.player);
     this.enemyFleetUI = new UIFleet(this.enemy);
     globalDataStore.setGame(this);
@@ -171,6 +186,8 @@ export class UIGame {
     this.initActionDefendListener();
     this.initActionStealthModeListener();
     this.initActionMoveListener();
+
+    this.combatEventViewer.initListeners();
   }
 
   render() {
@@ -191,5 +208,7 @@ export class UIGame {
     `;
 
     this.initListenersPerRender();
+
+    this.gameOverModal.init();
   }
 }

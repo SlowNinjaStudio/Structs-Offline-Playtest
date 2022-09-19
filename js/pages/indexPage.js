@@ -3,7 +3,6 @@ import {StructBuilder} from "../modules/StructBuilder.js";
 import {UNIT_TYPES} from "../modules/Constants.js";
 import {Player} from "../modules/Player.js";
 import {UIGame} from "./components/UIGame.js";
-import {UICombatEventViewer} from "./components/UICombatEventViewer.js";
 
 (new UINavbar()).init('nav-wrapper');
 
@@ -58,9 +57,12 @@ enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.SUB));
 enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.DESTROYER));
 
 
-const game = new UIGame('main-content-wrapper', player, enemy);
+const game = new UIGame(
+  player,
+  enemy,
+  'main-content-wrapper',
+  'modalContainer',
+  'offcanvasBottom'
+);
 game.render();
 game.initOneTimeListeners();
-
-const combatEventViewer = new UICombatEventViewer('offcanvasBottom', player, enemy);
-combatEventViewer.initListeners();
