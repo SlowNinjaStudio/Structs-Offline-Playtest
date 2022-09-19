@@ -14,10 +14,15 @@ export class UICombatEventViewer {
     this.playerLeft = null;
   }
 
-  initListeners() {
+  initOneTimeListeners() {
     Object.keys(EVENTS.COMBAT).forEach(key => {
       window.addEventListener(EVENTS.COMBAT[key], this.addEvent.bind(this));
     });
+    document.getElementById(this.offcanvasId).addEventListener('hidden.bs.offcanvas', function() {
+      if (this.player.isDefeated() || this.enemy.isDefeated()) {
+        window.dispatchEvent(new CustomEvent(EVENTS.RENDER.RENDER_GAME));
+      }
+    }.bind(this));
   }
 
   /**
@@ -175,7 +180,7 @@ export class UICombatEventViewer {
     return `
       <div class="row py-4 px-1 combat-event-row">
         <div class="col text-center">
-            <button type="button" class="btn btn-success" data-bs-dismiss="offcanvas">Close</button>
+            <button type="button" class="btn btn-success offcanvas-close" data-bs-dismiss="offcanvas">Close</button>
         </div>
       </div>
     `;

@@ -180,14 +180,23 @@ export class UIGame {
     });
   }
 
+  initGameRenderListener() {
+    const game = this;
+    window.addEventListener(EVENTS.RENDER.RENDER_GAME, function() {
+      game.render();
+    });
+  }
+
   initOneTimeListeners() {
+    this.initGameRenderListener();
+
     this.initActionAttackPrimaryListener();
     this.initActionAttackSecondaryListener();
     this.initActionDefendListener();
     this.initActionStealthModeListener();
     this.initActionMoveListener();
 
-    this.combatEventViewer.initListeners();
+    this.combatEventViewer.initOneTimeListeners();
   }
 
   render() {

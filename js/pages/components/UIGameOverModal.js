@@ -30,6 +30,19 @@ export class UIGameOverModal {
   }
 
   /**
+   * @return {boolean}
+   */
+  isOffcanvasClosed() {
+    let isClosed = true;
+    document.querySelectorAll('.offcanvas').forEach(offcanvas => {
+      if (offcanvas.classList.contains('show')) {
+        isClosed = false;
+      }
+    })
+    return isClosed;
+  }
+
+  /**
    * @return {string}
    */
   render() {
@@ -41,7 +54,13 @@ export class UIGameOverModal {
     }
 
     return `
-      <div class="modal fade ${playerCSSClass}" id="${this.modalId}" tabindex="-1" data-bs-backdrop="static">
+      <div
+        class="modal fade ${playerCSSClass}"
+        id="${this.modalId}"
+        tabindex="-1"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+      >
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
@@ -65,7 +84,7 @@ export class UIGameOverModal {
   }
 
   init() {
-    if (!this.isGameOver()) {
+    if (!this.isGameOver() || !this.isOffcanvasClosed()) {
       return;
     }
 
