@@ -41,7 +41,7 @@ export class UIGameOverModal {
     }
 
     return `
-      <div class="modal fade ${playerCSSClass}" id="${this.modalId}" tabindex="-1">
+      <div class="modal fade ${playerCSSClass}" id="${this.modalId}" tabindex="-1" data-bs-backdrop="static">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
