@@ -1,32 +1,30 @@
-import {StructsGlobalDataStore} from "../../modules/util/StructsGlobalDataStore.js";
 import {EVENTS} from "../../modules/Constants.js";
 
 export class UIEmptyMapSlot {
 
   /**
+   * @param {GameState} state
    * @param {Player} player
    * @param {string} ambit
    * @param {number} ambitSlot
    * @param {boolean} isCommandSlot
    */
-  constructor(player, ambit, ambitSlot, isCommandSlot = false) {
+  constructor(state, player, ambit, ambitSlot, isCommandSlot = false) {
+    this.state = state;
     this.player = player;
     this.ambit = ambit;
     this.ambitSlot = ambitSlot;
     this.isCommandSlot = isCommandSlot;
-
-    this.dataStore = new StructsGlobalDataStore();
   }
 
   /**
    * @return {boolean}
    */
   isSelectableSlot() {
-    const action = this.dataStore.getStructAction();
-    return !action
+    return !this.state.action
       || (
-        action.getType() === EVENTS.ACTIONS.ACTION_MOVE
-        && action.source.playerId === this.player.id
+        this.state.action.getType() === EVENTS.ACTIONS.ACTION_MOVE
+        && this.state.action.source.playerId === this.player.id
         && this.isCommandSlot
       );
   }

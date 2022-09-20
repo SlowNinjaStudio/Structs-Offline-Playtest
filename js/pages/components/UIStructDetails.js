@@ -8,18 +8,19 @@ import {
 } from "../../modules/Constants.js";
 import {Util} from "../../modules/util/Util.js";
 import {CounterMeasure} from "../../modules/struct_components/CounterMeasure.js";
-import {StructsGlobalDataStore} from "../../modules/util/StructsGlobalDataStore.js";
 import {StructAction} from "../../modules/StructAction.js";
 import {StructRef} from "../../modules/StructRef.js";
 
 export class UIStructDetails {
 
   /**
+   * @param {GameState} state
    * @param {Struct} struct
    * @param {Player} player
    * @param {string} offcanvasId
    */
-  constructor(struct, player, offcanvasId) {
+  constructor(state, struct, player, offcanvasId) {
+    this.state = state;
     this.struct = struct;
     this.player = player;
     this.offcanvasId = offcanvasId;
@@ -50,7 +51,6 @@ export class UIStructDetails {
     const bsOffcanvas = bootstrap.Offcanvas.getOrCreateInstance(domOffcanvas);
     return function() {
       bsOffcanvas.hide();
-      const dataStore = new StructsGlobalDataStore();
       const playerId = actionButton.getAttribute('data-player-id');
       const structId = actionButton.getAttribute('data-struct-id');
       const isCommandStruct = !!parseInt(actionButton.getAttribute('data-is-command-struct'));
@@ -65,14 +65,13 @@ export class UIStructDetails {
       action.applicableStructsFilter = applicableStructsFn;
 
       if (selfDispatch) {
-        dataStore.clearStructAction();
+        this.state.action = null;
         action.dispatchEvent();
       } else {
-        dataStore.setStructAction(action);
-        const game = dataStore.getGame();
-        game.render();
+        this.state.action = action;
+        window.dispatchEvent(new CustomEvent(EVENTS.RENDER.RENDER_GAME));
       }
-    }
+    }.bind(this);
   }
 
   /**
@@ -148,7 +147,8 @@ export class UIStructDetails {
 
   initStealthModeListener() {
     const defenseComponentButton = document.getElementById(this.defenseComponentButtonId);
-    if (defenseComponentButton) {
+    if (defenseComponentButton
+      && defenseComponentButton.getAttribute('data-action-event') === EVENTS.ACTIONS.ACTION_STEALTH_MODE) {
       defenseComponentButton.addEventListener('click', this.getActionFunction(
         EVENTS.ACTIONS.ACTION_STEALTH_MODE,
         this.defenseComponentButtonId,
@@ -160,7 +160,8 @@ export class UIStructDetails {
 
   initMoveListener() {
     const defenseComponentButton = document.getElementById(this.defenseComponentButtonId);
-    if (defenseComponentButton) {
+    if (defenseComponentButton
+      && defenseComponentButton.getAttribute('data-action-event') === EVENTS.ACTIONS.ACTION_MOVE) {
       defenseComponentButton.addEventListener('click', this.getActionFunction(
         EVENTS.ACTIONS.ACTION_MOVE,
         this.defenseComponentButtonId,
@@ -282,6 +283,7 @@ export class UIStructDetails {
               data-player-id="${this.player.id}"
               data-struct-id="${this.struct.id}"
               data-is-command-struct="${this.struct.isCommandStruct() ? 1: 0}"
+              data-action-event="${EVENTS.ACTIONS.ACTION_STEALTH_MODE}"
               ${this.isDefenseComponentEnabled() ? '' : 'disabled'}
             >
               ${this.struct.defenseComponent.getActionLabel()}
@@ -299,6 +301,7 @@ export class UIStructDetails {
               data-player-id="${this.player.id}"
               data-struct-id="${this.struct.id}"
               data-is-command-struct="${this.struct.isCommandStruct() ? 1: 0}"
+              data-action-event="${EVENTS.ACTIONS.ACTION_MOVE}"
             >
               ${this.struct.defenseComponent.getActionLabel()}
               <img src="${IMG.ICONS}icon-speed.png" alt="speed">

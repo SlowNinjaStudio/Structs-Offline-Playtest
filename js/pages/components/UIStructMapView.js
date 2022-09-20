@@ -1,16 +1,15 @@
 import {DEFENSE_COMPONENTS, IMG, MAX_HEART_ICONS} from "../../modules/Constants.js";
-import {StructsGlobalDataStore} from "../../modules/util/StructsGlobalDataStore.js";
 
 export class UIStructMapView {
   /**
+   * @param {GameState} state
    * @param {Struct} struct
    * @param {Player} player
    */
-  constructor(struct, player) {
+  constructor(state, struct, player) {
+    this.state = state;
     this.struct = struct;
     this.player = player;
-
-    this.dataStore = new StructsGlobalDataStore();
   }
 
   renderHealthInHearts() {
@@ -92,9 +91,9 @@ export class UIStructMapView {
 
   render() {
     let isSelectable = true;
-    const action = this.dataStore.getStructAction();
-    if (action) {
-      isSelectable = action.applicableStructsFilter(this.struct);
+    if (this.state.action) {
+      console.log(this.state.action);
+      isSelectable = this.state.action.applicableStructsFilter(this.struct);
     }
     return `
       ${(this.struct.isDestroyed || !isSelectable) ? '' : `

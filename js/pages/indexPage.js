@@ -65,13 +65,6 @@ state.modalContainerId = 'modalContainer';
 state.offcanvasId = 'offcanvasBottom';
 
 
-const game = new UIGame(
-  state,
-  player,
-  enemy,
-  'main-content-wrapper',
-  'modalContainer',
-  'offcanvasBottom'
-);
+const game = new UIGame(state);
 game.render();
 game.initOneTimeListeners();

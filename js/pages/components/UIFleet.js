@@ -5,11 +5,13 @@ import {UIEmptyMapSlot} from "./UIEmptyMapSlot.js";
 
 export class UIFleet {
   /**
+   * @param {GameState} state
    * @param {Player} player
    */
-  constructor(player) {
+  constructor(state, player) {
+    this.state = state;
     this.player = player;
-    this.uiFleetCommand = new UIFleetCommand(this.player);
+    this.uiFleetCommand = new UIFleetCommand(this.state, this.player);
 
     this.ambitsUtil = new AmbitsUtil();
   }
@@ -22,11 +24,13 @@ export class UIFleet {
       for (let i = 0; i < this.player.fleet[ambits[j]].length; i++) {
         if (this.player.fleet[ambits[j]][i]) {
           html += (new UIStructMapView(
+            this.state,
             this.player.fleet[ambits[j]][i],
             this.player
           )).render();
         } else {
           html += (new UIEmptyMapSlot(
+            this.state,
             this.player,
             ambits[j].toUpperCase(),
             i,

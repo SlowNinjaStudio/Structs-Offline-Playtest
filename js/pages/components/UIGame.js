@@ -1,7 +1,6 @@
 import {UIFleet} from "./UIFleet.js";
 import {EVENTS, MANUAL_WEAPON_SLOTS} from "../../modules/Constants.js";
 import {UIStructDetails} from "./UIStructDetails.js";
-import {StructsGlobalDataStore} from "../../modules/util/StructsGlobalDataStore.js";
 import {StructRef} from "../../modules/StructRef.js";
 import {SlotRef} from "../../modules/SlotRef.js";
 import {ActionActor} from "../../modules/ActionActor.js";
@@ -12,32 +11,13 @@ export class UIGame {
 
   /**
    * @param {GameState} state
-   * @param {Player} player
-   * @param {Player} enemy
-   * @param {string} elementId
-   * @param {string} modalContainerId
-   * @param {string} offcanvasId
-   * @param {StructsGlobalDataStore} globalDataStore
    */
-  constructor(
-    state,
-    player,
-    enemy,
-    elementId,
-    modalContainerId,
-    offcanvasId,
-    globalDataStore = new StructsGlobalDataStore()
-  ) {
+  constructor(state) {
     this.state = state;
-    this.player = player;
-    this.enemy = enemy;
-    this.players = [this.player, this.enemy];
-
     this.gameOverModal = new UIGameOverModal(this.state);
     this.combatEventViewer = new UICombatEventViewer(this.state);
-    this.playerFleetUI = new UIFleet(this.state.player);
-    this.enemyFleetUI = new UIFleet(this.state.enemy);
-    globalDataStore.setGame(this);
+    this.playerFleetUI = new UIFleet(this.state, this.state.player);
+    this.enemyFleetUI = new UIFleet(this.state, this.state.enemy);
   }
 
   initEmptyCommandSlotListeners() {
@@ -47,15 +27,14 @@ export class UIGame {
         const ambit = commandSlot.getAttribute('data-ambit');
         const ambitSlot = parseInt(commandSlot.getAttribute('data-ambit-slot'));
         const isCommandSlot = !!parseInt(commandSlot.getAttribute('data-is-command-slot'));
-        const structsStore = new StructsGlobalDataStore();
-        const action = structsStore.getStructAction();
+        const action = this.state.action;
 
         if (action && EVENTS.ACTIONS.ACTION_MOVE === action.getType()) {
           action.data = new SlotRef(playerId, ambit, ambitSlot, isCommandSlot);
           action.dispatchEvent();
-          structsStore.clearStructAction();
+          this.state.action = null;
         }
-      })
+      }.bind(this))
     })
   }
 
@@ -65,30 +44,28 @@ export class UIGame {
         const playerId = structButton.getAttribute('data-player-id');
         const structId = structButton.getAttribute('data-struct-id');
         const isCommandStruct = !!parseInt(structButton.getAttribute('data-is-command-struct'));
-        const structsStore = new StructsGlobalDataStore();
-        const action = structsStore.getStructAction();
+        const action = this.state.action;
 
         if (action && [
           EVENTS.ACTIONS.ACTION_ATTACK_PRIMARY,
           EVENTS.ACTIONS.ACTION_ATTACK_SECONDARY,
           EVENTS.ACTIONS.ACTION_DEFEND
         ].includes(action.getType())) {
-          structsStore.clearStructAction();
+          this.state.action = null;
           action.data = new StructRef(playerId, structId, isCommandStruct);
           action.dispatchEvent();
         } else {
-          const game = structsStore.getGame();
-          const player = game.players.find(player => player.id === playerId);
+          const player = (this.state.getPlayers()).find(player => player.id === playerId);
           const struct = isCommandStruct ? player.commandStruct : player.fleet.findStructById(structId);
           const domOffcanvas = document.getElementById('offcanvasBottom');
-          const bsOffcanvas = bootstrap.Offcanvas.getOrCreateInstance(document.getElementById('offcanvasBottom'));
-          const offcanvasClass = (game.player.id === playerId) ? 'player' : 'enemy';
+          const bsOffcanvas = bootstrap.Offcanvas.getOrCreateInstance(domOffcanvas);
+          const offcanvasClass = (this.state.player.id === playerId) ? 'player' : 'enemy';
 
           domOffcanvas.classList.remove('player');
           domOffcanvas.classList.remove('enemy');
           domOffcanvas.classList.add(offcanvasClass);
 
-          const uiStructDetails = new UIStructDetails(struct, player, 'offcanvasBottom');
+          const uiStructDetails = new UIStructDetails(this.state, struct, player, this.state.offcanvasId);
           domOffcanvas.innerHTML = uiStructDetails.render();
           uiStructDetails.initListeners();
 
@@ -102,7 +79,7 @@ export class UIGame {
 
           bsOffcanvas.show();
         }
-      });
+      }.bind(this));
     });
   }
 
@@ -112,79 +89,73 @@ export class UIGame {
   }
 
   initActionAttackPrimaryListener() {
-    const game = this;
     window.addEventListener(EVENTS.ACTIONS.ACTION_ATTACK_PRIMARY, function (e) {
-      const player = new ActionActor(e.detail.source, game.players);
-      const enemy = new ActionActor(e.detail.data, game.players);
-      const dataStore = new StructsGlobalDataStore();
-      dataStore.clearStructAction();
+      const player = new ActionActor(e.detail.source, this.state.getPlayers());
+      const enemy = new ActionActor(e.detail.data, this.state.getPlayers());
+
+      this.state.action = null;
 
       player.struct.attack(MANUAL_WEAPON_SLOTS.PRIMARY, enemy.struct);
 
-      game.render();
-    });
+      this.render();
+    }.bind(this));
   }
 
   initActionAttackSecondaryListener() {
-    const game = this;
     window.addEventListener(EVENTS.ACTIONS.ACTION_ATTACK_SECONDARY, function (e) {
-      const player = new ActionActor(e.detail.source, game.players);
-      const enemy = new ActionActor(e.detail.data, game.players);
-      const dataStore = new StructsGlobalDataStore();
-      dataStore.clearStructAction();
+      const player = new ActionActor(e.detail.source, this.state.getPlayers());
+      const enemy = new ActionActor(e.detail.data, this.state.getPlayers());
+
+      this.state.action = null;
 
       player.struct.attack(MANUAL_WEAPON_SLOTS.SECONDARY, enemy.struct);
 
-      game.render();
-    });
+      this.render();
+    }.bind(this));
   }
 
   initActionDefendListener() {
-    const game = this;
     window.addEventListener(EVENTS.ACTIONS.ACTION_DEFEND, function (e) {
-      const player = new ActionActor(e.detail.source, game.players);
-      const target = new ActionActor(e.detail.data, game.players);
-      const dataStore = new StructsGlobalDataStore();
-      dataStore.clearStructAction();
+      const player = new ActionActor(e.detail.source, this.state.getPlayers());
+      const target = new ActionActor(e.detail.data, this.state.getPlayers());
+
+      this.state.action = null;
 
       player.struct.defend(target.struct);
 
-      game.render();
-    });
+      this.render();
+    }.bind(this));
   }
 
   initActionStealthModeListener() {
-    const game = this;
     window.addEventListener(EVENTS.ACTIONS.ACTION_STEALTH_MODE, function (e) {
-      const player = new ActionActor(e.detail.source, game.players);
+      const player = new ActionActor(e.detail.source, this.state.getPlayers());
 
       player.struct.defenseComponent.isActive = !player.struct.defenseComponent.isActive;
 
-      game.render();
-    });
+      this.render();
+    }.bind(this));
   }
 
   initActionMoveListener() {
-    const game = this;
     window.addEventListener(EVENTS.ACTIONS.ACTION_MOVE, function(e) {
-      const player = new ActionActor(e.detail.source, game.players);
-      const dataStore = new StructsGlobalDataStore();
-      dataStore.clearStructAction();
+      const player = new ActionActor(e.detail.source, this.state.getPlayers());
+
+      this.state.action = null;
 
       const slotRef = e.detail.data;
       if (player.struct.defenseComponent.canChangeAmbit(player.struct.operatingAmbit, slotRef.ambit)) {
         player.struct.operatingAmbit = slotRef.ambit;
       }
 
-      game.render();
-    });
+      this.render();
+    }.bind(this));
   }
 
   initGameRenderListener() {
-    const game = this;
     window.addEventListener(EVENTS.RENDER.RENDER_GAME, function() {
-      game.render();
-    });
+      this.render();
+    }.bind(this));
   }
 
   initOneTimeListeners() {

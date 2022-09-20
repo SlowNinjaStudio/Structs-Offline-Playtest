@@ -5,9 +5,11 @@ import {UIEmptyMapSlot} from "./UIEmptyMapSlot.js";
 export class UIFleetCommand {
 
   /**
+   * @param {GameState} state;
    * @param {Player} player
    */
-  constructor(player) {
+  constructor(state, player) {
+    this.state = state;
     this.player = player;
     this.ambitsUtil = new AmbitsUtil();
   }
@@ -19,11 +21,13 @@ export class UIFleetCommand {
       html += `<div class="ambit ${ambits[i]}">`;
       if (this.player.commandStruct.operatingAmbit === ambits[i].toUpperCase()) {
         html += (new UIStructMapView(
+          this.state,
           this.player.commandStruct,
           this.player
         )).render();
       } else {
         html += (new UIEmptyMapSlot(
+          this.state,
           this.player,
           ambits[i].toUpperCase(),
           this.player.commandStruct.ambitSlot,
