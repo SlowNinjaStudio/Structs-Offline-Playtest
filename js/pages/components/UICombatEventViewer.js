@@ -2,14 +2,10 @@ import {COMBAT_EVENT_LABELS, EVENTS, IMG} from "../../modules/Constants.js";
 
 export class UICombatEventViewer {
   /**
-   * @param {string} offcanvasId
-   * @param {Player} player
-   * @param {Player} enemy
+   * @param {GameState} state
    */
-  constructor(offcanvasId, player, enemy) {
-    this.offcanvasId = offcanvasId;
-    this.player = player;
-    this.enemy = enemy;
+  constructor(state) {
+    this.state = state;
     this.events = [];
     this.playerLeft = null;
   }
@@ -18,8 +14,8 @@ export class UICombatEventViewer {
     Object.keys(EVENTS.COMBAT).forEach(key => {
       window.addEventListener(EVENTS.COMBAT[key], this.addEvent.bind(this));
     });
-    document.getElementById(this.offcanvasId).addEventListener('hidden.bs.offcanvas', function() {
-      if (this.player.isDefeated() || this.enemy.isDefeated()) {
+    document.getElementById(this.state.offcanvasId).addEventListener('hidden.bs.offcanvas', function() {
+      if (this.state.player.isDefeated() || this.state.enemy.isDefeated()) {
         window.dispatchEvent(new CustomEvent(EVENTS.RENDER.RENDER_GAME));
       }
     }.bind(this));
@@ -31,10 +27,10 @@ export class UICombatEventViewer {
   addEvent(e) {
     if (e.type === EVENTS.COMBAT.COMBAT_TARGETED) {
       this.events = [];
-      if (e.sourceStruct.playerId === this.player.id) {
-        this.playerLeft = this.player;
+      if (e.sourceStruct.playerId === this.state.player.id) {
+        this.playerLeft = this.state.player;
       } else {
-        this.playerLeft = this.enemy;
+        this.playerLeft = this.state.enemy;
       }
     }
     this.events.push(e);
@@ -196,7 +192,7 @@ export class UICombatEventViewer {
       }
     }
 
-    document.getElementById(this.offcanvasId).innerHTML = `
+    document.getElementById(this.state.offcanvasId).innerHTML = `
       <div class="offcanvas-header">
         <div class="container-fluid">
           <div class="row">
@@ -216,7 +212,7 @@ export class UICombatEventViewer {
       </div>
     `;
 
-    const bsOffcanvas = bootstrap.Offcanvas.getOrCreateInstance(document.getElementById(this.offcanvasId));
+    const bsOffcanvas = bootstrap.Offcanvas.getOrCreateInstance(document.getElementById(this.state.offcanvasId));
     bsOffcanvas.show();
   }
 }

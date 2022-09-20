@@ -1,13 +1,9 @@
 export class UIGameOverModal {
   /**
-   * @param {string} containerId
-   * @param {Player} player
-   * @param {Player} enemy
+   * @param {GameState} state
    */
-  constructor(containerId, player, enemy) {
-    this.containerId = containerId;
-    this.player = player;
-    this.enemy = enemy;
+  constructor(state) {
+    this.state = state;
     this.modalId = 'gameOverModal';
     this.playAgainBtnId = 'playAgainBtn';
   }
@@ -26,7 +22,7 @@ export class UIGameOverModal {
    * @return {boolean}
    */
   isGameOver() {
-    return this.player.isDefeated() || this.enemy.isDefeated();
+    return this.state.player.isDefeated() || this.state.enemy.isDefeated();
   }
 
   /**
@@ -48,7 +44,7 @@ export class UIGameOverModal {
   render() {
     let playerCSSClass = 'player';
     let playerLabel = 'Player';
-    if (this.player.isDefeated()) {
+    if (this.state.player.isDefeated()) {
       playerCSSClass = 'enemy';
       playerLabel = 'Enemy';
     }
@@ -88,7 +84,7 @@ export class UIGameOverModal {
       return;
     }
 
-    document.getElementById(this.containerId).innerHTML = this.render();
+    document.getElementById(this.state.modalContainerId).innerHTML = this.render();
 
     this.initListeners();
 

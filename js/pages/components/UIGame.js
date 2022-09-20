@@ -11,14 +11,16 @@ import {UICombatEventViewer} from "./UICombatEventViewer.js";
 export class UIGame {
 
   /**
-   * @param {string} elementId
+   * @param {GameState} state
    * @param {Player} player
    * @param {Player} enemy
+   * @param {string} elementId
    * @param {string} modalContainerId
    * @param {string} offcanvasId
    * @param {StructsGlobalDataStore} globalDataStore
    */
   constructor(
+    state,
     player,
     enemy,
     elementId,
@@ -26,17 +28,15 @@ export class UIGame {
     offcanvasId,
     globalDataStore = new StructsGlobalDataStore()
   ) {
-    this.elementId = elementId
+    this.state = state;
     this.player = player;
     this.enemy = enemy;
     this.players = [this.player, this.enemy];
-    this.modalContainerId = modalContainerId;
-    this.offcanvasId = offcanvasId;
 
-    this.gameOverModal = new UIGameOverModal(this.modalContainerId, this.player, this.enemy);
-    this.combatEventViewer = new UICombatEventViewer(this.offcanvasId, player, enemy);
-    this.playerFleetUI = new UIFleet(this.player);
-    this.enemyFleetUI = new UIFleet(this.enemy);
+    this.gameOverModal = new UIGameOverModal(this.state);
+    this.combatEventViewer = new UICombatEventViewer(this.state);
+    this.playerFleetUI = new UIFleet(this.state.player);
+    this.enemyFleetUI = new UIFleet(this.state.enemy);
     globalDataStore.setGame(this);
   }
 
@@ -200,17 +200,17 @@ export class UIGame {
   }
 
   render() {
-    document.getElementById(this.elementId).innerHTML = `
+    document.getElementById(this.state.gameContainerId).innerHTML = `
       <div class="container-fluid play-area">
         <div class="row">
 
-          <div id="playerFleet" class="col">${this.playerFleetUI.render(this.player)}</div>
+          <div id="playerFleet" class="col">${this.playerFleetUI.render(this.state.player)}</div>
 
           <div class="col-lg-2">
             <div class="vs">VS</div><div class="vertical-align-helper"></div>
           </div>
 
-          <div id="enemyFleet" class="col">${this.enemyFleetUI.render(this.player)}</div>
+          <div id="enemyFleet" class="col">${this.enemyFleetUI.render(this.state.player)}</div>
 
         </div>
       </div>
