@@ -1,5 +1,5 @@
 import {DTest} from "../../DTestFramework.js";
-import {Fraction} from "../../../js/modules/Fraction.js";
+import {Fraction} from "../../../js/modules/util/Fraction.js";
 
 const toDecimalTest = new DTest('toDecimalTest', function(params) {
   const fraction = new Fraction(params.numerator, params.denominator);

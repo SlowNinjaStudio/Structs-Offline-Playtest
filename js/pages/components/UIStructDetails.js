@@ -6,9 +6,9 @@ import {
   IMG,
   MANUAL_WEAPON_SLOTS
 } from "../../modules/Constants.js";
-import {Util} from "../../modules/Util.js";
-import {CounterMeasure} from "../../modules/CounterMeasure.js";
-import {StructsGlobalDataStore} from "../../modules/StructsGlobalDataStore.js";
+import {Util} from "../../modules/util/Util.js";
+import {CounterMeasure} from "../../modules/struct_components/CounterMeasure.js";
+import {StructsGlobalDataStore} from "../../modules/util/StructsGlobalDataStore.js";
 import {StructAction} from "../../modules/StructAction.js";
 import {StructRef} from "../../modules/StructRef.js";
 

@@ -1,6 +1,6 @@
-import {FLEET_STRUCT_DEFAULTS, MANUAL_WEAPON_CUSTOM_ACTION_LABELS, MANUAL_WEAPONS} from "./Constants.js";
+import {FLEET_STRUCT_DEFAULTS, MANUAL_WEAPON_CUSTOM_ACTION_LABELS, MANUAL_WEAPONS} from "../Constants.js";
 import {ManualWeapon} from "./ManualWeapon.js";
-import {ManualWeaponFactoryError} from "./ManualWeaponFactoryError.js";
+import {ManualWeaponFactoryError} from "../errors/ManualWeaponFactoryError.js";
 
 export class ManualWeaponFactory {
   /**

@@ -7,11 +7,11 @@ import {
   MANUAL_WEAPONS,
   PASSIVE_WEAPONS
 } from "../../../js/modules/Constants.js";
-import {PassiveWeaponFactory} from "../../../js/modules/PassiveWeaponFactory.js";
-import {DefenseComponentFactory} from "../../../js/modules/DefenseComponentFactory.js";
-import {ManualWeaponFactory} from "../../../js/modules/ManualWeaponFactory.js";
+import {PassiveWeaponFactory} from "../../../js/modules/struct_components/PassiveWeaponFactory.js";
+import {DefenseComponentFactory} from "../../../js/modules/struct_components/DefenseComponentFactory.js";
+import {ManualWeaponFactory} from "../../../js/modules/struct_components/ManualWeaponFactory.js";
 import {Struct} from "../../../js/modules/Struct.js";
-import {Fraction} from "../../../js/modules/Fraction.js";
+import {Fraction} from "../../../js/modules/util/Fraction.js";
 
 const makeTest = new DTest('makeTest', function(params) {
   const component = (new DefenseComponentFactory()).make(params.name, params.ambits);

@@ -1,14 +1,14 @@
 import {DTest} from "../../DTestFramework.js";
 import {Struct} from "../../../js/modules/Struct.js";
-import {ManualWeapon} from "../../../js/modules/ManualWeapon.js";
+import {ManualWeapon} from "../../../js/modules/struct_components/ManualWeapon.js";
 import {AMBITS, FLEET_STRUCT_DEFAULTS, MANUAL_WEAPON_SLOTS} from "../../../js/modules/Constants.js";
-import {PassiveWeapon} from "../../../js/modules/PassiveWeapon.js";
-import {AmbitDefense} from "../../../js/modules/AmbitDefense.js";
-import {CounterAttackEvasion} from "../../../js/modules/CounterAttackEvasion.js"
-import {DefendActionDisabledError} from "../../../js/modules/DefendActionDisabledError.js";
-import {InvalidManualWeaponSlotError} from "../../../js/modules/InvalidManualWeaponSlotError.js";
-import {AftermarketEngine} from "../../../js/modules/AftermarketEngine.js";
-import {Fraction} from "../../../js/modules/Fraction.js";
+import {PassiveWeapon} from "../../../js/modules/struct_components/PassiveWeapon.js";
+import {AmbitDefense} from "../../../js/modules/struct_components/AmbitDefense.js";
+import {CounterAttackEvasion} from "../../../js/modules/struct_components/CounterAttackEvasion.js"
+import {DefendActionDisabledError} from "../../../js/modules/errors/DefendActionDisabledError.js";
+import {InvalidManualWeaponSlotError} from "../../../js/modules/errors/InvalidManualWeaponSlotError.js";
+import {AftermarketEngine} from "../../../js/modules/struct_components/AftermarketEngine.js";
+import {Fraction} from "../../../js/modules/util/Fraction.js";
 
 /**
  * @return {Struct}

@@ -3,14 +3,14 @@ import {
   DEFENSE_COMPONENT_CUSTOM_ACTION_LABELS,
   DEFENSE_COMPONENTS,
   FLEET_STRUCT_DEFAULTS
-} from "./Constants.js";
-import {DefenseComponentFactoryError} from "./DefenseComponentFactoryError.js";
+} from "../Constants.js";
+import {DefenseComponentFactoryError} from "../errors/DefenseComponentFactoryError.js";
 import {Armour} from "./Armour.js";
 import {CounterMeasure} from "./CounterMeasure.js";
 import {AmbitDefense} from "./AmbitDefense.js";
 import {CounterAttackEvasion} from "./CounterAttackEvasion.js";
 import {AftermarketEngine} from "./AftermarketEngine.js";
-import {Fraction} from "./Fraction.js";
+import {Fraction} from "../util/Fraction.js";
 
 export class DefenseComponentFactory {
   /**

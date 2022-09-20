@@ -1,7 +1,7 @@
-import {COMMAND_STRUCT_DEFAULTS, FLEET_STRUCT_DEFAULTS, PASSIVE_WEAPONS} from "./Constants.js";
-import {PassiveWeaponFactoryError} from "./PassiveWeaponFactoryError.js";
+import {COMMAND_STRUCT_DEFAULTS, FLEET_STRUCT_DEFAULTS, PASSIVE_WEAPONS} from "../Constants.js";
+import {PassiveWeaponFactoryError} from "../errors/PassiveWeaponFactoryError.js";
 import {PassiveWeapon} from "./PassiveWeapon.js";
-import {Fraction} from "./Fraction.js";
+import {Fraction} from "../util/Fraction.js";
 
 export class PassiveWeaponFactory {
   /**

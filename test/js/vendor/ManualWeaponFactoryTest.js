@@ -1,6 +1,6 @@
 import {DTest} from "../../DTestFramework.js";
 import {AMBITS, FLEET_STRUCT_DEFAULTS, MANUAL_WEAPONS} from "../../../js/modules/Constants.js";
-import {ManualWeaponFactory} from "../../../js/modules/ManualWeaponFactory.js";
+import {ManualWeaponFactory} from "../../../js/modules/struct_components/ManualWeaponFactory.js";
 
 const makeTest = new DTest('makeTest', function(params) {
   const weapon = (new ManualWeaponFactory()).make(params.weaponName, params.ambits);

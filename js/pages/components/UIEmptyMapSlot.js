@@ -1,4 +1,4 @@
-import {StructsGlobalDataStore} from "../../modules/StructsGlobalDataStore.js";
+import {StructsGlobalDataStore} from "../../modules/util/StructsGlobalDataStore.js";
 import {EVENTS} from "../../modules/Constants.js";
 
 export class UIEmptyMapSlot {

@@ -1,4 +1,4 @@
-import {ORDER_OF_AMBITS} from "./Constants.js";
+import {ORDER_OF_AMBITS} from "../Constants.js";
 import {Util} from "./Util.js";
 
 export class AmbitsUtil {

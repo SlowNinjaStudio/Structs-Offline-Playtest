@@ -1,7 +1,7 @@
 import {UIFleet} from "./UIFleet.js";
 import {EVENTS, MANUAL_WEAPON_SLOTS} from "../../modules/Constants.js";
 import {UIStructDetails} from "./UIStructDetails.js";
-import {StructsGlobalDataStore} from "../../modules/StructsGlobalDataStore.js";
+import {StructsGlobalDataStore} from "../../modules/util/StructsGlobalDataStore.js";
 import {StructRef} from "../../modules/StructRef.js";
 import {SlotRef} from "../../modules/SlotRef.js";
 import {ActionActor} from "../../modules/ActionActor.js";

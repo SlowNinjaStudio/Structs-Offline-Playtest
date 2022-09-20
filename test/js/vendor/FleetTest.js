@@ -2,7 +2,7 @@ import {DTest} from "../../DTestFramework.js";
 import {AMBITS, UNIT_TYPES} from "../../../js/modules/Constants.js";
 import {StructBuilder} from "../../../js/modules/StructBuilder.js";
 import {Fleet} from "../../../js/modules/Fleet.js";
-import {IdGenerator} from "../../../js/modules/IdGenerator.js";
+import {IdGenerator} from "../../../js/modules/util/IdGenerator.js";
 
 const findStructByAmbitAndIdTest = new DTest('findStructByAmbitAndIdTest', function() {
   const fleet = new Fleet();

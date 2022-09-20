@@ -1,4 +1,4 @@
-import {Util} from "./Util.js";
+import {Util} from "../util/Util.js";
 
 export class ManualWeapon {
   /**

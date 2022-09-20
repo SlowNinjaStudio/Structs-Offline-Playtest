@@ -1,5 +1,5 @@
 import {DefenseComponent} from "./DefenseComponent.js";
-import {DEFENSE_COMPONENT_TYPES, ORDER_OF_AMBITS} from "./Constants.js";
+import {DEFENSE_COMPONENT_TYPES, ORDER_OF_AMBITS} from "../Constants.js";
 
 export class AftermarketEngine extends DefenseComponent {
   /**

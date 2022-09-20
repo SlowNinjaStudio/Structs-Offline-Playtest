@@ -1,10 +1,10 @@
 import {DEFENSE_COMPONENTS, EVENTS, FLEET_STRUCT_DEFAULTS, MANUAL_WEAPON_SLOTS, STRUCT_DEFAULTS} from "./Constants.js";
-import {DefenseComponent} from "./DefenseComponent.js";
-import {PassiveWeapon} from "./PassiveWeapon.js";
-import {DefendActionDisabledError} from "./DefendActionDisabledError.js";
-import {InvalidManualWeaponSlotError} from "./InvalidManualWeaponSlotError.js";
-import {IdGenerator} from "./IdGenerator.js";
-import {Util} from "./Util.js";
+import {DefenseComponent} from "./struct_components/DefenseComponent.js";
+import {PassiveWeapon} from "./struct_components/PassiveWeapon.js";
+import {DefendActionDisabledError} from "./errors/DefendActionDisabledError.js";
+import {InvalidManualWeaponSlotError} from "./errors/InvalidManualWeaponSlotError.js";
+import {IdGenerator} from "./util/IdGenerator.js";
+import {Util} from "./util/Util.js";
 import {CombatEventDispatcher} from "./CombatEventDispatcher.js";
 
 export class Struct {

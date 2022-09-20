@@ -1,6 +1,6 @@
 import {UIFleetCommand} from "./UIFleetCommand.js";
 import {UIStructMapView} from "./UIStructMapView.js";
-import {AmbitsUtil} from "../../modules/AmbitsUtil.js";
+import {AmbitsUtil} from "../../modules/util/AmbitsUtil.js";
 import {UIEmptyMapSlot} from "./UIEmptyMapSlot.js";
 
 export class UIFleet {

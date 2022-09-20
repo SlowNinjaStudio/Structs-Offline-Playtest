@@ -1,9 +1,9 @@
 import {AMBITS, DEFENSE_COMPONENTS, IMG, MANUAL_WEAPONS, PASSIVE_WEAPONS, UNIT_TYPES} from "./Constants.js";
 import {Struct} from "./Struct.js";
-import {ManualWeaponFactory} from "./ManualWeaponFactory.js";
-import {PassiveWeaponFactory} from "./PassiveWeaponFactory.js";
-import {DefenseComponentFactory} from "./DefenseComponentFactory.js";
-import {StructBuilderError} from "./StructBuilderError.js";
+import {ManualWeaponFactory} from "./struct_components/ManualWeaponFactory.js";
+import {PassiveWeaponFactory} from "./struct_components/PassiveWeaponFactory.js";
+import {DefenseComponentFactory} from "./struct_components/DefenseComponentFactory.js";
+import {StructBuilderError} from "./errors/StructBuilderError.js";
 
 export class StructBuilder {
   constructor() {

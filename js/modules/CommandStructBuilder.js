@@ -1,10 +1,10 @@
 import {AMBITS, DEFENSE_COMPONENTS, IMG, MANUAL_WEAPONS, PASSIVE_WEAPONS, UNIT_TYPES} from "./Constants.js";
 import {Struct} from "./Struct.js";
-import {ManualWeaponFactory} from "./ManualWeaponFactory.js";
-import {PassiveWeaponFactory} from "./PassiveWeaponFactory.js";
-import {DefenseComponentFactory} from "./DefenseComponentFactory.js";
+import {ManualWeaponFactory} from "./struct_components/ManualWeaponFactory.js";
+import {PassiveWeaponFactory} from "./struct_components/PassiveWeaponFactory.js";
+import {DefenseComponentFactory} from "./struct_components/DefenseComponentFactory.js";
 import {CommandStruct} from "./CommandStruct.js";
-import {CommandStructBuilderError} from "./CommandStructBuilderError.js";
+import {CommandStructBuilderError} from "./errors/CommandStructBuilderError.js";
 
 export class CommandStructBuilder {
   constructor() {

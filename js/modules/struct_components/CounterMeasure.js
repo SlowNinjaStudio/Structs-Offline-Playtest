@@ -1,5 +1,5 @@
 import {DefenseComponent} from "./DefenseComponent.js";
-import {DEFENSE_COMPONENT_TYPES} from "./Constants.js";
+import {DEFENSE_COMPONENT_TYPES} from "../Constants.js";
 
 export class CounterMeasure extends DefenseComponent {
   /**

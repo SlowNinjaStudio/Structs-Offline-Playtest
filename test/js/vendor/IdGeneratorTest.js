@@ -1,5 +1,5 @@
 import {DTest} from "../../DTestFramework.js";
-import {IdGenerator} from "../../../js/modules/IdGenerator.js";
+import {IdGenerator} from "../../../js/modules/util/IdGenerator.js";
 
 const makeTest = new DTest('makeTest', function(params) {
   const idGenerator = new IdGenerator();

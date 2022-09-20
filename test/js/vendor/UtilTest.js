@@ -1,5 +1,5 @@
 import {DTest} from "../../DTestFramework.js";
-import {Util} from "../../../js/modules/Util.js";
+import {Util} from "../../../js/modules/util/Util.js";
 
 const titleCaseTest = new DTest('titleCaseTest', function(params) {
   const util = new Util();

@@ -1,6 +1,6 @@
-import {DEFENSE_COMPONENT_TYPES} from "./Constants.js";
-import {Fraction} from "./Fraction.js";
-import {Util} from "./Util.js";
+import {DEFENSE_COMPONENT_TYPES} from "../Constants.js";
+import {Fraction} from "../util/Fraction.js";
+import {Util} from "../util/Util.js";
 
 export class DefenseComponent {
 

@@ -1,6 +1,6 @@
 import {PLAYER_DEFAULTS, UNIT_TYPES} from "./Constants.js";
 import {CommandStructBuilder} from "./CommandStructBuilder.js";
-import {IdGenerator} from "./IdGenerator.js";
+import {IdGenerator} from "./util/IdGenerator.js";
 import {Fleet} from "./Fleet.js";
 
 export class Player {

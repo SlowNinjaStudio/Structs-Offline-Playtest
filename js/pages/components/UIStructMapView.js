@@ -1,5 +1,5 @@
 import {DEFENSE_COMPONENTS, IMG, MAX_HEART_ICONS} from "../../modules/Constants.js";
-import {StructsGlobalDataStore} from "../../modules/StructsGlobalDataStore.js";
+import {StructsGlobalDataStore} from "../../modules/util/StructsGlobalDataStore.js";
 
 export class UIStructMapView {
   /**
