@@ -191,28 +191,32 @@ export class UIStructDetails {
    * @return {boolean}
    */
   isPrimaryAttackEnabled() {
-    return !this.struct.isHidden();
+    return !this.struct.isHidden()
+      && this.state.turn.id === this.player.id
+      && this.state.numTurns > 1;
   }
 
   /**
    * @return {boolean}
    */
   isSecondaryAttackEnabled() {
-    return !this.struct.isHidden();
+    return !this.struct.isHidden()
+      && this.state.turn.id === this.player.id
+      && this.state.numTurns > 1;
   }
 
   /**
    * @return {boolean}
    */
   isDefendEnabled() {
-    return !this.struct.isHidden();
+    return !this.struct.isHidden() && this.state.turn.id === this.player.id;
   }
 
   /**
    * @return {boolean}
    */
   isDefenseComponentEnabled() {
-    return true;
+    return this.state.turn.id === this.player.id;
   }
 
   /**
