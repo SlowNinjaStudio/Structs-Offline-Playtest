@@ -5,6 +5,9 @@ export class GameState {
 
     this.action = null;
 
+    this.turn = null;
+    this.numTurns = 0;
+
     this.gameContainerId = '';
     this.modalContainerId = '';
     this.offcanvasId = '';

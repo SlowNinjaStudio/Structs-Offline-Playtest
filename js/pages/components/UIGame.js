@@ -6,6 +6,7 @@ import {SlotRef} from "../../modules/SlotRef.js";
 import {ActionActor} from "../../modules/ActionActor.js";
 import {UIGameOverModal} from "./UIGameOverModal.js";
 import {UICombatEventViewer} from "./UICombatEventViewer.js";
+import {UIPrepareDefenses} from "./UIPrepareDefenses.js";
 
 export class UIGame {
 
@@ -18,6 +19,7 @@ export class UIGame {
     this.combatEventViewer = new UICombatEventViewer(this.state);
     this.playerFleetUI = new UIFleet(this.state, this.state.player);
     this.enemyFleetUI = new UIFleet(this.state, this.state.enemy);
+    this.prepareDefensesUI = new UIPrepareDefenses(this.state);
   }
 
   initEmptyCommandSlotListeners() {
@@ -86,6 +88,7 @@ export class UIGame {
   initListenersPerRender() {
     this.initEmptyCommandSlotListeners();
     this.initStructListeners();
+    this.prepareDefensesUI.initEndTurnListener();
   }
 
   initActionAttackPrimaryListener() {
@@ -158,8 +161,16 @@ export class UIGame {
     }.bind(this));
   }
 
+  initEndTurnListener() {
+    window.addEventListener(EVENTS.TURNS.END_TURN, function() {
+      this.state.turn = this.state.turn.id === this.state.player.id ? this.state.enemy : this.state.player;
+      this.state.numTurns++;
+    }.bind(this));
+  }
+
   initOneTimeListeners() {
     this.initGameRenderListener();
+    this.initEndTurnListener();
 
     this.initActionAttackPrimaryListener();
     this.initActionAttackSecondaryListener();
@@ -174,18 +185,7 @@ export class UIGame {
     document.getElementById(this.state.gameContainerId).innerHTML = `
       <div class="container-fluid play-area">
         <div class="row">
-          <div class="col align-content-center">
-            <div class="cta-card card player text-center mb-4">
-              <div class="card-body">
-                <h5 class="card-title">Prepare Your Defenses!</h5>
-                <p class="card-text">Player</p>
-                <hr class="mb-3">
-                <div class="d-grid gap-2">
-                  <a id="defensePrepEndTurnBtn" href="javascript:void(0)" class="btn btn-danger">End Turn</a>
-                </div>
-              </div>
-            </div>
-          </div>
+          <div class="col align-content-center">${this.prepareDefensesUI.render()}</div>
         </div>
         <div class="row">
 

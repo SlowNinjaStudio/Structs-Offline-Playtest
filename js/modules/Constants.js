@@ -61,6 +61,9 @@ export const
     },
     RENDER: {
       RENDER_GAME: 'RENDER_GAME'
+    },
+    TURNS: {
+      END_TURN: 'END_TURN'
     }
   },
 

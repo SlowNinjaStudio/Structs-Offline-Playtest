@@ -63,7 +63,7 @@ state.enemy = enemy;
 state.gameContainerId = 'main-content-wrapper';
 state.modalContainerId = 'modalContainer';
 state.offcanvasId = 'offcanvasBottom';
-
+state.turn = state.player;
 
 const game = new UIGame(state);
 game.render();
