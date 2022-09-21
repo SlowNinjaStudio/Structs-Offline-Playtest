@@ -7,6 +7,7 @@ export class GameState {
 
     this.turn = null;
     this.numTurns = 0;
+    this.turnChangeRequired = false;
 
     this.gameContainerId = '';
     this.modalContainerId = '';

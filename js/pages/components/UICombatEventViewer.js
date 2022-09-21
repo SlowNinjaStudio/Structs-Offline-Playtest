@@ -18,6 +18,10 @@ export class UICombatEventViewer {
       if (this.state.player.isDefeated() || this.state.enemy.isDefeated()) {
         window.dispatchEvent(new CustomEvent(EVENTS.RENDER.RENDER_GAME));
       }
+      if (this.state.turnChangeRequired) {
+        this.state.turnChangeRequired = false;
+        window.dispatchEvent(new CustomEvent(EVENTS.TURNS.END_TURN));
+      }
     }.bind(this));
   }
 
@@ -187,6 +191,7 @@ export class UICombatEventViewer {
     for (let i = 0; i < this.events.length; i++) {
       if (this.events[i].type === EVENTS.COMBAT.COMBAT_ENDED) {
         eventRowsHtml += this.renderEndRow();
+        this.state.turnChangeRequired = true;
       } else {
         eventRowsHtml += this.renderEventRow(this.events[i]);
       }
