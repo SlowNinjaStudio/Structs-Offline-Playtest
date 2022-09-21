@@ -480,6 +480,17 @@ body {
   font-weight: bold;
 }
 
+#gameStartModal.modal .modal-footer {
+  justify-content: space-evenly;
+}
+#animationContainer {
+  display: inline-block;
+  max-width: 100%;
+}
+#animationContainer img {
+  max-width: 100%;
+}
+
 .offcanvas.structDetails {
   margin: 0 auto;
   max-width: 500px;

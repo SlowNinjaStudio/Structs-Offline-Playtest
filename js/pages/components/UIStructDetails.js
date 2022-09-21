@@ -193,7 +193,7 @@ export class UIStructDetails {
   isPrimaryAttackEnabled() {
     return !this.struct.isHidden()
       && this.state.turn.id === this.player.id
-      && this.state.numTurns > 1;
+      && this.state.numTurns > 2;
   }
 
   /**
@@ -202,7 +202,7 @@ export class UIStructDetails {
   isSecondaryAttackEnabled() {
     return !this.struct.isHidden()
       && this.state.turn.id === this.player.id
-      && this.state.numTurns > 1;
+      && this.state.numTurns > 2;
   }
 
   /**

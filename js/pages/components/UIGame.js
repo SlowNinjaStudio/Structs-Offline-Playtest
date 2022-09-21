@@ -7,6 +7,7 @@ import {ActionActor} from "../../modules/ActionActor.js";
 import {UIGameOverModal} from "./UIGameOverModal.js";
 import {UICombatEventViewer} from "./UICombatEventViewer.js";
 import {UIPrepareDefenses} from "./UIPrepareDefenses.js";
+import {UIGameStartModal} from "./UIGameStartModal.js";
 
 export class UIGame {
 
@@ -15,6 +16,7 @@ export class UIGame {
    */
   constructor(state) {
     this.state = state;
+    this.gameStartModal = new UIGameStartModal(this.state);
     this.gameOverModal = new UIGameOverModal(this.state);
     this.combatEventViewer = new UICombatEventViewer(this.state);
     this.playerFleetUI = new UIFleet(this.state, this.state.player);
@@ -161,6 +163,13 @@ export class UIGame {
     }.bind(this));
   }
 
+  initFirstTurnListener() {
+    window.addEventListener(EVENTS.TURNS.FIRST_TURN, function() {
+      this.state.numTurns = 1;
+      this.render();
+    }.bind(this));
+  }
+
   initEndTurnListener() {
     window.addEventListener(EVENTS.TURNS.END_TURN, function() {
       this.state.turn = this.state.turn.id === this.state.player.id ? this.state.enemy : this.state.player;
@@ -171,6 +180,7 @@ export class UIGame {
 
   initOneTimeListeners() {
     this.initGameRenderListener();
+    this.initFirstTurnListener();
     this.initEndTurnListener();
 
     this.initActionAttackPrimaryListener();
@@ -204,6 +214,7 @@ export class UIGame {
 
     this.initListenersPerRender();
 
+    this.gameStartModal.init();
     this.gameOverModal.init();
   }
 }

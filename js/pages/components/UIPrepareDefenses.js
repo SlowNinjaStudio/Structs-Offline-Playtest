@@ -21,7 +21,7 @@ export class UIPrepareDefenses {
   }
 
   render() {
-    if (this.state.numTurns > 1) {
+    if (this.state.numTurns > 2) {
       return '';
     }
 
