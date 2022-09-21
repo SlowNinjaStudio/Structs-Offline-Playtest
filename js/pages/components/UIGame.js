@@ -174,6 +174,20 @@ export class UIGame {
     document.getElementById(this.state.gameContainerId).innerHTML = `
       <div class="container-fluid play-area">
         <div class="row">
+          <div class="col align-content-center">
+            <div class="cta-card card player text-center mb-4">
+              <div class="card-body">
+                <h5 class="card-title">Prepare Your Defenses!</h5>
+                <p class="card-text">Player</p>
+                <hr class="mb-3">
+                <div class="d-grid gap-2">
+                  <a id="defensePrepEndTurnBtn" href="javascript:void(0)" class="btn btn-danger">End Turn</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
 
           <div id="playerFleet" class="col">${this.playerFleetUI.render(this.state.player)}</div>
 

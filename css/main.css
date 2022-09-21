@@ -322,7 +322,7 @@ body {
   border: 4px solid #00bfff;
 }
 .struct.target {
-  border: 4px solid #ff3000;
+  border: 4px solid #ff4b21;
 }
 .struct.critical {
   background: #ff9780;
@@ -346,7 +346,7 @@ body {
   border: 1px solid #00bfff;
 }
 .side.enemy {
-  border: 1px solid #ff3000;
+  border: 1px solid #ff4b21;
 }
 .vs {
   color: white;
@@ -364,8 +364,8 @@ body {
   border-bottom: 1px solid #00bfff;
 }
 .side.enemy > .title {
-  color: #ff3000;
-  border-bottom: 1px solid #ff3000;
+  color: #ff4b21;
+  border-bottom: 1px solid #ff4b21;
 }
 .ambit.space {
   background: rgba(80, 80, 80, 0.25);
@@ -460,7 +460,7 @@ body {
   font-weight: bold;
 }
 .enemy .game-over-msg {
-  background: #ff3000;
+  background: #ff4b21;
   color: #000000;
   font-weight: bold;
 }
@@ -487,7 +487,7 @@ body {
   border-radius: 8px;
 }
 .offcanvas.enemy {
-  border: 4px solid #ff3000;
+  border: 4px solid #ff4b21;
   border-radius: 8px;
 }
 .offcanvas-header {
@@ -504,6 +504,31 @@ body {
 }
 .offcanvas-bottom {
   height: 54vh;
+}
+
+.cta-card.card {
+  background: #424242;
+  border: 1px solid #ffffff;
+  color: #ffffff;
+  display: inline-block;
+  max-width: 500px;
+  width: 100%;
+}
+.cta-card.card .card-text {
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 32px;
+}
+.cta-card.card.player .card-text {
+  color: #00bfff;
+}
+.cta-card.card.enemy .card-text {
+  color: #ff4b21;
+}
+.cta-card.card hr {
+  background: #ffffff;
+  border-top: 1px solid #fff;
+  opacity: .75;
 }
 
 /* Bootstrap Overrides - End */
