@@ -165,6 +165,7 @@ export class UIGame {
     window.addEventListener(EVENTS.TURNS.END_TURN, function() {
       this.state.turn = this.state.turn.id === this.state.player.id ? this.state.enemy : this.state.player;
       this.state.numTurns++;
+      this.render();
     }.bind(this));
   }
 

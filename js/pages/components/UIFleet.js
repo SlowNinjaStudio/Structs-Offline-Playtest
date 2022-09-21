@@ -53,8 +53,9 @@ export class UIFleet {
     const commandFleetHtml = `<div class="commandStructContainer">${this.uiFleetCommand.render()}</div>`;
     const commandFleetDivider = `<div class="commandFleetDivider"></div>`;
     const regularFleetHtml = `<div id="playerFleetContainer" class="fleetContainer">${this.renderFromFleet()}</div>`;
+    const isTurn = (this.state.turn.id === this.player.id) ? 'is-turn' : '';
 
-    let html = `<div class="side ${playerOrEnemy}">`;
+    let html = `<div class="side ${playerOrEnemy} ${isTurn}">`;
 
     if (playerOrEnemy === 'player') {
       html += `

@@ -367,6 +367,21 @@ body {
   color: #ff4b21;
   border-bottom: 1px solid #ff4b21;
 }
+.side.player.is-turn {
+  box-shadow: 0 0 15px #00bfff;
+}
+.side.enemy.is-turn {
+  box-shadow: 0 0 15px #ff4b21;
+}
+.side.player.is-turn > .title {
+  background: #21252a;
+  box-shadow: 0 0 15px #00bfff;
+}
+.side.enemy.is-turn > .title {
+  background: #21252a;
+  box-shadow: 0 0 15px #ff4b21;
+}
+
 .ambit.space {
   background: rgba(80, 80, 80, 0.25);
 }
