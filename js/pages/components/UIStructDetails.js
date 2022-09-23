@@ -95,7 +95,8 @@ export class UIStructDetails {
    * @return {boolean}
    */
   defendStructFilter(targetStruct) {
-    return this.player.id === targetStruct.playerId;
+    return this.player.id === targetStruct.playerId
+      && this.struct.id !== targetStruct.id;
   }
 
   /**

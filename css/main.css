@@ -263,7 +263,7 @@ textarea {
 
 body {
   background: #000000 url(/img/background/space-texture.png);
-  background-size: 256px 256px;
+  background-size: 128px 128px;
   image-rendering: -moz-crisp-edges;
   image-rendering: -webkit-crisp-edges;
   image-rendering: pixelated;
