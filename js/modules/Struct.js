@@ -142,6 +142,7 @@ export class Struct {
     return !this.isDestroyed
       && !struct.isDestroyed
       && weapon.canTargetAmbit(struct.operatingAmbit)
+      && (!this.isCommandStruct() || this.operatingAmbit === struct.operatingAmbit)
       && !struct.defenseComponent.blocksTargeting(this);
   }
 

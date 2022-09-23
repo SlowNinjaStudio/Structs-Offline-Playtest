@@ -92,7 +92,6 @@ export class UIStructMapView {
   render() {
     let isSelectable = true;
     if (this.state.action) {
-      console.log(this.state.action);
       isSelectable = this.state.action.applicableStructsFilter(this.struct);
     }
     return `
