@@ -32,12 +32,10 @@ export class UIGameStartModal {
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
             <div class="modal-body">
-              <div id="${this.animationContainer}">
-                <img src="/img/placeholder500x400.png" alt="placeholder">
-              </div>
+              <div id="${this.animationContainer}"></div>
             </div>
             <div class="modal-footer">
-              <button id="${this.button1PlayerId}" type="button" class="btn btn-primary" disabled>1 Player</button>
+              <button id="${this.button1PlayerId}" type="button" class="btn btn-secondary" disabled>1 Player</button>
               <button id="${this.button2PlayersId}" type="button" class="btn btn-primary">2 Players</button>
             </div>
           </div>
@@ -52,6 +50,15 @@ export class UIGameStartModal {
       this.init2PlayersListener();
       const domModal = document.getElementById(this.modalId);
       const bsModal = bootstrap.Modal.getOrCreateInstance(domModal);
+
+      window.lottie.loadAnimation({
+        container: document.getElementById(this.animationContainer),
+        renderer: 'svg',
+        loop: true,
+        autoplay: true,
+        path: 'img/lottie/combat_mechanics_intro/data.json'
+      });
+
       bsModal.show();
     }
   }
