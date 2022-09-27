@@ -1,4 +1,5 @@
-import {EVENTS} from "../../modules/Constants.js";
+import {EVENTS, GAME_MODES} from "../../modules/Constants.js";
+import {Analytics} from "../../modules/Analytics.js";
 
 export class UIGameStartModal {
   /**
@@ -9,11 +10,15 @@ export class UIGameStartModal {
     this.modalId = 'gameStartModal';
     this.animationContainer = 'animationContainer';
     this.button1PlayerId = 'button1Player';
-    this.button2PlayersId = 'button2Players';
+    this.button2PlayerId = 'button2Player';
+
+    this.analytics = new Analytics(state);
   }
 
   init2PlayersListener() {
-    document.getElementById(this.button2PlayersId).addEventListener('click', function() {
+    document.getElementById(this.button2PlayerId).addEventListener('click', function() {
+      this.state.gameMode = GAME_MODES.TWO_PLAYER;
+      this.analytics.trackGameStart();
       const bsModal = bootstrap.Modal.getOrCreateInstance(document.getElementById(this.modalId));
       bsModal.hide();
       window.dispatchEvent(new CustomEvent(EVENTS.TURNS.FIRST_TURN));
@@ -36,7 +41,7 @@ export class UIGameStartModal {
             </div>
             <div class="modal-footer">
               <button id="${this.button1PlayerId}" type="button" class="btn btn-secondary" disabled>1 Player</button>
-              <button id="${this.button2PlayersId}" type="button" class="btn btn-primary">2 Players</button>
+              <button id="${this.button2PlayerId}" type="button" class="btn btn-primary">2 Player</button>
             </div>
           </div>
         </div>

@@ -75,6 +75,11 @@ export const
     MAX_HEALTH: 3,
   },
 
+  GAME_MODES = {
+    ONE_PLAYER: '1_PLAYER',
+    TWO_PLAYER: '2_PLAYER',
+  },
+
   IMG = {
     ICONS: 'img/icons/',
     LARGE_ICONS: 'img/icons/large/',
@@ -128,6 +133,10 @@ export const
 
   STRUCT_DEFAULTS = {
     ID_PREFIX: 'struct-'
+  },
+
+  TRACKING = {
+    DNF: 'DNF'
   },
 
   UNIT_TYPES = {

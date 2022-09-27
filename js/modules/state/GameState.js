@@ -1,5 +1,9 @@
+import {PlayerMetrics} from "../PlayerMetrics.js";
+
 export class GameState {
   constructor() {
+    this.gameMode = '';
+
     this.player = null;
     this.enemy = null;
 
@@ -12,6 +16,11 @@ export class GameState {
     this.gameContainerId = '';
     this.modalContainerId = '';
     this.offcanvasId = '';
+
+    this.metrics = {
+      player: new PlayerMetrics(),
+      enemy: new PlayerMetrics()
+    };
   }
 
   /**
