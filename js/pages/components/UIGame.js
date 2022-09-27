@@ -252,6 +252,12 @@ export class UIGame {
     }.bind(this));
   }
 
+  initBeforeUnloadListener() {
+    window.addEventListener('beforeunload', function() {
+      this.analytics.trackEarlyExit();
+    }.bind(this));
+  }
+
   initOneTimeListeners() {
     this.initGameRenderListener();
     this.initFirstTurnListener();
@@ -270,6 +276,7 @@ export class UIGame {
     this.initCombatDefenderCounteredListener();
 
     this.initGameOverListener();
+    this.initBeforeUnloadListener();
 
     this.combatEventViewer.initOneTimeListeners();
   }
