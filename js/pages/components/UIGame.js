@@ -187,6 +187,9 @@ export class UIGame {
     window.addEventListener(EVENTS.TURNS.END_TURN, function() {
       this.state.turn = this.state.turn.id === this.state.player.id ? this.state.enemy : this.state.player;
       this.state.numTurns++;
+      if (this.state.numTurns === 3) {
+        this.analytics.trackDefensePhaseEnd();
+      }
       this.render();
     }.bind(this));
   }
