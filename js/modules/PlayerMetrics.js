@@ -43,7 +43,7 @@ export class PlayerMetrics {
    * @param {number} damageAmount
    */
   incrementDamageGiven(damageAmount) {
-    this.damageGiven++;
+    this.damageGiven += damageAmount;
   }
 
   incrementKills() {

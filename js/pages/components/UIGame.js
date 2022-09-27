@@ -102,6 +102,8 @@ export class UIGame {
 
       this.state.action = null;
 
+      this.state.metrics[player.player.name.toLowerCase()].incrementPrimaryAttacks();
+
       player.struct.attack(MANUAL_WEAPON_SLOTS.PRIMARY, enemy.struct);
 
       this.render();
@@ -114,6 +116,8 @@ export class UIGame {
       const enemy = new ActionActor(e.detail.data, this.state.getPlayers());
 
       this.state.action = null;
+
+      this.state.metrics[player.player.name.toLowerCase()].incrementSecondaryAttacks();
 
       player.struct.attack(MANUAL_WEAPON_SLOTS.SECONDARY, enemy.struct);
 
@@ -128,6 +132,8 @@ export class UIGame {
 
       this.state.action = null;
 
+      this.state.metrics[player.player.name.toLowerCase()].incrementDefends();
+
       player.struct.defend(target.struct);
 
       this.render();
@@ -137,6 +143,8 @@ export class UIGame {
   initActionStealthModeListener() {
     window.addEventListener(EVENTS.ACTIONS.ACTION_STEALTH_MODE, function (e) {
       const player = new ActionActor(e.detail.source, this.state.getPlayers());
+
+      this.state.metrics[player.player.name.toLowerCase()].incrementStealthUses();
 
       player.struct.defenseComponent.isActive = !player.struct.defenseComponent.isActive;
 
@@ -149,6 +157,8 @@ export class UIGame {
       const player = new ActionActor(e.detail.source, this.state.getPlayers());
 
       this.state.action = null;
+
+      this.state.metrics[player.player.name.toLowerCase()].incrementStructsMoved();
 
       const slotRef = e.detail.data;
       if (player.struct.defenseComponent.canChangeAmbit(player.struct.operatingAmbit, slotRef.ambit)) {
@@ -167,6 +177,7 @@ export class UIGame {
 
   initFirstTurnListener() {
     window.addEventListener(EVENTS.TURNS.FIRST_TURN, function() {
+      this.analytics.trackGameStart();
       this.state.numTurns = 1;
       this.render();
     }.bind(this));
@@ -180,6 +191,57 @@ export class UIGame {
     }.bind(this));
   }
 
+  /**
+   * @param {CombatEvent} e
+   */
+  trackDamage(e) {
+    const sourcePlayer = this.state.findPlayerById(e.sourceStruct.playerId);
+    const targetPlayer = this.state.findPlayerById(e.targetStruct.playerId);
+    const sourceMetric = sourcePlayer.name.toLowerCase();
+    const targetMetric = targetPlayer.name.toLowerCase();
+
+    this.state.metrics[sourceMetric].incrementDamageGiven(e.damageAmount);
+    this.state.metrics[targetMetric].incrementDamageTaken(e.damageAmount);
+
+    if (e.targetStructNewHealth <= 0) {
+      this.state.metrics[sourceMetric].incrementKills(e.damageAmount);
+      this.state.metrics[targetMetric].incrementStructsLost(e.damageAmount);
+    }
+  }
+
+  initCombatAttackedListener() {
+    window.addEventListener(EVENTS.COMBAT.COMBAT_ATTACKED, this.trackDamage.bind(this));
+  }
+
+  initCombatCounterAttackedListener() {
+    window.addEventListener(EVENTS.COMBAT.COMBAT_COUNTER_ATTACKED, this.trackDamage.bind(this));
+  }
+
+  initCombatCounterAttackedOnDeathListener() {
+    window.addEventListener(EVENTS.COMBAT.COMBAT_COUNTER_ATTACKED_ON_DEATH, this.trackDamage.bind(this));
+  }
+
+  initCombatDefenderBlockedListener() {
+    window.addEventListener(EVENTS.COMBAT.COMBAT_DEFENDER_BLOCKED, function(e) {
+      const defender = this.state.findPlayerById(e.sourceStruct.playerId);
+      const attacker = this.state.findPlayerById(e.targetStruct.playerId);
+      const defenderMetric = defender.name.toLowerCase();
+      const attackerMetric = attacker.name.toLowerCase();
+
+      this.state.metrics[defenderMetric].incrementDamageTaken(e.damageAmount);
+      this.state.metrics[attackerMetric].incrementDamageGiven(e.damageAmount);
+
+      if (e.targetStructNewHealth <= 0) {
+        this.state.metrics[defenderMetric].incrementStructsLost(e.damageAmount);
+        this.state.metrics[attackerMetric].incrementKills(e.damageAmount);
+      }
+    })
+  }
+
+  initCombatDefenderCounteredListener() {
+    window.addEventListener(EVENTS.COMBAT.COMBAT_DEFENDER_COUNTERED, this.trackDamage.bind(this));
+  }
+
   initOneTimeListeners() {
     this.initGameRenderListener();
     this.initFirstTurnListener();
@@ -191,10 +253,17 @@ export class UIGame {
     this.initActionStealthModeListener();
     this.initActionMoveListener();
 
+    this.initCombatAttackedListener();
+    this.initCombatCounterAttackedListener();
+    this.initCombatCounterAttackedOnDeathListener();
+    this.initCombatDefenderBlockedListener();
+    this.initCombatDefenderCounteredListener();
+
     this.combatEventViewer.initOneTimeListeners();
   }
 
   render() {
+    console.log(this.state);
     document.getElementById(this.state.gameContainerId).innerHTML = `
       <div class="container-fluid play-area">
         <div class="row">

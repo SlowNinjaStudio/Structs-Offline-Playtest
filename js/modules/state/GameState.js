@@ -29,4 +29,12 @@ export class GameState {
   getPlayers() {
     return [this.player, this.enemy];
   }
+
+  /**
+   * @param {string} playerId
+   * @return {Player|undefined}
+   */
+  findPlayerById(playerId) {
+    return (this.getPlayers()).find(player => player.id === playerId);
+  }
 }

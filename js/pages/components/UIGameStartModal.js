@@ -1,5 +1,4 @@
 import {EVENTS, GAME_MODES} from "../../modules/Constants.js";
-import {Analytics} from "../../modules/Analytics.js";
 
 export class UIGameStartModal {
   /**
@@ -11,14 +10,11 @@ export class UIGameStartModal {
     this.animationContainer = 'animationContainer';
     this.button1PlayerId = 'button1Player';
     this.button2PlayerId = 'button2Player';
-
-    this.analytics = new Analytics(state);
   }
 
   init2PlayersListener() {
     document.getElementById(this.button2PlayerId).addEventListener('click', function() {
       this.state.gameMode = GAME_MODES.TWO_PLAYER;
-      this.analytics.trackGameStart();
       const bsModal = bootstrap.Modal.getOrCreateInstance(document.getElementById(this.modalId));
       bsModal.hide();
       window.dispatchEvent(new CustomEvent(EVENTS.TURNS.FIRST_TURN));
