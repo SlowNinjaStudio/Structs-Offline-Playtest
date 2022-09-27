@@ -59,6 +59,7 @@ export const
       COMBAT_ENDED: 'COMBAT_ENDED',
       COMBAT_TARGETED: 'COMBAT_TARGETED'
     },
+    GAME_OVER: 'GAME_OVER',
     RENDER: {
       RENDER_GAME: 'RENDER_GAME'
     },

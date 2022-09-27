@@ -245,6 +245,13 @@ export class UIGame {
     window.addEventListener(EVENTS.COMBAT.COMBAT_DEFENDER_COUNTERED, this.trackDamage.bind(this));
   }
 
+  initGameOverListener() {
+    window.addEventListener(EVENTS.GAME_OVER, function() {
+      const winner = (this.state.player.isDefeated()) ? this.state.enemy : this.state.player;
+      this.analytics.trackGameOver(winner);
+    }.bind(this));
+  }
+
   initOneTimeListeners() {
     this.initGameRenderListener();
     this.initFirstTurnListener();
@@ -261,6 +268,8 @@ export class UIGame {
     this.initCombatCounterAttackedOnDeathListener();
     this.initCombatDefenderBlockedListener();
     this.initCombatDefenderCounteredListener();
+
+    this.initGameOverListener();
 
     this.combatEventViewer.initOneTimeListeners();
   }

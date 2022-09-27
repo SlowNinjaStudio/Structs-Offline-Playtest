@@ -1,3 +1,5 @@
+import {EVENTS} from "../../modules/Constants.js";
+
 export class UIGameOverModal {
   /**
    * @param {GameState} state
@@ -83,6 +85,8 @@ export class UIGameOverModal {
     if (!this.isGameOver() || !this.isOffcanvasClosed()) {
       return;
     }
+
+    window.dispatchEvent(new CustomEvent(EVENTS.GAME_OVER));
 
     document.getElementById(this.state.modalContainerId).innerHTML = this.render();
 
