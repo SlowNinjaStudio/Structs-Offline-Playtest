@@ -49,6 +49,8 @@ enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.SUB));
 const state = new GameState();
 state.player = player;
 state.enemy = enemy;
+state.metrics.player.initialStructCount = player.fleet.numberOfStructs() + 1; // + 1 for command struct
+state.metrics.enemy.initialStructCount = player.fleet.numberOfStructs() + 1; // + 1 for command struct
 state.gameContainerId = 'main-content-wrapper';
 state.modalContainerId = 'modalContainer';
 state.offcanvasId = 'offcanvasBottom';
