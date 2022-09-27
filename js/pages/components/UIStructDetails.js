@@ -307,6 +307,7 @@ export class UIStructDetails {
               data-struct-id="${this.struct.id}"
               data-is-command-struct="${this.struct.isCommandStruct() ? 1: 0}"
               data-action-event="${EVENTS.ACTIONS.ACTION_MOVE}"
+              ${this.isDefenseComponentEnabled() ? '' : 'disabled'}
             >
               ${this.struct.defenseComponent.getActionLabel()}
               <img src="${IMG.ICONS}icon-speed.png" alt="speed">

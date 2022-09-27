@@ -8,6 +8,7 @@ import {UIGameOverModal} from "./UIGameOverModal.js";
 import {UICombatEventViewer} from "./UICombatEventViewer.js";
 import {UIPrepareDefenses} from "./UIPrepareDefenses.js";
 import {UIGameStartModal} from "./UIGameStartModal.js";
+import {Analytics} from "../../modules/Analytics.js";
 
 export class UIGame {
 
@@ -22,6 +23,7 @@ export class UIGame {
     this.playerFleetUI = new UIFleet(this.state, this.state.player);
     this.enemyFleetUI = new UIFleet(this.state, this.state.enemy);
     this.prepareDefensesUI = new UIPrepareDefenses(this.state);
+    this.analytics = new Analytics(this.state);
   }
 
   initEmptyCommandSlotListeners() {
