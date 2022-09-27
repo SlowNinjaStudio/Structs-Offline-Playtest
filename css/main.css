@@ -572,6 +572,12 @@ body {
 #gameStartModal.modal .modal-footer {
   border-top: 1px solid black;
 }
+#gameStartModal.modal.allow-gtag .modal-body {
+  color: #ffffff;
+  font-size: 16px;
+  padding: 40px;
+}
+
 /* Bootstrap Overrides - End */
 
 @media (max-width: 800px) {

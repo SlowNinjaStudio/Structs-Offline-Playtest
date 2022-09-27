@@ -21,6 +21,30 @@ export class UIGameStartModal {
     }.bind(this));
   }
 
+  /**
+   * @return {string}
+   */
+  renderAllowGtag() {
+    return `
+      <div
+        id="${this.modalId}"
+        class="modal fade allow-gtag"
+        tabindex="-1"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+      >
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-body">
+              <img src="/img/friendly_robot_300x256.png" alt="friendly robot">
+              <p>Please allow Google Analytics as we use it to improve the gameplay mechancis.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
   render() {
     return `
       <div
@@ -47,20 +71,27 @@ export class UIGameStartModal {
 
   init() {
     if (this.state.numTurns === 0) {
-      document.getElementById(this.state.modalContainerId).innerHTML = this.render();
-      this.init2PlayersListener();
-      const domModal = document.getElementById(this.modalId);
-      const bsModal = bootstrap.Modal.getOrCreateInstance(domModal);
+      if (!window.gtagLoaded) {
+        document.getElementById(this.state.modalContainerId).innerHTML = this.renderAllowGtag();
+        const domModal = document.getElementById(this.modalId);
+        const bsModal = bootstrap.Modal.getOrCreateInstance(domModal);
+        bsModal.show();
+      } else {
+        document.getElementById(this.state.modalContainerId).innerHTML = this.render();
+        this.init2PlayersListener();
+        const domModal = document.getElementById(this.modalId);
+        const bsModal = bootstrap.Modal.getOrCreateInstance(domModal);
 
-      window.lottie.loadAnimation({
-        container: document.getElementById(this.animationContainer),
-        renderer: 'svg',
-        loop: true,
-        autoplay: true,
-        path: 'img/lottie/combat_mechanics_intro/data.json'
-      });
+        window.lottie.loadAnimation({
+          container: document.getElementById(this.animationContainer),
+          renderer: 'svg',
+          loop: true,
+          autoplay: true,
+          path: 'img/lottie/combat_mechanics_intro/data.json'
+        });
 
-      bsModal.show();
+        bsModal.show();
+      }
     }
   }
 }

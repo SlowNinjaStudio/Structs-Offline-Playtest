@@ -282,7 +282,6 @@ export class UIGame {
   }
 
   render() {
-    console.log(this.state);
     document.getElementById(this.state.gameContainerId).innerHTML = `
       <div class="container-fluid play-area">
         <div class="row">
