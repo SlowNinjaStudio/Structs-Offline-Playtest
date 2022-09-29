@@ -37,4 +37,20 @@ export class Tree {
     }
     parentNode.addChild(childNode);
   }
+
+  /**
+   * Prunes the node specified by key and it's descendents.
+   * @param {string|number} key
+   */
+  prune(key) {
+    const nodeToPrune = this.search(key);
+    if (nodeToPrune === null) {
+      throw new TreeError('Could not find node to prune');
+    }
+    if (nodeToPrune.nodeParent === null) {
+      throw new TreeError('Cannot prune tree root');
+    }
+    const nodeParent = nodeToPrune.nodeParent;
+    nodeParent.removeChildByKey(nodeToPrune.key);
+  }
 }

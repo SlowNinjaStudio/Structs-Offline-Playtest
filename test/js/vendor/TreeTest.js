@@ -71,7 +71,30 @@ const addChildAtTest = new DTest('addChildAtTest', function() {
   this.assertEquals(tree.search('4').nodeChildren.length, 1);
 });
 
+const pruneTest = new DTest('pruneTest', function() {
+  const tree = getTestTree();
+
+  this.assertEquals(tree.search('1.3').nodeChildren.length, 1);
+  this.assertEquals(tree.search('1.3.1') !== null, true);
+  tree.prune('1.3.1');
+  this.assertEquals(tree.search('1.3').nodeChildren.length, 0);
+  this.assertEquals(tree.search('1.3.1') === null, true);
+
+  this.assertEquals(tree.search('0').nodeChildren.length, 3);
+  this.assertEquals(tree.search('2') !== null, true);
+  tree.prune('2');
+  this.assertEquals(tree.search('0').nodeChildren.length, 2);
+  this.assertEquals(tree.search('2') === null, true);
+
+  try {
+    tree.prune('0');
+  } catch (e) {
+    this.assertEquals(e instanceof TreeError, true);
+  }
+});
+
 // Test execution
 console.log('TreeTest');
 searchTest.run();
 addChildAtTest.run();
+pruneTest.run();
