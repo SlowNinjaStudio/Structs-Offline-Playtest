@@ -1,3 +1,5 @@
+import {TreeError} from "../errors/TreeError.js";
+
 export class Tree {
   /**
    * @param {TreeNode} root
@@ -22,5 +24,17 @@ export class Tree {
     }
 
     return null;
+  }
+
+  /**
+   * @param {string|number} parentKey
+   * @param {TreeNode} childNode
+   */
+  addChildAt(parentKey, childNode) {
+    const parentNode = this.search(parentKey);
+    if (parentNode === null) {
+      throw new TreeError('Could not find parent node');
+    }
+    parentNode.addChild(childNode);
   }
 }
