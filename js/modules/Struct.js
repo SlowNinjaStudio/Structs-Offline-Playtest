@@ -159,12 +159,12 @@ export class Struct {
    * @return {string[]}
    */
   getTargetableAmbits() {
-    const targetableAmbits = [];
+    let targetableAmbits = [];
     if (this.manualWeaponPrimary) {
-      targetableAmbits.concat(this.manualWeaponPrimary.ambits);
+      targetableAmbits = targetableAmbits.concat(this.manualWeaponPrimary.ambits);
     }
     if (this.manualWeaponSecondary) {
-      targetableAmbits.concat(this.manualWeaponSecondary.ambits);
+      targetableAmbits = targetableAmbits.concat(this.manualWeaponSecondary.ambits);
     }
     return [...new Set(targetableAmbits)];
   }
