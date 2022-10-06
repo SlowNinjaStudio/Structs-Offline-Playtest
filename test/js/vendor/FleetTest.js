@@ -247,6 +247,42 @@ const isDestroyedTest = new DTest('isDestroyedTest', function() {
   this.assertEquals(fleet.isDestroyed(), true);
 });
 
+const forEachStructTest = new DTest('forEachStructTest', function() {
+  const structBuilder = new StructBuilder();
+  const fleet = new Fleet();
+  fleet.space[0] = structBuilder.make(UNIT_TYPES.STAR_FIGHTER);
+  fleet.space[1] = structBuilder.make(UNIT_TYPES.SPACE_FRIGATE);
+  fleet.space[2] = structBuilder.make(UNIT_TYPES.GALACTIC_BATTLESHIP);
+  fleet.space[3] = structBuilder.make(UNIT_TYPES.STAR_FIGHTER);
+  fleet.sky[0] = structBuilder.make(UNIT_TYPES.FIGHTER_JET);
+  fleet.sky[1] = structBuilder.make(UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR);
+  fleet.sky[2] = null;
+  fleet.sky[3] = structBuilder.make(UNIT_TYPES.STEALTH_BOMBER);
+  fleet.land[0] = structBuilder.make(UNIT_TYPES.TANK);
+  fleet.land[1] = null;
+  fleet.land[2] = structBuilder.make(UNIT_TYPES.ARTILLERY);
+  fleet.land[3] = null;
+  fleet.water[0] = null;
+  fleet.water[1] = null;
+  fleet.water[2] = null;
+  fleet.water[3] = structBuilder.make(UNIT_TYPES.CRUISER);
+
+  let structCount = {
+    SPACE: 0,
+    SKY: 0,
+    LAND: 0,
+    WATER: 0
+  }
+  fleet.forEachStruct(struct => {
+    structCount[struct.operatingAmbit]++;
+  });
+
+  this.assertEquals(structCount.SPACE, 4);
+  this.assertEquals(structCount.SKY, 3);
+  this.assertEquals(structCount.LAND, 2);
+  this.assertEquals(structCount.WATER, 1);
+});
+
 // Test execution
 console.log('FleetTest');
 findStructByAmbitAndIdTest.run();
@@ -260,3 +296,4 @@ isAmbitCapacityRemainingTest.run();
 addStructTest.run();
 removeStructByAmbitAndIdTest.run();
 isDestroyedTest.run();
+forEachStructTest.run();

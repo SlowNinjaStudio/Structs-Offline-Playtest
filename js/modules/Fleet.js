@@ -40,7 +40,9 @@ export class Fleet {
       const ambitStructs = this[ambits[j].toLowerCase()];
       for (let i = 0; i < ambitStructs.length; i++) {
         const struct = ambitStructs[i];
-        callback(struct);
+        if (struct) {
+          callback(struct);
+        }
       }
     }
   }
