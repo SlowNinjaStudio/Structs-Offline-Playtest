@@ -156,6 +156,20 @@ export class Struct {
   }
 
   /**
+   * @return {string[]}
+   */
+  getTargetableAmbits() {
+    const targetableAmbits = [];
+    if (this.manualWeaponPrimary) {
+      targetableAmbits.concat(this.manualWeaponPrimary.ambits);
+    }
+    if (this.manualWeaponSecondary) {
+      targetableAmbits.concat(this.manualWeaponSecondary.ambits);
+    }
+    return [...new Set(targetableAmbits)];
+  }
+
+  /**
    * @param {Struct} target
    * @returns {boolean}
    */

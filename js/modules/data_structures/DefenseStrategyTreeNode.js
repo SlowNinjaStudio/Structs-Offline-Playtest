@@ -1,19 +1,20 @@
-export class TreeNode {
+export class DefenseStrategyTreeNode {
   /**
    * @param {string|number} key
-   * @param {*} value
-   * @param {number} weight
+   * @param {Struct} struct
+   * @param {AmbitDistribution} cost
    */
-  constructor(key, value, weight = 0) {
+  constructor(key, struct, cost = null) {
     this.key = key;
-    this.value = value;
-    this.weight = weight;
+    this.struct = struct;
+    this.cost = cost;
+    this.costFromRoot = cost;
     this.nodeParent = null;
     this.nodeChildren = [];
   }
 
   /**
-   * @param {TreeNode} node
+   * @param {DefenseStrategyTreeNode} node
    */
   addChild(node) {
     node.nodeParent = this;
