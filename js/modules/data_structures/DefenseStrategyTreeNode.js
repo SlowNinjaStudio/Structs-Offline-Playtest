@@ -1,3 +1,5 @@
+import {AmbitDistribution} from "../AmbitDistribution.js";
+
 export class DefenseStrategyTreeNode {
   /**
    * @param {string|number} key
@@ -8,7 +10,7 @@ export class DefenseStrategyTreeNode {
     this.key = key;
     this.struct = struct;
     this.cost = cost;
-    this.costFromRoot = cost;
+    this.costFromRoot = cost ? new AmbitDistribution().add(cost) : null;
     this.nodeParent = null;
     this.nodeChildren = [];
   }

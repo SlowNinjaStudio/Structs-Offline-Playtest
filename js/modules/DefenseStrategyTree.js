@@ -3,7 +3,7 @@ import {AmbitDistribution} from "./AmbitDistribution.js";
 
 export class DefenseStrategyTree {
   /**
-   * @param {CommandStruct} commandStruct
+   * @param {Struct} commandStruct
    * @return {DefenseStrategyTreeNode}
    */
   generate(commandStruct) {
