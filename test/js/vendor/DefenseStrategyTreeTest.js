@@ -142,6 +142,33 @@ const generateTest = new DTest('generateTest', function() {
   this.assertEquals(cruiserNode.nodeChildren.length, 0);
 });
 
+const getLeafNodesTest = new DTest('getLeafNodesTest', function() {
+  const player = getDummyPlayer();
+  setupPlayerDefensiveStrategy(player);
+  const defenseStrategyTree = new DefenseStrategyTree();
+  const treeRoot = defenseStrategyTree.generate(player.commandStruct);
+  const leafNodes = defenseStrategyTree.getLeafNodes(treeRoot);
+
+  this.assertEquals(leafNodes.length, 4);
+
+  const starFighterNode = leafNodes.find(node => node.struct.unitType === UNIT_TYPES.STAR_FIGHTER);
+
+  this.assertEquals(!!starFighterNode, true);
+
+  const interceptorNode = leafNodes.find(node => node.struct.unitType === UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR);
+
+  this.assertEquals(!!interceptorNode, true);
+
+  const tankNode = leafNodes.find(node => node.struct.unitType === UNIT_TYPES.TANK);
+
+  this.assertEquals(!!tankNode, true);
+
+  const cruiserNode = leafNodes.find(node => node.struct.unitType === UNIT_TYPES.CRUISER);
+
+  this.assertEquals(!!cruiserNode, true);
+});
+
 // Test execution
 console.log('DefenseStrategyTreeTest');
 generateTest.run();
+getLeafNodesTest.run();
