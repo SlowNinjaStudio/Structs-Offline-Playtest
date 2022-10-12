@@ -120,7 +120,7 @@ const generateTest = new DTest('generateTest', function() {
   );
   this.assertEquals(tankNode.cost.space, 0);
   this.assertEquals(tankNode.cost.sky, 0);
-  this.assertEquals(tankNode.cost.land, 2);
+  this.assertEquals(tankNode.cost.land, 3);
   this.assertEquals(tankNode.cost.water, 0);
   this.assertEquals(tankNode.costFromRoot.space, 5);
   this.assertEquals(tankNode.costFromRoot.sky, 0);

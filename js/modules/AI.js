@@ -40,7 +40,7 @@ export class AI {
       const rank = this.rankTarget(leaf);
       if (rank < bestChoice.rank) {
         bestChoice.rank = rank;
-        bestChoice.struct = leaf;
+        bestChoice.struct = leaf.struct;
       }
     }
 

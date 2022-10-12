@@ -10,7 +10,7 @@ export class DefenseStrategyTreeNode {
     this.key = key;
     this.struct = struct;
     this.cost = cost;
-    this.costFromRoot = cost ? new AmbitDistribution().add(cost) : null;
+    this.costFromRoot = new AmbitDistribution();
     this.nodeParent = null;
     this.nodeChildren = [];
   }

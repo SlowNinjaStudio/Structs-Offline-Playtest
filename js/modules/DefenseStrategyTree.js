@@ -1,7 +1,20 @@
 import {DefenseStrategyTreeNode} from "./data_structures/DefenseStrategyTreeNode.js";
 import {AmbitDistribution} from "./AmbitDistribution.js";
+import {DEFENSE_COMPONENTS} from "./Constants.js";
 
 export class DefenseStrategyTree {
+  /**
+   * @param {Struct} struct
+   * @return {number}
+   */
+  calculateCost(struct) {
+    let attackDamage = 2;
+    if (struct.defenseComponent && struct.defenseComponent.type === DEFENSE_COMPONENTS.ARMOUR) {
+      attackDamage = 1;
+    }
+    return Math.ceil(struct.currentHealth / attackDamage);
+  }
+
   /**
    * @param {Struct} commandStruct
    * @return {DefenseStrategyTreeNode}
@@ -15,7 +28,7 @@ export class DefenseStrategyTree {
 
       currentNode.cost.increment(
         currentNode.struct.operatingAmbit,
-        Math.ceil(currentNode.struct.currentHealth / 2)
+        this.calculateCost(currentNode.struct)
       );
 
       openSet = openSet.concat(currentNode.struct.defenders.map(defender => {
