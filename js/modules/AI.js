@@ -49,11 +49,21 @@ export class AI {
 
   /**
    * @param {Struct} attackStruct
+   * @param {Struct} targetStruct
+   * @return {number}
+   */
+  getUncounterableAttackScore(attackStruct, targetStruct) {
+    return !targetStruct.canCounterAttack(attackStruct) ? Infinity : 0;
+  }
+
+  /**
+   * @param {Struct} attackStruct
    * @return {number}
    */
   getBlockingCommandShipAttackScore(attackStruct) {
-    return (!attackStruct.defending || attackStruct.defending.id !== this.state.enemy.commandStruct.id)
-      ? 1 : 0;
+    return (!attackStruct.defending
+      || !attackStruct.defending.isCommandStruct()
+      || attackStruct.operatingAmbit !== attackStruct.defending.operatingAmbit) ? 1 : 0;
   }
 
   /**
@@ -77,7 +87,7 @@ export class AI {
    * @return {number}
    */
   getAmbitTargetingCostAttackScore(attackStruct) {
-    return 4 - attackStruct.getTargetableAmbits();
+    return 4 - attackStruct.getTargetableAmbits().length;
   }
 
   /**
@@ -86,10 +96,16 @@ export class AI {
    * @return {number}
    */
   getStructAttackScore(attackStruct, targetStruct) {
+    if(!attackStruct.canTargetAmbit(targetStruct.operatingAmbit)) {
+      return -1;
+    }
+
     let score = 0;
+    score += this.getUncounterableAttackScore(attackStruct, targetStruct);
     score += this.getBlockingCommandShipAttackScore(attackStruct);
     score += this.getCurrentHealthAttackScore(attackStruct, targetStruct);
     score += this.getAmbitTargetingCostAttackScore(attackStruct);
+
     return score;
   }
 
@@ -104,18 +120,6 @@ export class AI {
     };
 
     this.state.enemy.fleet.forEachStruct(aiStruct => {
-      // Can it attack that ambit?
-      if(aiStruct.canTargetAmbit(targetStruct.operatingAmbit)) {
-        return;
-      }
-
-      // Can it be counter-attacked?
-      if (!targetStruct.canCounterAttack(aiStruct)) {
-        bestAttackStruct.struct = aiStruct;
-        bestAttackStruct.score = Infinity;
-        return;
-      }
-
       let score = this.getStructAttackScore(aiStruct, targetStruct);
 
       if (score > bestAttackStruct.score) {
