@@ -177,6 +177,7 @@ export class Struct {
     return !this.isDestroyed
       && !target.isDestroyed
       && this.canTargetAmbit(target.operatingAmbit)
+      && (!this.isCommandStruct() || this.operatingAmbit === target.operatingAmbit)
       && this.hasPassiveWeapon()
       && !target.defenseComponent.evadeCounterAttack();
   }

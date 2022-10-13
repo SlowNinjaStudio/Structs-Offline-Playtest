@@ -1,7 +1,7 @@
 import {DTest} from "../../DTestFramework.js";
 import {DefenseStrategyTreeNode} from "../../../js/modules/data_structures/DefenseStrategyTreeNode.js";
 import {StructBuilder} from "../../../js/modules/StructBuilder.js";
-import {UNIT_TYPES} from "../../../js/modules/Constants.js";
+import {AMBITS, UNIT_TYPES} from "../../../js/modules/Constants.js";
 import {AmbitDistribution} from "../../../js/modules/AmbitDistribution.js";
 import {AI} from "../../../js/modules/AI.js";
 import {GameState} from "../../../js/modules/state/GameState.js";
@@ -238,6 +238,150 @@ const getAmbitTargetingCostAttackScoreTest = new DTest('getAmbitTargetingCostAtt
   this.assertEquals(ai.getAmbitTargetingCostAttackScore(galacticBattleship), 1);
 });
 
+const getStructAttackScoreTest = new DTest('getStructAttackScoreTest', function() {
+  const structBuilder = new StructBuilder();
+  const commandStructBuilder = new CommandStructBuilder();
+  const ai = new AI(new GameState());
+
+  const commandShip1 = commandStructBuilder.make(UNIT_TYPES.COMMAND_SHIP);
+  const commandShip2 = commandStructBuilder.make(UNIT_TYPES.COMMAND_SHIP);
+  commandShip1.operatingAmbit = AMBITS.WATER;
+  commandShip2.operatingAmbit = AMBITS.WATER;
+  const starFighter = structBuilder.make(UNIT_TYPES.STAR_FIGHTER);
+  const sub = structBuilder.make(UNIT_TYPES.SUB);
+  sub.defend(commandShip2);
+  const artillery = structBuilder.make(UNIT_TYPES.ARTILLERY);
+  const stealthBomber = structBuilder.make(UNIT_TYPES.STEALTH_BOMBER);
+  const spaceFrigate = structBuilder.make(UNIT_TYPES.SPACE_FRIGATE);
+
+  this.assertEquals(ai.getStructAttackScore(starFighter, commandShip1), -1);
+  this.assertEquals(ai.getStructAttackScore(commandShip1, commandShip2), 1);
+  this.assertEquals(ai.getStructAttackScore(sub, commandShip1), 4);
+  this.assertEquals(ai.getStructAttackScore(artillery, commandShip1), Infinity);
+  this.assertEquals(ai.getStructAttackScore(stealthBomber, commandShip1), Infinity);
+  this.assertEquals(ai.getStructAttackScore(artillery, sub), Infinity);
+  this.assertEquals(ai.getStructAttackScore(starFighter, spaceFrigate), 6);
+});
+
+const chooseAttackStructTest = new DTest('chooseAttackStructTest', function(params) {
+  const gameState = new GameState();
+  gameState.player = getDummyPlayer();
+  gameState.enemy = getDummyPlayer();
+  const target = gameState.player.fleet[params.targetAmbit].find(struct => struct.unitType === params.targetUnitType);
+  const ai = new AI(gameState);
+
+  this.assertEquals(params.expectedUnitTypes.includes(ai.chooseAttackStruct(target).unitType), true);
+}, function() {
+  return [
+    {
+      targetAmbit: 'space',
+      targetUnitType: UNIT_TYPES.STAR_FIGHTER,
+      expectedUnitTypes: [
+        UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
+        UNIT_TYPES.SAM_LAUNCHER,
+        UNIT_TYPES.SUB
+      ]
+    },
+    {
+      targetAmbit: 'space',
+      targetUnitType: UNIT_TYPES.SPACE_FRIGATE,
+      expectedUnitTypes: [
+        UNIT_TYPES.SAM_LAUNCHER,
+        UNIT_TYPES.SUB
+      ]
+    },
+    {
+      targetAmbit: 'space',
+      targetUnitType: UNIT_TYPES.GALACTIC_BATTLESHIP,
+      expectedUnitTypes: [
+        UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR
+      ]
+    },
+    {
+      targetAmbit: 'sky',
+      targetUnitType: UNIT_TYPES.FIGHTER_JET,
+      expectedUnitTypes: [
+        UNIT_TYPES.SPACE_FRIGATE,
+        UNIT_TYPES.SAM_LAUNCHER,
+        UNIT_TYPES.DESTROYER,
+        UNIT_TYPES.CRUISER,
+      ]
+    },
+    {
+      targetAmbit: 'sky',
+      targetUnitType: UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
+      expectedUnitTypes: [
+        UNIT_TYPES.SAM_LAUNCHER,
+        UNIT_TYPES.DESTROYER,
+        UNIT_TYPES.CRUISER,
+      ]
+    },
+    {
+      targetAmbit: 'sky',
+      targetUnitType: UNIT_TYPES.STEALTH_BOMBER,
+      expectedUnitTypes: [
+        UNIT_TYPES.SPACE_FRIGATE,
+        UNIT_TYPES.FIGHTER_JET,
+        UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
+      ]
+    },
+    {
+      targetAmbit: 'land',
+      targetUnitType: UNIT_TYPES.TANK,
+      expectedUnitTypes: [
+        UNIT_TYPES.GALACTIC_BATTLESHIP,
+        UNIT_TYPES.STEALTH_BOMBER,
+        UNIT_TYPES.ARTILLERY,
+        UNIT_TYPES.CRUISER,
+      ]
+    },
+    {
+      targetAmbit: 'land',
+      targetUnitType: UNIT_TYPES.ARTILLERY,
+      expectedUnitTypes: [
+        UNIT_TYPES.GALACTIC_BATTLESHIP,
+        UNIT_TYPES.STEALTH_BOMBER,
+        UNIT_TYPES.TANK,
+        UNIT_TYPES.ARTILLERY,
+        UNIT_TYPES.CRUISER,
+      ]
+    },
+    {
+      targetAmbit: 'land',
+      targetUnitType: UNIT_TYPES.SAM_LAUNCHER,
+      expectedUnitTypes: [
+        UNIT_TYPES.TANK,
+        UNIT_TYPES.ARTILLERY,
+        UNIT_TYPES.CRUISER,
+      ]
+    },
+    {
+      targetAmbit: 'water',
+      targetUnitType: UNIT_TYPES.SUB,
+      expectedUnitTypes: [
+        UNIT_TYPES.STEALTH_BOMBER,
+        UNIT_TYPES.ARTILLERY
+      ]
+    },
+    {
+      targetAmbit: 'water',
+      targetUnitType: UNIT_TYPES.DESTROYER,
+      expectedUnitTypes: [
+        UNIT_TYPES.GALACTIC_BATTLESHIP,
+        UNIT_TYPES.ARTILLERY,
+      ]
+    },
+    {
+      targetAmbit: 'water',
+      targetUnitType: UNIT_TYPES.CRUISER,
+      expectedUnitTypes: [
+        UNIT_TYPES.GALACTIC_BATTLESHIP,
+        UNIT_TYPES.ARTILLERY,
+      ]
+    },
+  ];
+});
+
 // Test execution
 console.log('AITest');
 rankTargetTest.run();
@@ -246,3 +390,5 @@ getUncounterableAttackScoreTest.run();
 getBlockingCommandShipAttackScoreTest.run();
 getCurrentHealthAttackScoreTest.run();
 getAmbitTargetingCostAttackScoreTest.run();
+getStructAttackScoreTest.run();
+chooseAttackStructTest.run();
