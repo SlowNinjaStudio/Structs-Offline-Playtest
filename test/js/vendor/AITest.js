@@ -1,7 +1,7 @@
 import {DTest} from "../../DTestFramework.js";
 import {DefenseStrategyTreeNode} from "../../../js/modules/data_structures/DefenseStrategyTreeNode.js";
 import {StructBuilder} from "../../../js/modules/StructBuilder.js";
-import {AMBITS, UNIT_TYPES} from "../../../js/modules/Constants.js";
+import {AMBITS, MANUAL_WEAPON_SLOTS, UNIT_TYPES} from "../../../js/modules/Constants.js";
 import {AmbitDistribution} from "../../../js/modules/AmbitDistribution.js";
 import {AI} from "../../../js/modules/AI.js";
 import {GameState} from "../../../js/modules/state/GameState.js";
@@ -382,6 +382,60 @@ const chooseAttackStructTest = new DTest('chooseAttackStructTest', function(para
   ];
 });
 
+const chooseWeaponTest = new DTest('chooseWeaponTest', function(params) {
+  const ai = new AI(new GameState());
+
+  try {
+    const weaponSlot = ai.chooseWeapon(params.attackStruct, params.targetAmbit);
+    this.assertEquals(weaponSlot, params.expectedWeaponSlot);
+  } catch(e) {
+    this.assertEquals(params.exceptionExpected, true);
+  }
+}, function() {
+  const structBuilder = new StructBuilder();
+  const tank = structBuilder.make(UNIT_TYPES.TANK);
+  const sub = structBuilder.make(UNIT_TYPES.SUB);
+  const cruiser = structBuilder.make(UNIT_TYPES.CRUISER);
+  return [
+    {
+      attackStruct: tank,
+      targetAmbit: AMBITS.LAND,
+      expectedWeaponSlot: MANUAL_WEAPON_SLOTS.PRIMARY,
+      exceptionExpected: false
+    },
+    {
+      attackStruct: sub,
+      targetAmbit: AMBITS.WATER,
+      expectedWeaponSlot: MANUAL_WEAPON_SLOTS.PRIMARY,
+      exceptionExpected: false
+    },
+    {
+      attackStruct: sub,
+      targetAmbit: AMBITS.SPACE,
+      expectedWeaponSlot: MANUAL_WEAPON_SLOTS.PRIMARY,
+      exceptionExpected: false
+    },
+    {
+      attackStruct: cruiser,
+      targetAmbit: AMBITS.WATER,
+      expectedWeaponSlot: MANUAL_WEAPON_SLOTS.PRIMARY,
+      exceptionExpected: false
+    },
+    {
+      attackStruct: cruiser,
+      targetAmbit: AMBITS.SKY,
+      expectedWeaponSlot: MANUAL_WEAPON_SLOTS.SECONDARY,
+      exceptionExpected: false
+    },
+    {
+      attackStruct: tank,
+      targetAmbit: AMBITS.SKY,
+      expectedWeaponSlot: MANUAL_WEAPON_SLOTS.SECONDARY,
+      exceptionExpected: false
+    }
+  ];
+});
+
 // Test execution
 console.log('AITest');
 rankTargetTest.run();
@@ -392,3 +446,5 @@ getCurrentHealthAttackScoreTest.run();
 getAmbitTargetingCostAttackScoreTest.run();
 getStructAttackScoreTest.run();
 chooseAttackStructTest.run();
+chooseWeaponTest.run();
+
