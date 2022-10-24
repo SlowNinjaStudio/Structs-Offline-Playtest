@@ -430,10 +430,75 @@ const chooseWeaponTest = new DTest('chooseWeaponTest', function(params) {
     {
       attackStruct: tank,
       targetAmbit: AMBITS.SKY,
-      expectedWeaponSlot: MANUAL_WEAPON_SLOTS.SECONDARY,
-      exceptionExpected: false
+      expectedWeaponSlot: null,
+      exceptionExpected: true
     }
   ];
+});
+
+const attackTest = new DTest('attackTest', function() {
+  const player = getDummyPlayer();
+  const playerSpaceFrigate = player.fleet.space[1];
+  playerSpaceFrigate.currentHealth = 2;
+  playerSpaceFrigate.defend(player.commandStruct);
+  const playerGalacticBattleship = player.fleet.space[2];
+  playerGalacticBattleship.defend(player.commandStruct);
+
+  const enemy = getDummyPlayer();
+  const enemySub1 = enemy.fleet.water[0];
+  const enemySub2 = enemy.fleet.water[3];
+  enemySub1.defend(enemy.commandStruct);
+  enemySub2.defend(enemy.commandStruct);
+
+  const state = new GameState();
+  state.player = player;
+  state.enemy = enemy;
+  const ai = new AI(state);
+
+  this.assertEquals(playerSpaceFrigate.currentHealth, 2);
+  this.assertEquals(playerSpaceFrigate.isDestroyed, false);
+
+  let choice = ai.attack();
+  const enemySamLauncher = enemy.fleet.land[2];
+
+  this.assertEquals(choice.targetStruct.unitType, playerSpaceFrigate.unitType);
+  this.assertEquals(choice.attackStruct.unitType, enemySamLauncher.unitType);
+  this.assertEquals(choice.weaponSlot, MANUAL_WEAPON_SLOTS.PRIMARY);
+
+  this.assertEquals(playerSpaceFrigate.currentHealth, 0);
+  this.assertEquals(playerSpaceFrigate.isDestroyed, true);
+  this.assertEquals(playerGalacticBattleship.currentHealth, 3);
+
+  const enemyHighAltitudeInterceptor = enemy.fleet.sky[1];
+  choice = ai.attack();
+
+  this.assertEquals(choice.targetStruct.unitType, playerGalacticBattleship.unitType);
+  this.assertEquals(choice.attackStruct.unitType, enemyHighAltitudeInterceptor.unitType);
+  this.assertEquals(choice.weaponSlot, MANUAL_WEAPON_SLOTS.PRIMARY);
+
+  playerGalacticBattleship.destroyStruct();
+  enemyHighAltitudeInterceptor.destroyStruct();
+  choice = ai.attack();
+
+  this.assertEquals(choice.targetStruct.id, player.commandStruct.id);
+  this.assertEquals(choice.attackStruct.unitType, enemySamLauncher.unitType);
+  this.assertEquals(choice.weaponSlot, MANUAL_WEAPON_SLOTS.PRIMARY);
+  this.assertEquals(player.commandStruct.currentHealth, 4);
+
+  choice = ai.attack();
+
+  this.assertEquals(choice.targetStruct.id, player.commandStruct.id);
+  this.assertEquals(choice.attackStruct.unitType, enemySamLauncher.unitType);
+  this.assertEquals(choice.weaponSlot, MANUAL_WEAPON_SLOTS.PRIMARY);
+  this.assertEquals(player.commandStruct.currentHealth, 2);
+
+  choice = ai.attack();
+
+  this.assertEquals(choice.targetStruct.id, player.commandStruct.id);
+  this.assertEquals(choice.attackStruct.unitType, enemySamLauncher.unitType);
+  this.assertEquals(choice.weaponSlot, MANUAL_WEAPON_SLOTS.PRIMARY);
+  this.assertEquals(player.commandStruct.currentHealth, 0);
+  this.assertEquals(player.commandStruct.isDestroyed, true);
 });
 
 // Test execution
@@ -447,4 +512,4 @@ getAmbitTargetingCostAttackScoreTest.run();
 getStructAttackScoreTest.run();
 chooseAttackStructTest.run();
 chooseWeaponTest.run();
-
+attackTest.run();

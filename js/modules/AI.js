@@ -1,5 +1,6 @@
 import {DefenseStrategyTree} from "./DefenseStrategyTree.js";
 import {MANUAL_WEAPON_SLOTS} from "./Constants.js";
+import {AIAttackChoice} from "./AIAttackChoice.js";
 
 export class AI {
   /**
@@ -150,6 +151,9 @@ export class AI {
     throw new Error(`Struct cannot target given ambit: ${targetAmbit}`);
   }
 
+  /**
+   * @return {AIAttackChoice}
+   */
   attack() {
     // Determine the best target
     const target = this.determineTarget();
@@ -168,6 +172,12 @@ export class AI {
 
     // Execute attack and end turn
     aiStruct.attack(weaponSlot, target);
+
+    return new AIAttackChoice(
+      aiStruct,
+      weaponSlot,
+      target
+    );
   }
 
   executeTurn() {
