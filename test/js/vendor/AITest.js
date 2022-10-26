@@ -50,6 +50,28 @@ function setupPlayerDefensiveStrategy(dummyPlayer) {
   dummyPlayer.fleet.water[2].defend(dummyPlayer.fleet.land[2]); // Cruiser
 }
 
+/**
+ * @param {Fleet} fleet
+ */
+function destroySelectStructs(fleet) {
+  // space[0] = Star Fighter 1, space
+  // space[1] = Space Frigate, space and sky
+  fleet.space[2].destroyStruct();
+  fleet.space[3].destroyStruct();
+  fleet.sky[0].destroyStruct();
+  // sky[1] = High Altitude Interceptor, space and sky
+  fleet.sky[2].destroyStruct();
+  fleet.sky[3].destroyStruct();
+  fleet.land[0].destroyStruct();
+  fleet.land[1].destroyStruct();
+  // land[2] = SAM, space and sky
+  fleet.land[3].destroyStruct();
+  // water[0] = SUB, water, space
+  fleet.water[1].destroyStruct();
+  fleet.water[2].destroyStruct();
+  fleet.water[3].destroyStruct();
+}
+
 const rankTargetTest = new DTest('rankTargetTest', function() {
   const ai = new AI(new GameState());
   const structBuilder = new StructBuilder();
@@ -501,6 +523,62 @@ const attackTest = new DTest('attackTest', function() {
   this.assertEquals(player.commandStruct.isDestroyed, true);
 });
 
+const openingDefenseTest = new DTest('openingDefenseTest', function() {
+  const player = getDummyPlayer();
+  const enemy = getDummyPlayer();
+  const state = new GameState();
+  state.player = player;
+  state.enemy = enemy;
+  const ai = new AI(state);
+
+  ai.openingDefense();
+
+  state.player.fleet.forEachStruct(struct => {
+    this.assertEquals(!!struct.defending, false);
+  });
+
+  state.enemy.fleet.forEachStruct(struct => {
+    this.assertEquals(struct.defending.id, state.enemy.commandStruct.id);
+  });
+});
+
+const analyzeFleetAmbitAttackCapabilitiesTest = new DTest('analyzeFleetAmbitAttackCapabilitiesTest',
+  function() {
+    const player = getDummyPlayer();
+    const enemy = getDummyPlayer();
+    const state = new GameState();
+    state.player = player;
+    state.enemy = enemy;
+    const ai = new AI(state);
+
+    destroySelectStructs(state.player.fleet);
+
+    const ambitAttackCapabilities = ai.analyzeFleetAmbitAttackCapabilities(state.player.fleet);
+
+    this.assertEquals(ambitAttackCapabilities.space, 5);
+    this.assertEquals(ambitAttackCapabilities.sky, 3);
+    this.assertEquals(ambitAttackCapabilities.land, 0);
+    this.assertEquals(ambitAttackCapabilities.water, 1);
+  }
+);
+
+const turnBasedDefenseTest = new DTest('turnBasedDefenseTest', function() {
+  const player = getDummyPlayer();
+  const enemy = getDummyPlayer();
+  const state = new GameState();
+  state.player = player;
+  state.enemy = enemy;
+  const ai = new AI(state);
+
+  destroySelectStructs(state.player.fleet);
+
+  this.assertEquals(state.enemy.commandStruct.operatingAmbit, AMBITS.SPACE);
+
+  ai.turnBasedDefense();
+
+  this.assertEquals(state.enemy.commandStruct.operatingAmbit, AMBITS.LAND);
+});
+
 // Test execution
 console.log('AITest');
 rankTargetTest.run();
@@ -513,3 +591,6 @@ getStructAttackScoreTest.run();
 chooseAttackStructTest.run();
 chooseWeaponTest.run();
 attackTest.run();
+openingDefenseTest.run();
+analyzeFleetAmbitAttackCapabilitiesTest.run();
+turnBasedDefenseTest.run();

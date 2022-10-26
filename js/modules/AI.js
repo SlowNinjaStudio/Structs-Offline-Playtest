@@ -1,6 +1,7 @@
 import {DefenseStrategyTree} from "./DefenseStrategyTree.js";
-import {MANUAL_WEAPON_SLOTS} from "./Constants.js";
+import {AMBITS, MANUAL_WEAPON_SLOTS} from "./Constants.js";
 import {AIAttackChoice} from "./AIAttackChoice.js";
+import {AmbitDistribution} from "./AmbitDistribution.js";
 
 export class AI {
   /**
@@ -180,8 +181,49 @@ export class AI {
     );
   }
 
+  openingDefense() {
+    this.state.enemy.fleet.forEachStruct(aiStruct => {
+      aiStruct.defend(this.state.enemy.commandStruct);
+    });
+  }
+
+  /**
+   * @param {Fleet} fleet
+   * @return {AmbitDistribution}
+   */
+  analyzeFleetAmbitAttackCapabilities(fleet) {
+    const ambitAttackCapabilities = new AmbitDistribution();
+    fleet.forEachStruct(struct => {
+      if (!struct.isDestroyed) {
+        const targetableAmbits = struct.getTargetableAmbits();
+        targetableAmbits.forEach(ambit => {
+          ambitAttackCapabilities.increment(ambit, 1);
+        });
+      }
+    });
+    return ambitAttackCapabilities;
+  }
+
+  /**
+   * Check if the player is unable to attack a certain ambit, if so, move the command struct to that ambit.
+   */
+  turnBasedDefense() {
+    const ambitAttackCapabilities = this.analyzeFleetAmbitAttackCapabilities(this.state.player.fleet);
+    const ambits = Object.values(AMBITS);
+    for (let i = 0; i < ambits.length; i++) {
+      if (ambitAttackCapabilities[ambits[i].toLowerCase()] === 0) {
+        this.state.enemy.commandStruct.operatingAmbit = ambits[i];
+        break;
+      }
+    }
+  }
+
   executeTurn() {
-    // defensive moves
+    if (this.state.numTurns === 2) {
+      this.openingDefense();
+    }
+
+    this.turnBasedDefense();
 
     this.attack();
   }
