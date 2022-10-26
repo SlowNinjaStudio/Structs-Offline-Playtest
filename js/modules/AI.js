@@ -1,5 +1,5 @@
 import {DefenseStrategyTree} from "./DefenseStrategyTree.js";
-import {AMBITS, MANUAL_WEAPON_SLOTS} from "./Constants.js";
+import {AMBITS, EVENTS, MANUAL_WEAPON_SLOTS} from "./Constants.js";
 import {AIAttackChoice} from "./AIAttackChoice.js";
 import {AmbitDistribution} from "./AmbitDistribution.js";
 
@@ -98,7 +98,7 @@ export class AI {
    * @return {number}
    */
   getStructAttackScore(attackStruct, targetStruct) {
-    if(!attackStruct.canTargetAmbit(targetStruct.operatingAmbit)) {
+    if(!attackStruct.canTargetAmbit(targetStruct.operatingAmbit) || attackStruct.isDestroyed) {
       return -1;
     }
 
@@ -221,10 +221,10 @@ export class AI {
   executeTurn() {
     if (this.state.numTurns === 2) {
       this.openingDefense();
+      window.dispatchEvent(new CustomEvent(EVENTS.TURNS.END_TURN));
+    } else {
+      this.turnBasedDefense();
+      this.attack();
     }
-
-    this.turnBasedDefense();
-
-    this.attack();
   }
 }

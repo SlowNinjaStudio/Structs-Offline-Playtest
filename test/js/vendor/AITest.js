@@ -283,6 +283,10 @@ const getStructAttackScoreTest = new DTest('getStructAttackScoreTest', function(
   this.assertEquals(ai.getStructAttackScore(stealthBomber, commandShip1), Infinity);
   this.assertEquals(ai.getStructAttackScore(artillery, sub), Infinity);
   this.assertEquals(ai.getStructAttackScore(starFighter, spaceFrigate), 6);
+
+  starFighter.destroyStruct();
+
+  this.assertEquals(ai.getStructAttackScore(starFighter, spaceFrigate), -1);
 });
 
 const chooseAttackStructTest = new DTest('chooseAttackStructTest', function(params) {

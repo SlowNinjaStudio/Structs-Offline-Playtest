@@ -12,6 +12,15 @@ export class UIGameStartModal {
     this.button2PlayerId = 'button2Player';
   }
 
+  init1PlayerListener() {
+    document.getElementById(this.button1PlayerId).addEventListener('click', function() {
+      this.state.gameMode = GAME_MODES.ONE_PLAYER;
+      const bsModal = bootstrap.Modal.getOrCreateInstance(document.getElementById(this.modalId));
+      bsModal.hide();
+      window.dispatchEvent(new CustomEvent(EVENTS.TURNS.FIRST_TURN));
+    }.bind(this));
+  }
+
   init2PlayersListener() {
     document.getElementById(this.button2PlayerId).addEventListener('click', function() {
       this.state.gameMode = GAME_MODES.TWO_PLAYER;
@@ -60,7 +69,7 @@ export class UIGameStartModal {
               <div id="${this.animationContainer}"></div>
             </div>
             <div class="modal-footer">
-              <button id="${this.button1PlayerId}" type="button" class="btn btn-secondary" disabled>1 Player</button>
+              <button id="${this.button1PlayerId}" type="button" class="btn btn-primary">1 Player</button>
               <button id="${this.button2PlayerId}" type="button" class="btn btn-primary">2 Player</button>
             </div>
           </div>
@@ -78,6 +87,7 @@ export class UIGameStartModal {
         bsModal.show();
       } else {
         document.getElementById(this.state.modalContainerId).innerHTML = this.render();
+        this.init1PlayerListener();
         this.init2PlayersListener();
         const domModal = document.getElementById(this.modalId);
         const bsModal = bootstrap.Modal.getOrCreateInstance(domModal);
