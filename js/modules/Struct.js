@@ -224,8 +224,8 @@ export class Struct {
       const damage = this.takeDamage(attackingWeapon.getDamage(), attacker);
       this.combatEventDispatcher.dispatch(
         EVENTS.COMBAT.COMBAT_DEFENDER_BLOCKED,
-        this,
         attacker,
+        this,
         damage
       );
       return true;
