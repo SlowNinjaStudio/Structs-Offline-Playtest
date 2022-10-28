@@ -566,6 +566,44 @@ const analyzeFleetAmbitAttackCapabilitiesTest = new DTest('analyzeFleetAmbitAtta
   }
 );
 
+const findFleetTargetingWeaknessTest = new DTest('findFleetTargetingWeaknessTest', function() {
+  const player = getDummyPlayer();
+  const enemy = getDummyPlayer();
+  const state = new GameState();
+  state.player = player;
+  state.enemy = enemy;
+  const ai = new AI(state);
+
+  let ambitWeakness = ai.findFleetTargetingWeakness(state.player.fleet);
+
+  this.assertEquals(ambitWeakness, null);
+
+  destroySelectStructs(state.player.fleet);
+
+  ambitWeakness = ai.findFleetTargetingWeakness(state.player.fleet);
+
+  this.assertEquals(ambitWeakness, AMBITS.LAND);
+});
+
+const findMostOccupiedAmbitTest = new DTest('findMostOccupiedAmbitTest', function() {
+  const player = getDummyPlayer();
+  const enemy = getDummyPlayer();
+  const state = new GameState();
+  state.player = player;
+  state.enemy = enemy;
+  const ai = new AI(state);
+
+  let mostOccupiedAmbit = ai.findMostOccupiedAmbit(state.enemy.fleet);
+
+  this.assertEquals(mostOccupiedAmbit, AMBITS.WATER);
+
+  destroySelectStructs(state.enemy.fleet);
+
+  mostOccupiedAmbit = ai.findMostOccupiedAmbit(state.enemy.fleet);
+
+  this.assertEquals(mostOccupiedAmbit, AMBITS.SPACE);
+});
+
 const turnBasedDefenseTest = new DTest('turnBasedDefenseTest', function() {
   const player = getDummyPlayer();
   const enemy = getDummyPlayer();
@@ -574,13 +612,36 @@ const turnBasedDefenseTest = new DTest('turnBasedDefenseTest', function() {
   state.enemy = enemy;
   const ai = new AI(state);
 
-  destroySelectStructs(state.player.fleet);
-
   this.assertEquals(state.enemy.commandStruct.operatingAmbit, AMBITS.SPACE);
 
   ai.turnBasedDefense();
 
-  this.assertEquals(state.enemy.commandStruct.operatingAmbit, AMBITS.LAND);
+  this.assertEquals(state.enemy.commandStruct.operatingAmbit, AMBITS.WATER);
+
+  ai.turnBasedDefense();
+
+  this.assertEquals(state.enemy.commandStruct.operatingAmbit, AMBITS.WATER);
+
+  state.enemy.fleet.water[0].destroyStruct();
+  state.enemy.fleet.land[0].destroyStruct();
+  state.enemy.fleet.space[0].destroyStruct();
+
+  ai.turnBasedDefense();
+
+  this.assertEquals(state.enemy.commandStruct.operatingAmbit, AMBITS.SKY);
+
+  state.player.fleet.space[0].destroyStruct();
+  state.player.fleet.space[1].destroyStruct();
+  state.player.fleet.space[2].destroyStruct();
+  state.player.fleet.space[3].destroyStruct();
+  state.player.fleet.sky[1].destroyStruct(); // High Altitude Interceptor
+  state.player.fleet.land[2].destroyStruct(); // SAM Launcher
+  state.player.fleet.water[0].destroyStruct(); // SUB 1
+  state.player.fleet.water[3].destroyStruct(); // SUB 2
+
+  ai.turnBasedDefense();
+
+  this.assertEquals(state.enemy.commandStruct.operatingAmbit, AMBITS.SPACE);
 });
 
 // Test execution
@@ -597,4 +658,6 @@ chooseWeaponTest.run();
 attackTest.run();
 openingDefenseTest.run();
 analyzeFleetAmbitAttackCapabilitiesTest.run();
+findFleetTargetingWeaknessTest.run();
+findMostOccupiedAmbitTest.run();
 turnBasedDefenseTest.run();

@@ -1,5 +1,5 @@
 import {DefenseStrategyTree} from "./DefenseStrategyTree.js";
-import {AMBITS, EVENTS, MANUAL_WEAPON_SLOTS} from "./Constants.js";
+import {AMBITS, EVENTS, MANUAL_WEAPON_SLOTS, ORDER_OF_AMBITS} from "./Constants.js";
 import {AIAttackChoice} from "./AIAttackChoice.js";
 import {AmbitDistribution} from "./AmbitDistribution.js";
 
@@ -205,16 +205,65 @@ export class AI {
   }
 
   /**
-   * Check if the player is unable to attack a certain ambit, if so, move the command struct to that ambit.
+   * @param {Fleet} fleet
+   * @return {AmbitDistribution}
    */
-  turnBasedDefense() {
-    const ambitAttackCapabilities = this.analyzeFleetAmbitAttackCapabilities(this.state.player.fleet);
+  analyzeFleetAmbitPositions(fleet) {
+    const ambitPositions = new AmbitDistribution();
+    fleet.forEachStruct(struct => {
+      if (!struct.isDestroyed) {
+        ambitPositions.increment(struct.operatingAmbit, 1);
+      }
+    });
+    return ambitPositions;
+  }
+
+  /**
+   * Find an ambit the fleet cannot attack.
+   *
+   * @param {Fleet} fleet
+   * @return {string|null}
+   */
+  findFleetTargetingWeakness(fleet) {
+    const ambitAttackCapabilities = this.analyzeFleetAmbitAttackCapabilities(fleet);
     const ambits = Object.values(AMBITS);
     for (let i = 0; i < ambits.length; i++) {
       if (ambitAttackCapabilities[ambits[i].toLowerCase()] === 0) {
-        this.state.enemy.commandStruct.operatingAmbit = ambits[i];
-        break;
+        return ambits[i];
       }
+    }
+    return null;
+  }
+
+  /**
+   * Find the ambit where the fleet has the most structs.
+   *
+   * @param fleet
+   * @return {string|null}
+   */
+  findMostOccupiedAmbit(fleet) {
+    let mostOccupiedAmbit = null;
+    let mostStructs = 0;
+    const ambitPositions = this.analyzeFleetAmbitPositions(fleet);
+    const ambits = ORDER_OF_AMBITS;
+    for (let i = 0; i < ambits.length; i++) {
+      if (ambitPositions[ambits[i].toLowerCase()] > mostStructs) {
+        mostStructs = ambitPositions[ambits[i].toLowerCase()];
+        mostOccupiedAmbit = ambits[i];
+      }
+    }
+    return mostOccupiedAmbit;
+  }
+
+  turnBasedDefense() {
+    let changeAmbit = this.findFleetTargetingWeakness(this.state.player.fleet);
+
+    if (!changeAmbit) {
+      changeAmbit = this.findMostOccupiedAmbit(this.state.enemy.fleet);
+    }
+
+    if (changeAmbit) {
+      this.state.enemy.commandStruct.operatingAmbit = changeAmbit;
     }
   }
 
