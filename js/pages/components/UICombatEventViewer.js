@@ -111,7 +111,7 @@ export class UICombatEventViewer {
   renderEventTypeIcon(e) {
     let html = ``;
     if (e.type === EVENTS.COMBAT.COMBAT_DEFENDER_BLOCKED) {
-      html += `<img src="${IMG.LARGE_ICONS}large-icon-arrow-left-blocked.png" alt="blocked"></a>`;
+      html += `<img src="${IMG.LARGE_ICONS}large-icon-arrow-right-blocked.png" alt="blocked"></a>`;
     } else {
       html += `<img src="${IMG.LARGE_ICONS}large-icon-arrow-right.png" alt="arrow"></a>`;
     }

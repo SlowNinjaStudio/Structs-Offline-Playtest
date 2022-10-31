@@ -1,5 +1,5 @@
 import {UIFleet} from "./UIFleet.js";
-import {EVENTS, MANUAL_WEAPON_SLOTS} from "../../modules/Constants.js";
+import {EVENTS, GAME_MODES, MANUAL_WEAPON_SLOTS} from "../../modules/Constants.js";
 import {UIStructDetails} from "./UIStructDetails.js";
 import {StructRef} from "../../modules/StructRef.js";
 import {SlotRef} from "../../modules/SlotRef.js";
@@ -9,6 +9,7 @@ import {UICombatEventViewer} from "./UICombatEventViewer.js";
 import {UIPrepareDefenses} from "./UIPrepareDefenses.js";
 import {UIGameStartModal} from "./UIGameStartModal.js";
 import {Analytics} from "../../modules/Analytics.js";
+import {AI} from "../../modules/AI.js";
 
 export class UIGame {
 
@@ -24,6 +25,7 @@ export class UIGame {
     this.enemyFleetUI = new UIFleet(this.state, this.state.enemy);
     this.prepareDefensesUI = new UIPrepareDefenses(this.state);
     this.analytics = new Analytics(this.state);
+    this.ai = new AI(this.state);
   }
 
   initEmptyCommandSlotListeners() {
@@ -191,6 +193,10 @@ export class UIGame {
         this.analytics.trackDefensePhaseEnd();
       }
       this.render();
+
+      if (this.state.gameMode === GAME_MODES.ONE_PLAYER && this.state.turn.id === this.state.enemy.id) {
+        this.ai.executeTurn();
+      }
     }.bind(this));
   }
 
@@ -305,5 +311,11 @@ export class UIGame {
 
     this.gameStartModal.init();
     this.gameOverModal.init();
+
+    const domOffcanvas = document.getElementById('offcanvasBottom');
+    const offcanvasClass = (this.state.player.id === this.state.turn.id) ? 'player' : 'enemy';
+    domOffcanvas.classList.remove('player');
+    domOffcanvas.classList.remove('enemy');
+    domOffcanvas.classList.add(offcanvasClass);
   }
 }

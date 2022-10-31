@@ -32,6 +32,22 @@ export class Fleet {
   }
 
   /**
+   * @param {function} callback
+   */
+  forEachStruct(callback) {
+    const ambits = Object.values(AMBITS);
+    for (let j = 0; j < ambits.length; j++) {
+      const ambitStructs = this[ambits[j].toLowerCase()];
+      for (let i = 0; i < ambitStructs.length; i++) {
+        const struct = ambitStructs[i];
+        if (struct) {
+          callback(struct);
+        }
+      }
+    }
+  }
+
+  /**
    * @param {string} ambit
    * @param {string} id
    * @return {Struct}
@@ -181,15 +197,14 @@ export class Fleet {
       return false;
     }
 
-    const ambits = Object.values(AMBITS);
-    for (let j = 0; j < ambits.length; j++) {
-      const ambitStructs = this[ambits[j].toLowerCase()];
-      for (let i = 0; i < ambitStructs.length; i++) {
-        if (!!ambitStructs[i] && !ambitStructs[i].isDestroyed) {
-          return false;
-        }
+    let destroyed = true;
+
+    this.forEachStruct(struct => {
+      if (!!struct && !struct.isDestroyed) {
+        destroyed = false;
       }
-    }
-    return true;
+    });
+
+    return destroyed;
   }
 }

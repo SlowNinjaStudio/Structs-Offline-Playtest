@@ -1,7 +1,7 @@
 import {DTest} from "../../DTestFramework.js";
 import {Struct} from "../../../js/modules/Struct.js";
 import {ManualWeapon} from "../../../js/modules/struct_components/ManualWeapon.js";
-import {AMBITS, FLEET_STRUCT_DEFAULTS, MANUAL_WEAPON_SLOTS} from "../../../js/modules/Constants.js";
+import {AMBITS, FLEET_STRUCT_DEFAULTS, MANUAL_WEAPON_SLOTS, UNIT_TYPES} from "../../../js/modules/Constants.js";
 import {PassiveWeapon} from "../../../js/modules/struct_components/PassiveWeapon.js";
 import {AmbitDefense} from "../../../js/modules/struct_components/AmbitDefense.js";
 import {CounterAttackEvasion} from "../../../js/modules/struct_components/CounterAttackEvasion.js"
@@ -9,6 +9,7 @@ import {DefendActionDisabledError} from "../../../js/modules/errors/DefendAction
 import {InvalidManualWeaponSlotError} from "../../../js/modules/errors/InvalidManualWeaponSlotError.js";
 import {AftermarketEngine} from "../../../js/modules/struct_components/AftermarketEngine.js";
 import {Fraction} from "../../../js/modules/util/Fraction.js";
+import {StructBuilder} from "../../../js/modules/StructBuilder.js";
 
 /**
  * @return {Struct}
@@ -604,6 +605,22 @@ const changeAmbitTest = new DTest('changeAmbitTest', function() {
 
 });
 
+const getTargetableAmbitsTest = new DTest('getTargetableAmbitsTest', function(params) {
+  this.assertArrayEquals(params.struct.getTargetableAmbits(), params.expected);
+}, function () {
+  const builder = new StructBuilder();
+  return [
+    {
+      struct: builder.make(UNIT_TYPES.TANK),
+      expected: [AMBITS.LAND]
+    },
+    {
+      struct: builder.make(UNIT_TYPES.GALACTIC_BATTLESHIP),
+      expected: [AMBITS.WATER, AMBITS.LAND, AMBITS.SPACE]
+    },
+  ];
+});
+
 // Test execution
 console.log('StructTest');
 addDefenderTest.run();
@@ -622,3 +639,4 @@ blockAttackTest.run();
 counterAttackTest.run();
 attackTest.run();
 changeAmbitTest.run();
+getTargetableAmbitsTest.run();

@@ -1,19 +1,22 @@
-export class TreeNode {
+import {AmbitDistribution} from "../AmbitDistribution.js";
+
+export class DefenseStrategyTreeNode {
   /**
    * @param {string|number} key
-   * @param {*} value
-   * @param {number} weight
+   * @param {Struct} struct
+   * @param {AmbitDistribution} cost
    */
-  constructor(key, value, weight = 0) {
+  constructor(key, struct, cost = null) {
     this.key = key;
-    this.value = value;
-    this.weight = weight;
+    this.struct = struct;
+    this.cost = cost;
+    this.costFromRoot = new AmbitDistribution();
     this.nodeParent = null;
     this.nodeChildren = [];
   }
 
   /**
-   * @param {TreeNode} node
+   * @param {DefenseStrategyTreeNode} node
    */
   addChild(node) {
     node.nodeParent = this;

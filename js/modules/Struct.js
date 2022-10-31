@@ -156,6 +156,20 @@ export class Struct {
   }
 
   /**
+   * @return {string[]}
+   */
+  getTargetableAmbits() {
+    let targetableAmbits = [];
+    if (this.manualWeaponPrimary) {
+      targetableAmbits = targetableAmbits.concat(this.manualWeaponPrimary.ambits);
+    }
+    if (this.manualWeaponSecondary) {
+      targetableAmbits = targetableAmbits.concat(this.manualWeaponSecondary.ambits);
+    }
+    return [...new Set(targetableAmbits)];
+  }
+
+  /**
    * @param {Struct} target
    * @returns {boolean}
    */
@@ -163,6 +177,7 @@ export class Struct {
     return !this.isDestroyed
       && !target.isDestroyed
       && this.canTargetAmbit(target.operatingAmbit)
+      && (!this.isCommandStruct() || this.operatingAmbit === target.operatingAmbit)
       && this.hasPassiveWeapon()
       && !target.defenseComponent.evadeCounterAttack();
   }
@@ -209,8 +224,8 @@ export class Struct {
       const damage = this.takeDamage(attackingWeapon.getDamage(), attacker);
       this.combatEventDispatcher.dispatch(
         EVENTS.COMBAT.COMBAT_DEFENDER_BLOCKED,
-        this,
         attacker,
+        this,
         damage
       );
       return true;
