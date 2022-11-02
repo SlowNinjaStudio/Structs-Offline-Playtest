@@ -148,6 +148,15 @@ export class Struct {
   }
 
   /**
+   * @param struct
+   * @return {boolean}
+   */
+  canAttackAnyWeapon(struct) {
+    let canAttack = (this.manualWeaponPrimary && this.canAttack(this.manualWeaponPrimary, struct));
+    return canAttack || (this.manualWeaponSecondary && this.canAttack(this.manualWeaponSecondary, struct));
+  }
+
+  /**
    * @param {string} ambit
    * @returns {boolean}
    */

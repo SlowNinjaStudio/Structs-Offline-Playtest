@@ -275,6 +275,8 @@ const getStructAttackScoreTest = new DTest('getStructAttackScoreTest', function(
   const artillery = structBuilder.make(UNIT_TYPES.ARTILLERY);
   const stealthBomber = structBuilder.make(UNIT_TYPES.STEALTH_BOMBER);
   const spaceFrigate = structBuilder.make(UNIT_TYPES.SPACE_FRIGATE);
+  const samLauncher = structBuilder.make(UNIT_TYPES.SAM_LAUNCHER);
+  const fighterJet = structBuilder.make(UNIT_TYPES.FIGHTER_JET);
 
   this.assertEquals(ai.getStructAttackScore(starFighter, commandShip1), -1);
   this.assertEquals(ai.getStructAttackScore(commandShip1, commandShip2), 1);
@@ -287,6 +289,13 @@ const getStructAttackScoreTest = new DTest('getStructAttackScoreTest', function(
   starFighter.destroyStruct();
 
   this.assertEquals(ai.getStructAttackScore(starFighter, spaceFrigate), -1);
+
+  this.assertEquals(ai.getStructAttackScore(samLauncher, stealthBomber), 5);
+
+  stealthBomber.defenseComponent.isActive = true;
+
+  this.assertEquals(ai.getStructAttackScore(samLauncher, stealthBomber), -1);
+  this.assertEquals(ai.getStructAttackScore(fighterJet, stealthBomber), Infinity);
 });
 
 const chooseAttackStructTest = new DTest('chooseAttackStructTest', function(params) {
@@ -644,6 +653,27 @@ const turnBasedDefenseTest = new DTest('turnBasedDefenseTest', function() {
   this.assertEquals(state.enemy.commandStruct.operatingAmbit, AMBITS.SPACE);
 });
 
+const canAttackIfHiddenTest = new DTest('canAttackIfHiddenTest', function() {
+  const gameState = new GameState();
+  gameState.player = getDummyPlayer();
+  gameState.enemy = getDummyPlayer();
+  const ai = new AI(gameState);
+
+  const playerStealthBomber = gameState.player.fleet.sky[2];
+
+  this.assertEquals(ai.canAttackIfHidden(playerStealthBomber), true);
+
+  playerStealthBomber.defenseComponent.isActive = true;
+
+  this.assertEquals(ai.canAttackIfHidden(playerStealthBomber), true);
+
+  gameState.enemy.fleet.sky[0].destroyStruct(); // Fighter Jet
+  gameState.enemy.fleet.sky[1].destroyStruct(); // High Altitude Interceptor
+  gameState.enemy.fleet.sky[3].destroyStruct(); // Fighter Jet
+
+  this.assertEquals(ai.canAttackIfHidden(playerStealthBomber), false);
+});
+
 // Test execution
 console.log('AITest');
 rankTargetTest.run();
@@ -661,3 +691,4 @@ analyzeFleetAmbitAttackCapabilitiesTest.run();
 findFleetTargetingWeaknessTest.run();
 findMostOccupiedAmbitTest.run();
 turnBasedDefenseTest.run();
+canAttackIfHiddenTest.run();
