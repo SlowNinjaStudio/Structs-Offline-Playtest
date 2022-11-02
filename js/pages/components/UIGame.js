@@ -10,6 +10,7 @@ import {UIPrepareDefenses} from "./UIPrepareDefenses.js";
 import {UIGameStartModal} from "./UIGameStartModal.js";
 import {Analytics} from "../../modules/Analytics.js";
 import {AI} from "../../modules/AI.js";
+import {UICancelAction} from "./UICancelAction.js";
 
 export class UIGame {
 
@@ -26,6 +27,7 @@ export class UIGame {
     this.prepareDefensesUI = new UIPrepareDefenses(this.state);
     this.analytics = new Analytics(this.state);
     this.ai = new AI(this.state);
+    this.cancelActionButton = new UICancelAction(this.state);
   }
 
   initEmptyCommandSlotListeners() {
@@ -317,5 +319,7 @@ export class UIGame {
     domOffcanvas.classList.remove('player');
     domOffcanvas.classList.remove('enemy');
     domOffcanvas.classList.add(offcanvasClass);
+
+    this.cancelActionButton.render();
   }
 }

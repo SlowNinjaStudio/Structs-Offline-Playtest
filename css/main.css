@@ -491,6 +491,8 @@ body {
   max-width: 100%;
 }
 
+/* Bootstrap Overrides - Start */
+
 .offcanvas.structDetails {
   margin: 0 auto;
   max-width: 500px;
@@ -503,7 +505,11 @@ body {
   transform: scaleX(-1);
 }
 
-/* Bootstrap Overrides - Start */
+.offcanvas#offcanvasTop {
+  margin: 0 auto;
+  height: 56px;
+  visibility: visible;
+}
 
 .offcanvas .container-fluid {
   max-width: 500px;
