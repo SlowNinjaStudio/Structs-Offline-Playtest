@@ -17,6 +17,6 @@ export class Armour extends DefenseComponent {
    * @return {number}
    */
   reduceAttackDamage(incomingDamage, attackingWeapon = null) {
-    return Math.max(1, incomingDamage - this.damageReduction);
+    return Math.max(0, incomingDamage - this.damageReduction);
   }
 }

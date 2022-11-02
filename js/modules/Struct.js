@@ -118,7 +118,8 @@ export class Struct {
       this.destroyStruct();
 
       // Counter Attack on Death
-      if (this.hasPassiveWeapon() && attacker && !attacker.isDestroyed) {
+      if (this.hasPassiveWeapon() && attacker && !attacker.isDestroyed
+          && this.passiveWeapon.probabilityOnDeath.toDecimal() > 0) {
         const damage = attacker.takeDamage(this.passiveWeapon.getDamageOnDeath());
         if (damage > 0) {
           this.combatEventDispatcher.dispatch(
