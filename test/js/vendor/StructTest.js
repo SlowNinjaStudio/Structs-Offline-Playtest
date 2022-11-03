@@ -231,6 +231,23 @@ const canAttackTest = new DTest('canAttackTest', function(params) {
   ];
 });
 
+const canAttackAnyWeaponTest = new DTest('canAttackAnyWeaponTest', function() {
+  const builder = new StructBuilder();
+  const cruiser = builder.make(UNIT_TYPES.CRUISER);
+  const sub = builder.make(UNIT_TYPES.SUB);
+  const tank = builder.make(UNIT_TYPES.TANK);
+  const fighterJet = builder.make(UNIT_TYPES.FIGHTER_JET);
+  const starFighter = builder.make(UNIT_TYPES.STAR_FIGHTER);
+  const stealthBomber = builder.make(UNIT_TYPES.STEALTH_BOMBER);
+  stealthBomber.defenseComponent.isActive = true;
+
+  this.assertEquals(cruiser.canAttackAnyWeapon(sub), true);
+  this.assertEquals(cruiser.canAttackAnyWeapon(tank), true);
+  this.assertEquals(cruiser.canAttackAnyWeapon(fighterJet), true);
+  this.assertEquals(cruiser.canAttackAnyWeapon(starFighter), false);
+  this.assertEquals(cruiser.canAttackAnyWeapon(stealthBomber), false);
+});
+
 const canTargetAmbitTest = new DTest('canTargetAmbitTest', function(params) {
   const struct = getTestStruct();
   struct.manualWeaponPrimary = params.primary;
@@ -631,6 +648,7 @@ removeAllDefendersTest.run();
 destroyStructTest.run();
 takeDamageTest.run();
 canAttackTest.run();
+canAttackAnyWeaponTest.run();
 canTargetAmbitTest.run();
 canCounterAttackTest.run();
 canTakeDamageForTest.run();

@@ -13,10 +13,27 @@ export class AI {
   }
 
   /**
+   * @param {Struct} playerStruct
+   * @return {boolean}
+   */
+  canAttackIfHidden(playerStruct) {
+    if (!playerStruct.isHidden()) {
+      return true;
+    }
+
+    return !!this.state.enemy.fleet[playerStruct.operatingAmbit.toLowerCase()].reduce((canAttack, aiStruct) =>
+      canAttack || !aiStruct || aiStruct.canAttackAnyWeapon(playerStruct)
+    , false);
+  }
+
+  /**
    * @param {DefenseStrategyTreeNode} treeNode
    * @return {number} rank (lower is better)
    */
   rankTarget(treeNode) {
+    if (!this.canAttackIfHidden(treeNode.struct)) {
+      return Infinity;
+    }
     const attacksRequiredDistribution = treeNode.costFromRoot.add(treeNode.cost);
     const totalAttacksRequired = attacksRequiredDistribution.getAmbitValues().reduce(
       (previous, current) => previous + current,
@@ -98,7 +115,7 @@ export class AI {
    * @return {number}
    */
   getStructAttackScore(attackStruct, targetStruct) {
-    if(!attackStruct.canTargetAmbit(targetStruct.operatingAmbit) || attackStruct.isDestroyed) {
+    if(attackStruct.isDestroyed || !attackStruct.canAttackAnyWeapon(targetStruct)) {
       return -1;
     }
 

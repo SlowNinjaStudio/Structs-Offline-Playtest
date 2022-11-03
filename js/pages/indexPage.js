@@ -54,6 +54,7 @@ state.metrics.enemy.initialStructCount = player.fleet.numberOfStructs() + 1; // 
 state.gameContainerId = 'main-content-wrapper';
 state.modalContainerId = 'modalContainer';
 state.offcanvasId = 'offcanvasBottom';
+state.offcanvasTopId = 'offcanvasTop';
 state.turn = state.player;
 
 const game = new UIGame(state);

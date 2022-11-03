@@ -16,6 +16,7 @@ export class GameState {
     this.gameContainerId = '';
     this.modalContainerId = '';
     this.offcanvasId = '';
+    this.offcanvasTopId = '';
 
     this.metrics = {
       player: new PlayerMetrics(),

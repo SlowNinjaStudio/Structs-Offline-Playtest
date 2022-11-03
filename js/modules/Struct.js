@@ -118,7 +118,8 @@ export class Struct {
       this.destroyStruct();
 
       // Counter Attack on Death
-      if (this.hasPassiveWeapon() && attacker && !attacker.isDestroyed) {
+      if (this.hasPassiveWeapon() && attacker && !attacker.isDestroyed
+          && this.passiveWeapon.probabilityOnDeath.toDecimal() > 0) {
         const damage = attacker.takeDamage(this.passiveWeapon.getDamageOnDeath());
         if (damage > 0) {
           this.combatEventDispatcher.dispatch(
@@ -144,6 +145,15 @@ export class Struct {
       && weapon.canTargetAmbit(struct.operatingAmbit)
       && (!this.isCommandStruct() || this.operatingAmbit === struct.operatingAmbit)
       && !struct.defenseComponent.blocksTargeting(this);
+  }
+
+  /**
+   * @param struct
+   * @return {boolean}
+   */
+  canAttackAnyWeapon(struct) {
+    let canAttack = (this.manualWeaponPrimary && this.canAttack(this.manualWeaponPrimary, struct));
+    return canAttack || (this.manualWeaponSecondary && this.canAttack(this.manualWeaponSecondary, struct));
   }
 
   /**
