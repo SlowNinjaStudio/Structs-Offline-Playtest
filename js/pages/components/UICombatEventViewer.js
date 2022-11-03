@@ -7,7 +7,7 @@ export class UICombatEventViewer {
   constructor(state) {
     this.state = state;
     this.events = [];
-    this.playerLeft = null;
+    this.playerLeft = this.state.player;
   }
 
   initOneTimeListeners() {
@@ -31,11 +31,6 @@ export class UICombatEventViewer {
   addEvent(e) {
     if (e.type === EVENTS.COMBAT.COMBAT_TARGETED) {
       this.events = [];
-      if (e.sourceStruct.playerId === this.state.player.id) {
-        this.playerLeft = this.state.player;
-      } else {
-        this.playerLeft = this.state.enemy;
-      }
     }
     this.events.push(e);
     this.render();
@@ -72,6 +67,11 @@ export class UICombatEventViewer {
   renderStruct(side, struct, previousHealth, newHealth) {
     return `
       <div class="col">
+        <div class="row">
+          <div class="col text-center">
+            ${side === 'LEFT' ? 'Player' : 'Enemy'}
+          </div>
+        </div>
         <div class="row">
           <div class="col text-center">
             <img src="${IMG.ICONS}icon-location-pin.png" alt="location-pin"><strong>:</strong>
