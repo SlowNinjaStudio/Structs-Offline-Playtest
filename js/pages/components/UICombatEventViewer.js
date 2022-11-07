@@ -1,4 +1,5 @@
 import {COMBAT_EVENT_LABELS, EVENTS, IMG} from "../../modules/Constants.js";
+import {Util} from "../../modules/util/Util.js";
 
 export class UICombatEventViewer {
   /**
@@ -8,6 +9,7 @@ export class UICombatEventViewer {
     this.state = state;
     this.events = [];
     this.playerLeft = this.state.player;
+    this.util = new Util();
   }
 
   initOneTimeListeners() {
@@ -124,6 +126,7 @@ export class UICombatEventViewer {
    */
   renderEventRow(e) {
     let damageAmount = e.damageAmount;
+    let defenseComponentName = this.util.titleCase(e.defenseComponentName);
 
     let leftStruct = e.sourceStruct;
     let leftStructPreviousHealth = e.sourceStructHealth;
@@ -162,6 +165,13 @@ export class UICombatEventViewer {
             <div class="row">
               <div class="col combat-event-damage">
                 <img src="${IMG.ICONS}icon-fire.png" alt="fire"> ${damageAmount}
+              </div>
+            </div>
+            ` : ''}
+            ${!!defenseComponentName ? `
+            <div class="row">
+              <div class="col combat-event-damage">
+                Reduced by ${defenseComponentName}
               </div>
             </div>
             ` : ''}

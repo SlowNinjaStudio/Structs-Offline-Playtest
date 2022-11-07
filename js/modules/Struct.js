@@ -108,31 +108,31 @@ export class Struct {
    * @param {number} damage
    * @param {Struct} attacker
    * @param {ManualWeapon} attackingWeapon
-   * @return {number}
+   * @return {DamageResultDTO}
    */
   takeDamage(damage, attacker = null, attackingWeapon = null) {
     const previousHeath = this.currentHealth;
-    const damageReductionResult = this.defenseComponent.reduceAttackDamage(damage, attackingWeapon);
-    this.setCurrentHealth(this.currentHealth - damageReductionResult.finalDamage);
-    const damageTaken = previousHeath - this.currentHealth;
+    const damageResult = this.defenseComponent.reduceAttackDamage(damage, attackingWeapon);
+    this.setCurrentHealth(this.currentHealth - damageResult.finalDamage);
+    damageResult.damageTaken = previousHeath - this.currentHealth;
     if (this.currentHealth === 0) {
       this.destroyStruct();
 
       // Counter Attack on Death
       if (this.hasPassiveWeapon() && attacker && !attacker.isDestroyed
           && this.passiveWeapon.probabilityOnDeath.toDecimal() > 0) {
-        const damage = attacker.takeDamage(this.passiveWeapon.getDamageOnDeath());
-        if (damage > 0) {
+        const damageOnDeathResult = attacker.takeDamage(this.passiveWeapon.getDamageOnDeath());
+        if (damageOnDeathResult.damageTaken > 0) {
           this.combatEventDispatcher.dispatch(
             EVENTS.COMBAT.COMBAT_COUNTER_ATTACKED_ON_DEATH,
             this,
             attacker,
-            damage
+            damageOnDeathResult.damageTaken
           );
         }
       }
     }
-    return damageTaken;
+    return damageResult;
   }
 
   /**
@@ -232,12 +232,12 @@ export class Struct {
    */
   blockAttack(attacker, attackingWeapon, target) {
     if (this.canTakeDamageFor(target)) {
-      const damage = this.takeDamage(attackingWeapon.getDamage(), attacker);
+      const damageResult = this.takeDamage(attackingWeapon.getDamage(), attacker);
       this.combatEventDispatcher.dispatch(
         EVENTS.COMBAT.COMBAT_DEFENDER_BLOCKED,
         attacker,
         this,
-        damage
+        damageResult.damageTaken
       );
       return true;
     }
@@ -250,7 +250,7 @@ export class Struct {
    */
   counterAttack(target, isDefenderCounter = false) {
     if (this.canCounterAttack(target)) {
-      const damage = target.takeDamage(
+      const damageResult = target.takeDamage(
         this.passiveWeapon.getDamageOnCounter(this.operatingAmbit === target.operatingAmbit),
         this
       );
@@ -258,7 +258,7 @@ export class Struct {
         isDefenderCounter ? EVENTS.COMBAT.COMBAT_DEFENDER_COUNTERED : EVENTS.COMBAT.COMBAT_COUNTER_ATTACKED,
         this,
         target,
-        damage
+        damageResult.damageTaken
       );
       return true;
     }
@@ -298,12 +298,13 @@ export class Struct {
 
     // Attack
     if (!attackBlocked) {
-      const damage = target.takeDamage(attackingWeapon.getDamage(), this, attackingWeapon);
+      const damageResult = target.takeDamage(attackingWeapon.getDamage(), this, attackingWeapon);
       this.combatEventDispatcher.dispatch(
         EVENTS.COMBAT.COMBAT_ATTACKED,
         this,
         target,
-        damage
+        damageResult.damageTaken,
+        damageResult.defenseComponentName
       );
     }
 
