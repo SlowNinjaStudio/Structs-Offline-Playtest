@@ -112,7 +112,8 @@ export class Struct {
    */
   takeDamage(damage, attacker = null, attackingWeapon = null) {
     const previousHeath = this.currentHealth;
-    this.setCurrentHealth(this.currentHealth - this.defenseComponent.reduceAttackDamage(damage, attackingWeapon));
+    const damageReductionResult = this.defenseComponent.reduceAttackDamage(damage, attackingWeapon);
+    this.setCurrentHealth(this.currentHealth - damageReductionResult.finalDamage);
     const damageTaken = previousHeath - this.currentHealth;
     if (this.currentHealth === 0) {
       this.destroyStruct();

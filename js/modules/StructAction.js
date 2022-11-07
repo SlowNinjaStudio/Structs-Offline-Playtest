@@ -3,7 +3,7 @@ import {EVENTS} from "./Constants.js";
 export class StructAction {
   /**
    * @param {string} type
-   * @param {StructRef} source
+   * @param {StructRefDTO} source
    */
   constructor(type, source) {
     this.setType(type);

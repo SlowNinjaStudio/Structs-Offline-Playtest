@@ -9,7 +9,7 @@ import {
 import {Util} from "../../modules/util/Util.js";
 import {CounterMeasure} from "../../modules/struct_components/CounterMeasure.js";
 import {StructAction} from "../../modules/StructAction.js";
-import {StructRef} from "../../modules/StructRef.js";
+import {StructRefDTO} from "../../modules/dtos/StructRefDTO.js";
 
 export class UIStructDetails {
 
@@ -56,7 +56,7 @@ export class UIStructDetails {
       const isCommandStruct = !!parseInt(actionButton.getAttribute('data-is-command-struct'));
       const action = new StructAction(
         eventType,
-        new StructRef(
+        new StructRefDTO(
           playerId,
           structId,
           isCommandStruct

@@ -28,8 +28,11 @@ const makeTest = new DTest('makeTest', function(params) {
   this.assertEquals(component.name, params.name);
   this.assertEquals(component.blocksTargeting(params.attacker), params.blocksTargeting);
   this.assertEquals(component.evadeCounterAttack(), params.evadeCounterAttack);
+
+  const damageReductionResult = component.reduceAttackDamage(params.incomingDamage, params.attackingWeapon)
+
   this.assertEquals(
-    component.reduceAttackDamage(params.incomingDamage, params.attackingWeapon),
+    damageReductionResult.finalDamage,
     params.reduceAttackDamage
   );
   this.assertEquals(

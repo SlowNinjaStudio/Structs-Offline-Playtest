@@ -1,4 +1,4 @@
-export class StructRef {
+export class StructRefDTO {
   /**
    * @param {string} playerId
    * @param {string} structId

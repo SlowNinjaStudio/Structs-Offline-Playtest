@@ -1,5 +1,6 @@
 import {DefenseComponent} from "./DefenseComponent.js";
 import {DEFENSE_COMPONENT_TYPES} from "../Constants.js";
+import {DamageReductionResultDTO} from "../dtos/DamageReductionResultDTO.js";
 
 export class CounterMeasure extends DefenseComponent {
   /**
@@ -15,13 +16,14 @@ export class CounterMeasure extends DefenseComponent {
   /**
    * @param {number} incomingDamage
    * @param {ManualWeapon} attackingWeapon
-   * @return {number}
+   * @return {DamageReductionResultDTO}
    */
   reduceAttackDamage(incomingDamage , attackingWeapon) {
-    return (
+    const finalDamage = (
       attackingWeapon !== null
       && attackingWeapon.isGuided === this.guided
       && Math.random() < this.probability.toDecimal()
     ) ? 0 : incomingDamage;
+    return new DamageReductionResultDTO(incomingDamage, finalDamage, this.name);
   }
 }
