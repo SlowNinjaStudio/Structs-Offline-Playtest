@@ -1,6 +1,6 @@
 export class ActionActor {
   /**
-   * @param {StructRef} structRef
+   * @param {StructRefDTO} structRef
    * @param {Player[]} players
    */
   constructor(structRef, players) {

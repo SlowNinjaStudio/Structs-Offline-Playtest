@@ -1,5 +1,6 @@
 import {DefenseComponent} from "./DefenseComponent.js";
 import {DEFENSE_COMPONENT_TYPES} from "../Constants.js";
+import {DamageResultDTO} from "../dtos/DamageResultDTO.js";
 
 export class Armour extends DefenseComponent {
   /**
@@ -14,9 +15,10 @@ export class Armour extends DefenseComponent {
   /**
    * @param {number} incomingDamage
    * @param {ManualWeapon} attackingWeapon
-   * @return {number}
+   * @return {DamageResultDTO}
    */
   reduceAttackDamage(incomingDamage, attackingWeapon = null) {
-    return incomingDamage > 0 ? Math.max(1, incomingDamage - this.damageReduction) : 0;
+    const finalDamage = incomingDamage > 0 ? Math.max(1, incomingDamage - this.damageReduction) : 0;
+    return new DamageResultDTO(incomingDamage, finalDamage, this.name);
   }
 }

@@ -1,4 +1,4 @@
-export class SlotRef {
+export class SlotRefDTO {
 
   /**
    * @param {string} playerId

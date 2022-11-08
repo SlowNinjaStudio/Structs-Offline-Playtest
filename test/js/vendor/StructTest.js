@@ -158,17 +158,17 @@ const takeDamageTest = new DTest('takeDamageTest', function() {
 
   this.assertEquals(defender.isDestroyed, false);
 
-  let damageTaken = defender.takeDamage(2, attacker);
+  let damageResult = defender.takeDamage(2, attacker);
 
   this.assertEquals(defender.currentHealth, defender.maxHealth - 2);
   this.assertEquals(defender.isDestroyed, false);
-  this.assertEquals(damageTaken, 2);
+  this.assertEquals(damageResult.damageTaken, 2);
 
-  damageTaken = defender.takeDamage(2, attacker);
+  damageResult = defender.takeDamage(2, attacker);
 
   this.assertEquals(defender.currentHealth, 0);
   this.assertEquals(defender.isDestroyed, true);
-  this.assertEquals(damageTaken, 1);
+  this.assertEquals(damageResult.damageTaken, 1);
 })
 
 const canAttackTest = new DTest('canAttackTest', function(params) {

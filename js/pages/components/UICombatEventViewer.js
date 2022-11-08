@@ -1,4 +1,5 @@
 import {COMBAT_EVENT_LABELS, EVENTS, IMG} from "../../modules/Constants.js";
+import {Util} from "../../modules/util/Util.js";
 
 export class UICombatEventViewer {
   /**
@@ -7,7 +8,8 @@ export class UICombatEventViewer {
   constructor(state) {
     this.state = state;
     this.events = [];
-    this.playerLeft = null;
+    this.playerLeft = this.state.player;
+    this.util = new Util();
   }
 
   initOneTimeListeners() {
@@ -31,11 +33,6 @@ export class UICombatEventViewer {
   addEvent(e) {
     if (e.type === EVENTS.COMBAT.COMBAT_TARGETED) {
       this.events = [];
-      if (e.sourceStruct.playerId === this.state.player.id) {
-        this.playerLeft = this.state.player;
-      } else {
-        this.playerLeft = this.state.enemy;
-      }
     }
     this.events.push(e);
     this.render();
@@ -72,6 +69,11 @@ export class UICombatEventViewer {
   renderStruct(side, struct, previousHealth, newHealth) {
     return `
       <div class="col">
+        <div class="row">
+          <div class="col text-center">
+            ${side === 'LEFT' ? 'Player' : 'Enemy'}
+          </div>
+        </div>
         <div class="row">
           <div class="col text-center">
             <img src="${IMG.ICONS}icon-location-pin.png" alt="location-pin"><strong>:</strong>
@@ -124,6 +126,7 @@ export class UICombatEventViewer {
    */
   renderEventRow(e) {
     let damageAmount = e.damageAmount;
+    let defenseComponentName = this.util.titleCase(e.defenseComponentName);
 
     let leftStruct = e.sourceStruct;
     let leftStructPreviousHealth = e.sourceStructHealth;
@@ -162,6 +165,13 @@ export class UICombatEventViewer {
             <div class="row">
               <div class="col combat-event-damage">
                 <img src="${IMG.ICONS}icon-fire.png" alt="fire"> ${damageAmount}
+              </div>
+            </div>
+            ` : ''}
+            ${!!defenseComponentName ? `
+            <div class="row">
+              <div class="col combat-event-damage">
+                Reduced by ${defenseComponentName}
               </div>
             </div>
             ` : ''}

@@ -1,8 +1,8 @@
 import {UIFleet} from "./UIFleet.js";
 import {EVENTS, GAME_MODES, MANUAL_WEAPON_SLOTS} from "../../modules/Constants.js";
 import {UIStructDetails} from "./UIStructDetails.js";
-import {StructRef} from "../../modules/StructRef.js";
-import {SlotRef} from "../../modules/SlotRef.js";
+import {StructRefDTO} from "../../modules/dtos/StructRefDTO.js";
+import {SlotRefDTO} from "../../modules/dtos/SlotRefDTO.js";
 import {ActionActor} from "../../modules/ActionActor.js";
 import {UIGameOverModal} from "./UIGameOverModal.js";
 import {UICombatEventViewer} from "./UICombatEventViewer.js";
@@ -40,7 +40,7 @@ export class UIGame {
         const action = this.state.action;
 
         if (action && EVENTS.ACTIONS.ACTION_MOVE === action.getType()) {
-          action.data = new SlotRef(playerId, ambit, ambitSlot, isCommandSlot);
+          action.data = new SlotRefDTO(playerId, ambit, ambitSlot, isCommandSlot);
           action.dispatchEvent();
           this.state.action = null;
         }
@@ -62,7 +62,7 @@ export class UIGame {
           EVENTS.ACTIONS.ACTION_DEFEND
         ].includes(action.getType())) {
           this.state.action = null;
-          action.data = new StructRef(playerId, structId, isCommandStruct);
+          action.data = new StructRefDTO(playerId, structId, isCommandStruct);
           action.dispatchEvent();
         } else {
           const player = (this.state.getPlayers()).find(player => player.id === playerId);

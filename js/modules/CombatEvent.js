@@ -5,12 +5,14 @@ export class CombatEvent extends CustomEvent {
    * @param {Struct} sourceStruct
    * @param {Struct} targetStruct
    * @param {number|null} damageAmount
+   * @param {string} defenseComponentName
    */
   constructor(
     eventType,
     sourceStruct,
     targetStruct,
-    damageAmount= null
+    damageAmount = null,
+    defenseComponentName = ''
   ) {
     super(eventType);
     this.sourceStruct = sourceStruct;
@@ -19,6 +21,7 @@ export class CombatEvent extends CustomEvent {
     this.sourceStructHealth = sourceStruct.currentHealth;
     this.targetStructPreviousHealth = damageAmount !== null ? targetStruct.currentHealth + damageAmount : targetStruct.currentHealth;
     this.targetStructNewHealth = targetStruct.currentHealth;
+    this.defenseComponentName = defenseComponentName;
   }
 
   dispatch() {

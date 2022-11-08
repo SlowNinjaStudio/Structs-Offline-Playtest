@@ -1,4 +1,4 @@
-export class AIAttackChoice {
+export class AIAttackChoiceDTO {
   /**
    * @param {Struct} attackStruct
    * @param {string} weaponSlot

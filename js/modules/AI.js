@@ -1,6 +1,6 @@
 import {DefenseStrategyTree} from "./DefenseStrategyTree.js";
 import {AMBITS, EVENTS, MANUAL_WEAPON_SLOTS, ORDER_OF_AMBITS} from "./Constants.js";
-import {AIAttackChoice} from "./AIAttackChoice.js";
+import {AIAttackChoiceDTO} from "./dtos/AIAttackChoiceDTO.js";
 import {AmbitDistribution} from "./AmbitDistribution.js";
 
 export class AI {
@@ -170,7 +170,7 @@ export class AI {
   }
 
   /**
-   * @return {AIAttackChoice}
+   * @return {AIAttackChoiceDTO}
    */
   attack() {
     // Determine the best target
@@ -191,7 +191,7 @@ export class AI {
     // Execute attack and end turn
     aiStruct.attack(weaponSlot, target);
 
-    return new AIAttackChoice(
+    return new AIAttackChoiceDTO(
       aiStruct,
       weaponSlot,
       target

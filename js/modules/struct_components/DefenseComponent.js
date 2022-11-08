@@ -1,6 +1,7 @@
 import {DEFENSE_COMPONENT_TYPES} from "../Constants.js";
 import {Fraction} from "../util/Fraction.js";
 import {Util} from "../util/Util.js";
+import {DamageResultDTO} from "../dtos/DamageResultDTO.js";
 
 export class DefenseComponent {
 
@@ -58,10 +59,10 @@ export class DefenseComponent {
    *
    * @param {number} incomingDamage
    * @param {ManualWeapon} attackingWeapon
-   * @return {number}
+   * @return {DamageResultDTO}
    */
   reduceAttackDamage(incomingDamage, attackingWeapon = null) {
-    return incomingDamage;
+    return new DamageResultDTO(incomingDamage, incomingDamage);
   }
 
   /**
