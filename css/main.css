@@ -491,6 +491,11 @@ body {
   max-width: 100%;
 }
 
+.struct-ability-details {
+  background-color: #EEEEEE;
+  border-radius: 4px;
+}
+
 /* Bootstrap Overrides - Start */
 
 .offcanvas.structDetails {
