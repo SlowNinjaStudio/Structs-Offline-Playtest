@@ -49,9 +49,15 @@ export class UIStructMapView {
    * @return {string}
    */
   renderIsDefendedIcon() {
-    return (this.struct.defenders.length > 0)
-      ? `<img src="${IMG.ICONS}icon-strength.png" alt="strength">`
-      : '';
+    let icon = '';
+    if (this.struct.defenders.length > 2) {
+      icon = `<img src="${IMG.ICONS}icon-defended-danger.png" alt="heavily defended" title="Heavily Defended">`;
+    } else if (this.struct.defenders.length === 2) {
+      icon = `<img src="${IMG.ICONS}icon-defended-warning.png" alt="moderately defended" title="Moderately Defended">`;
+    } else if (this.struct.defenders.length === 1) {
+      icon = `<img src="${IMG.ICONS}icon-defended-info.png" alt="lightly defended" title="Lightly Defended">`;
+    }
+    return icon;
   }
 
   /**

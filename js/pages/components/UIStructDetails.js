@@ -256,7 +256,7 @@ export class UIStructDetails {
               ${this.isDefendEnabled() ? '' : 'disabled'}
             >
               Defend
-              <img src="${IMG.ICONS}icon-strength.png" alt="strength">
+              <img src="${IMG.ICONS}icon-defended-info.png" alt="defended">
             </button>
           ` : this.getUnavailableActionButton()}
           </div>
@@ -616,7 +616,7 @@ export class UIStructDetails {
                  data-bs-toggle="popover"
                  title="Defended By"
                  data-bs-content="The list of structs defending this struct."
-              ><img src="${IMG.ICONS}icon-strength.png" alt="strength"></a> Defended By:
+              ><img src="${IMG.ICONS}icon-defended-info.png" alt="defended"></a> Defended By:
             </div>
           </div>
           <div class="row">
