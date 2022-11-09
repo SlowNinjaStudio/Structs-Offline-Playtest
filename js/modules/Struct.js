@@ -304,7 +304,7 @@ export class Struct {
         this,
         target,
         damageResult.damageTaken,
-        damageResult.defenseComponentName
+        damageResult.incomingDamage !== damageResult.finalDamage ? damageResult.defenseComponentName : ''
       );
     }
 
