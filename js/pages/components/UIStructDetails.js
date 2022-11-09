@@ -572,17 +572,19 @@ export class UIStructDetails {
   getDefendingIcons(defending) {
     return `
       <div class="row">
-        <div class="col-auto pe-1">
-          <a href="javascript: void(0)"
-             data-bs-toggle="popover"
-             title="Defending"
-             data-bs-content="The struct this struct is defending."
-          ><img src="${IMG.ICONS}icon-rook.png" alt="rook"></a>:
-        </div>
-        <div class="col-auto ps-1">
-        ${defending ? `
-          ${this.getAmbitIcon(defending.operatingAmbit)} ${defending.getDisplayAmbitSlot()}
-        ` : '--'}
+        <div class="col p-2 mb-2 struct-details-group">
+          <div>
+            <a href="javascript: void(0)"
+               data-bs-toggle="popover"
+               title="Defending"
+               data-bs-content="The struct this struct is defending."
+            ><img src="${IMG.ICONS}icon-rook.png" alt="rook"></a> Defending:
+          </div>
+          <div>
+            ${defending ? `
+              ${this.getAmbitIcon(defending.operatingAmbit)} ${defending.getDisplayAmbitSlot()}
+            ` : '--'}
+          </div>
         </div>
       </div>
     `;
@@ -607,14 +609,16 @@ export class UIStructDetails {
   getDefendedByIcons(struct) {
     return `
       <div class="row">
-        <div class="col-auto pe-1">
-          <a href="javascript: void(0)"
-             data-bs-toggle="popover"
-             title="Defended By"
-             data-bs-content="The list of structs defending this struct."
-          ><img src="${IMG.ICONS}icon-strength.png" alt="strength"></a>:
-        </div>
-        <div class="col ps-1">
+        <div class="col p-2 mb-2 struct-details-group">
+          <div class="row">
+            <div class="col">
+              <a href="javascript: void(0)"
+                 data-bs-toggle="popover"
+                 title="Defended By"
+                 data-bs-content="The list of structs defending this struct."
+              ><img src="${IMG.ICONS}icon-strength.png" alt="strength"></a> Defended By:
+            </div>
+          </div>
           <div class="row">
             <div class="col">
               ${this.getDefendersByAmbit(this.struct, AMBITS.SPACE)}
@@ -692,7 +696,7 @@ export class UIStructDetails {
               <div class="col">
 
                 <div class="row">
-                  <div class="col p-2 mb-2 struct-ability-details">
+                  <div class="col p-2 mb-2 struct-details-group">
                     <div>
                       <a href="javascript: void(0)"
                        data-bs-toggle="popover"
@@ -706,7 +710,7 @@ export class UIStructDetails {
                   </div>
                 </div>
                 <div class="row">
-                  <div class="col p-2 mb-2 struct-ability-details">
+                  <div class="col p-2 mb-2 struct-details-group">
                     <div>
                       <a href="javascript: void(0)"
                        data-bs-toggle="popover"
@@ -720,7 +724,7 @@ export class UIStructDetails {
                   </div>
                 </div>
                 <div class="row">
-                  <div class="col p-2 mb-2 struct-ability-details">
+                  <div class="col p-2 mb-2 struct-details-group">
                     <div>
                       <a href="javascript: void(0)"
                          data-bs-toggle="popover"
@@ -735,7 +739,7 @@ export class UIStructDetails {
                   </div>
                 </div>
                 <div class="row">
-                  <div class="col p-2 mb-2 struct-ability-details">
+                  <div class="col p-2 mb-2 struct-details-group">
                     <div>
                       <a href="javascript: void(0)"
                          data-bs-toggle="popover"

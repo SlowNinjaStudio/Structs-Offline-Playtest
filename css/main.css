@@ -426,7 +426,6 @@ body {
 
 .defense-container {
   border-top: 1px solid #cccccc;
-  margin-top: 8px;
   padding-top: 8px;
 }
 
@@ -491,7 +490,7 @@ body {
   max-width: 100%;
 }
 
-.struct-ability-details {
+.struct-details-group {
   background-color: #EEEEEE;
   border-radius: 4px;
 }
@@ -540,7 +539,7 @@ body {
   text-align: left;
 }
 .offcanvas-bottom {
-  height: 54vh;
+  height: 60vh;
 }
 
 .cta-card.card {
