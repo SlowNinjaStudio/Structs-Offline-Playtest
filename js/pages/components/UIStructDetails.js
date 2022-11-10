@@ -573,7 +573,7 @@ export class UIStructDetails {
    */
   getDefendingIcons(defending) {
     return `
-      <div class="col-5 p-2 mb-2 struct-details-group">
+      <div class="col-6 p-2 mb-2 struct-details-group">
         <div>
           <a href="javascript: void(0)"
              data-bs-toggle="popover"
