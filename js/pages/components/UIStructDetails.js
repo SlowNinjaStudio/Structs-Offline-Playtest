@@ -256,7 +256,7 @@ export class UIStructDetails {
               ${this.isDefendEnabled() ? '' : 'disabled'}
             >
               Defend
-              <img src="${IMG.ICONS}icon-strength.png" alt="strength">
+              <img src="${IMG.ICONS}icon-defended-info.png" alt="defended">
             </button>
           ` : this.getUnavailableActionButton()}
           </div>
@@ -346,23 +346,26 @@ export class UIStructDetails {
     return `<a href="javascript: void(0)"
          data-bs-toggle="popover"
          data-bs-content="Damage Value"
-      ><img src="${IMG.ICONS}icon-fire.png" alt="fire"></a> ${damageValue}`;
+      ><img src="${IMG.ICONS}icon-fire.png" alt="fire"></a> ${damageValue} DMG`;
   }
 
   /**
    * @param {boolean} isGuided
+   * @param {string} labelPrefix
    */
-  getGuidedIcon(isGuided) {
+  getGuidedIcon(isGuided, labelPrefix = '') {
     if (isGuided) {
       return `<a href="javascript: void(0)"
            data-bs-toggle="popover"
-           data-bs-content="Guided"
-        ><img src="${IMG.ICONS}icon-accuracy.png" alt="guided"></a>`;
+           title="Guided"
+           data-bs-content="Some units can defend against guided attacks."
+        ><img src="${IMG.ICONS}icon-accuracy.png" alt="guided"></a> ${labelPrefix} Guided`;
     }
     return `<a href="javascript: void(0)"
          data-bs-toggle="popover"
-         data-bs-content="Unguided"
-      ><img src="${IMG.ICONS}icon-unguided.png" alt="unguided"></a>`;
+         title="Unguided"
+         data-bs-content="Some units can defend against unguided attacks."
+      ><img src="${IMG.ICONS}icon-unguided.png" alt="unguided"></a> ${labelPrefix} Unguided`;
   }
 
   /**
@@ -405,14 +408,15 @@ export class UIStructDetails {
 
   /**
    * @param {string} damageValue
+   * @param {string} label
    * @return {string}
    */
-  getDamageReductionIcon(damageValue) {
+  getDamageReductionIcon(damageValue, label = '') {
     return `<a href="javascript: void(0)"
          data-bs-toggle="popover"
          title="Incoming Damage Reduction"
          data-bs-content="The amount incoming damage is reduced by."
-      ><img src="${IMG.ICONS}icon-damage-down.png" alt="damage-down"></a> -${damageValue}`;
+      ><img src="${IMG.ICONS}icon-damage-down.png" alt="damage-down"></a> ${label} ${damageValue}`;
   }
 
   /**
@@ -423,7 +427,7 @@ export class UIStructDetails {
          data-bs-toggle="popover"
          title="Movement Ability"
          data-bs-content="This struct can change ambits."
-      ><img src="${IMG.ICONS}icon-speed.png" alt="speed"></a>`;
+      ><img src="${IMG.ICONS}icon-speed.png" alt="speed"></a> Movement Ability: Can Move to Target a Struct in a Different Ambit or Move to an Ambit That is Better Defeneded`;
   }
 
   /**
@@ -445,7 +449,8 @@ export class UIStructDetails {
          data-bs-toggle="popover"
          title="Indirect Combat"
          data-bs-content="This struct cannot counter attack or be counter attacked."
-      ><img src="${IMG.ICONS}icon-counter-attack-cancel.png" alt="no counter attack"></a>`;
+      ><img src="${IMG.ICONS}icon-counter-attack-cancel.png" alt="no counter attack"></a>
+      Indirect Combat: Cannot Counter-Attack or be Counter-Attacked`;
   }
 
   /**
@@ -457,25 +462,38 @@ export class UIStructDetails {
     const damage = this.getDamageIcon(damageString);
     const guided = this.getGuidedIcon(weapon.isGuided);
     const ambits = this.getIconsForAmbits(weapon.ambits);
-    return `${damage}, ${guided}, ${ambits}`;
+    return `${damage}, ${guided}, Targets ${ambits}`;
   }
 
   /**
-   * @param {PassiveWeapon} weapon
+   * @param {Struct} struct
    * @return {string}
    */
-  getPassiveWeaponIcons(weapon) {
+  getPassiveWeaponIcons(struct) {
     const icons = [];
-    if (weapon.probabilityOnDeath.toString() === '1/1') {
+    if (struct.passiveWeapon.probabilityOnDeath.toString() === '1/1') {
       icons.push(this.getOnDeathIcon());
     }
-    if (weapon.probability.toString() === '1/1') {
-      icons.push(this.getDamageIcon(`${weapon.damage}`));
+    if (struct.passiveWeapon.probability.toString() === '1/1') {
+      icons.push(this.getDamageIcon(`${struct.passiveWeapon.damage}`));
     }
-    if (weapon.damage !== weapon.damageSameAmbit) {
-      icons.push(this.getSameAmbitDamageIcon(`${weapon.damageSameAmbit}`));
+    if (struct.passiveWeapon.damage !== struct.passiveWeapon.damageSameAmbit) {
+      icons.push(this.getSameAmbitDamageIcon(`${struct.passiveWeapon.damageSameAmbit}`));
     }
-    return icons.join(', ');
+    let iconsString = icons.join(', ');
+    if (iconsString) {
+      iconsString += ', Can Counter ';
+      if (this.struct.isCommandStruct()) {
+        iconsString += this.getIconsForAmbits([this.struct.operatingAmbit]);
+      } else {
+        iconsString += this.getIconsForAmbits([... new Set([
+          ...this.struct.manualWeaponPrimary.ambits,
+          ...(this.struct.manualWeaponSecondary ? this.struct.manualWeaponSecondary.ambits : [])
+        ])]);
+      }
+    }
+
+    return iconsString;
   }
 
   /**
@@ -492,7 +510,7 @@ export class UIStructDetails {
   getAmbitDefenseIcons(ambitDefense) {
     const stealth = this.getStealthIcon();
     const ambits = this.getIconsForAmbits(ambitDefense.ambitsDefendedAgainst);
-    return `${stealth} ${ambits}`;
+    return `${stealth} Stealth Mode: Can Hide from ${ambits} Attacking Structs`;
   }
 
   /**
@@ -500,7 +518,7 @@ export class UIStructDetails {
    * @return {string}
    */
   getArmourIcons(armour) {
-    return this.getDamageReductionIcon(`${armour.damageReduction}`)
+    return this.getDamageReductionIcon(`${armour.damageReduction}`, 'Armour: Reduces damage by')
   }
 
   /**
@@ -508,8 +526,10 @@ export class UIStructDetails {
    * @return {string}
    */
   getCounterMeasureIcons(counterMeasure) {
-    const guided = this.getGuidedIcon(counterMeasure.guided);
-    return `${guided} ${counterMeasure.probability.toString()}`;
+    return this.getGuidedIcon(
+      counterMeasure.guided,
+      `${counterMeasure.probability.toString()} Chance to Evade Attacks that are`
+    );
   }
 
   /**
@@ -552,17 +572,19 @@ export class UIStructDetails {
   getDefendingIcons(defending) {
     return `
       <div class="row">
-        <div class="col-auto pe-1">
-          <a href="javascript: void(0)"
-             data-bs-toggle="popover"
-             title="Defending"
-             data-bs-content="The struct this struct is defending."
-          ><img src="${IMG.ICONS}icon-rook.png" alt="rook"></a>:
-        </div>
-        <div class="col-auto ps-1">
-        ${defending ? `
-          ${this.getAmbitIcon(defending.operatingAmbit)} ${defending.getDisplayAmbitSlot()}
-        ` : '--'}
+        <div class="col p-2 mb-2 struct-details-group">
+          <div>
+            <a href="javascript: void(0)"
+               data-bs-toggle="popover"
+               title="Defending"
+               data-bs-content="The struct this struct is defending."
+            ><img src="${IMG.ICONS}icon-rook.png" alt="rook"></a> Defending:
+          </div>
+          <div>
+            ${defending ? `
+              ${this.getAmbitIcon(defending.operatingAmbit)} ${defending.getDisplayAmbitSlot()}
+            ` : '--'}
+          </div>
         </div>
       </div>
     `;
@@ -587,14 +609,16 @@ export class UIStructDetails {
   getDefendedByIcons(struct) {
     return `
       <div class="row">
-        <div class="col-auto pe-1">
-          <a href="javascript: void(0)"
-             data-bs-toggle="popover"
-             title="Defended By"
-             data-bs-content="The list of structs defending this struct."
-          ><img src="${IMG.ICONS}icon-strength.png" alt="strength"></a>:
-        </div>
-        <div class="col ps-1">
+        <div class="col p-2 mb-2 struct-details-group">
+          <div class="row">
+            <div class="col">
+              <a href="javascript: void(0)"
+                 data-bs-toggle="popover"
+                 title="Defended By"
+                 data-bs-content="The list of structs defending this struct."
+              ><img src="${IMG.ICONS}icon-defended-info.png" alt="defended"></a> Defended By:
+            </div>
+          </div>
           <div class="row">
             <div class="col">
               ${this.getDefendersByAmbit(this.struct, AMBITS.SPACE)}
@@ -654,66 +678,78 @@ export class UIStructDetails {
                        data-bs-content="Current Health / Max Health"
                     ><img src="${IMG.ICONS}icon-health.png"
                        alt="health"
-                    ></a><strong>:</strong> ${this.struct.currentHealth}/${this.struct.maxHealth}
+                    ></a><strong>:</strong>
+                    ${this.struct.currentHealth}/${this.struct.maxHealth}
                   </div>
                 </div>
-              </div>
-              <div class="col">
                 <div class="row">
-                  <div class="col-3 pe-1">
+                  <div class="col text-center">
                     <a href="javascript: void(0)"
                        data-bs-toggle="popover"
                        title="Struct Position"
                        data-bs-content="This struct's position by ambit and slot number."
                     ><img src="${IMG.ICONS}icon-location-pin.png" alt="location-pin"></a><strong>:</strong>
-                  </div>
-                  <div class="col ps-1">
                     ${this.getAmbitIcon(this.struct.operatingAmbit)} ${this.struct.getDisplayAmbitSlot()}
                   </div>
                 </div>
-                <div class="row">
-                  <div class="col-3 pe-1">
-                    <a href="javascript: void(0)"
-                       data-bs-toggle="popover"
-                       data-bs-content="Primary Weapon"
-                    ><strong>1</strong> <img src="${IMG.ICONS}icon-attack-range.png" alt="attack-range"></a><strong>:</strong>
-                  </div>
-                  <div class="col ps-1">
-                    ${this.getManualWeaponIcons(this.struct.manualWeaponPrimary)}
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-3 pe-1">
-                    <a href="javascript: void(0)"
-                       data-bs-toggle="popover"
-                       data-bs-content="Secondary Weapon"
-                    ><strong>2</strong> <img src="${IMG.ICONS}icon-attack-range.png" alt="attack-range"></a><strong>:</strong>
-                  </div>
-                  <div class="col ps-1">
-                    ${this.struct.manualWeaponSecondary ? this.getManualWeaponIcons(this.struct.manualWeaponSecondary) : '--'}
-                  </div>
-                </div>
+              </div>
+              <div class="col">
 
                 <div class="row">
-                  <div class="col-3 pe-1">
-                    <a href="javascript: void(0)"
+                  <div class="col p-2 mb-2 struct-details-group">
+                    <div>
+                      <a href="javascript: void(0)"
                        data-bs-toggle="popover"
-                       data-bs-content="Counter Attack Capabilities"
-                    ><img src="${IMG.ICONS}icon-counter-attack.png" alt="counter-attack"></a><strong>:</strong>
-                  </div>
-                  <div class="col ps-1">
-                    ${this.struct.passiveWeapon ? this.getPassiveWeaponIcons(this.struct.passiveWeapon) : '--'}
+                       data-bs-content="Primary Weapon"
+                      ><img src="${IMG.ICONS}icon-attack-range.png" alt="attack-range"></a>
+                      ${this.struct.manualWeaponPrimary.getActionLabel()}<strong>:</strong>
+                    </div>
+                    <div>
+                      ${this.getManualWeaponIcons(this.struct.manualWeaponPrimary)}
+                    </div>
                   </div>
                 </div>
                 <div class="row">
-                  <div class="col-3 pe-1">
-                    <a href="javascript: void(0)"
+                  <div class="col p-2 mb-2 struct-details-group">
+                    <div>
+                      <a href="javascript: void(0)"
                        data-bs-toggle="popover"
-                       data-bs-content="Defensive Capabilities"
-                    ><img src="${IMG.ICONS}icon-def-melee.png" alt="def-melee"></a><strong>:</strong>
+                       data-bs-content="Secondary Weapon"
+                      ><img src="${IMG.ICONS}icon-attack-range.png" alt="attack-range"></a>
+                      ${this.struct.manualWeaponSecondary ? this.struct.manualWeaponSecondary.getActionLabel() : 'N/A'}<strong>:</strong>
+                    </div>
+                    <div>
+                      ${this.struct.manualWeaponSecondary ? this.getManualWeaponIcons(this.struct.manualWeaponSecondary) : '--'}
+                    </div>
                   </div>
-                  <div class="col ps-1">
-                    ${this.getDefensiveComponentIcons(this.struct.defenseComponent)}
+                </div>
+                <div class="row">
+                  <div class="col p-2 mb-2 struct-details-group">
+                    <div>
+                      <a href="javascript: void(0)"
+                         data-bs-toggle="popover"
+                         title="Counter Attack Capabilities"
+                         data-bs-content="Structs counter-attack when attacked. If this struct is defending a struct that is targeted, this struct will also counter-attack."
+                      ><img src="${IMG.ICONS}icon-counter-attack.png" alt="counter-attack"></a>
+                      Counter-Attack<strong>:</strong>
+                    </div>
+                    <div>
+                        ${this.struct.passiveWeapon ? this.getPassiveWeaponIcons(this.struct) : '--'}
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col p-2 mb-2 struct-details-group">
+                    <div>
+                      <a href="javascript: void(0)"
+                         data-bs-toggle="popover"
+                         data-bs-content="Defensive Capabilities"
+                      ><img src="${IMG.ICONS}icon-def-melee.png" alt="def-melee"></a>
+                      Defenses<strong>:</strong>
+                    </div>
+                    <div>
+                        ${this.getDefensiveComponentIcons(this.struct.defenseComponent)}
+                    </div>
                   </div>
                 </div>
               </div>
