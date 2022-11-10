@@ -4,7 +4,8 @@ import {
   DEFENSE_COMPONENTS,
   EVENTS,
   IMG,
-  MANUAL_WEAPON_SLOTS
+  MANUAL_WEAPON_SLOTS,
+  MAX_FLEET_STRUCTS_PER_AMBIT
 } from "../../modules/Constants.js";
 import {Util} from "../../modules/util/Util.js";
 import {CounterMeasure} from "../../modules/struct_components/CounterMeasure.js";
@@ -321,13 +322,14 @@ export class UIStructDetails {
 
   /**
    * @param {string} ambit
+   * @param {string} imgClassName
    * @return {string}
    */
-  getAmbitIcon(ambit) {
+  getAmbitIcon(ambit, imgClassName = '') {
     return `<a href="javascript: void(0)"
          data-bs-toggle="popover"
          data-bs-content="${this.util.titleCase(ambit)} Ambit"
-      ><img src="${IMG.ICONS}icon-ambit-${ambit.toLowerCase()}.png" alt="${ambit.toLowerCase()} ambit"></a>`;
+      ><img src="${IMG.ICONS}icon-ambit-${ambit.toLowerCase()}.png" class="${imgClassName}" alt="${ambit.toLowerCase()} ambit"></a>`;
   }
 
   /**
@@ -571,23 +573,79 @@ export class UIStructDetails {
    */
   getDefendingIcons(defending) {
     return `
-      <div class="row">
-        <div class="col p-2 mb-2 struct-details-group">
-          <div>
-            <a href="javascript: void(0)"
-               data-bs-toggle="popover"
-               title="Defending"
-               data-bs-content="The struct this struct is defending."
-            ><img src="${IMG.ICONS}icon-rook.png" alt="rook"></a> Defending:
+      <div class="col-5 p-2 mb-2 struct-details-group">
+        <div>
+          <a href="javascript: void(0)"
+             data-bs-toggle="popover"
+             title="Defending"
+             data-bs-content="The struct this struct is defending."
+          ><img src="${IMG.ICONS}icon-rook.png" alt="rook"></a> Defending:
+        </div>
+        <div>
+          <div class="row">
+            <div class="col">
+              ${this.getDefendingByAmbit(this.struct, AMBITS.SPACE)}
+            </div>
           </div>
-          <div>
-            ${defending ? `
-              ${this.getAmbitIcon(defending.operatingAmbit)} ${defending.getDisplayAmbitSlot()}
-            ` : '--'}
+          <div class="row">
+            <div class="col">
+              ${this.getDefendingByAmbit(this.struct, AMBITS.SKY)}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              ${this.getDefendingByAmbit(this.struct, AMBITS.LAND)}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              ${this.getDefendingByAmbit(this.struct, AMBITS.WATER)}
+            </div>
           </div>
         </div>
       </div>
     `;
+  }
+
+  /**
+   * @param {string} ambit
+   * @param {Struct[]} structs
+   * @param {boolean} includeCommandColumn
+   * @param {Struct} commandStruct
+   * @return {string}
+   */
+  renderMiniMapRow(ambit, structs, includeCommandColumn = false, commandStruct = null) {
+    const maxSlots = structs.reduce(
+      (max, struct) => Math.max(max, parseInt(struct.getDisplayAmbitSlot())),
+      MAX_FLEET_STRUCTS_PER_AMBIT[ambit]
+    );
+
+    const icon = this.getAmbitIcon(ambit,'mini-map-ambit-icon');
+    const iconCommand = this.getAmbitIcon(ambit, 'mini-map-ambit-icon-command');
+    const iconPlaceholder = `<span class="mini-map-icon-placeholder">--</span>`;
+
+    let slots = [];
+    for (let i = 1; i <= maxSlots; i++) {
+      const struct = structs.find(defender => parseInt(defender.getDisplayAmbitSlot()) === i);
+      if (struct) {
+        slots.push(icon);
+      } else {
+        slots.push(iconPlaceholder);
+      }
+    }
+
+    slots = slots.join(' | ');
+
+    if (includeCommandColumn) {
+      let commandIcon = commandStruct ? iconCommand : iconPlaceholder;
+      if (this.player.id === this.state.enemy.id) {
+        slots = `${slots} <span class="mini-map-divider-command">|</span> ${commandIcon}`;
+      } else {
+        slots = `${commandIcon} <span class="mini-map-divider-command">|</span> ${slots}`;
+      }
+    }
+
+    return slots;
   }
 
   /**
@@ -597,9 +655,27 @@ export class UIStructDetails {
    */
   getDefendersByAmbit(struct, ambit) {
     const ambitDefenders = struct.defenders.filter(defender => defender.operatingAmbit === ambit);
-    let slots = ambitDefenders.reduce((slotsList, defender) => `${slotsList}, ${defender.getDisplayAmbitSlot()}`, '');
-    slots = slots.length > 2 ? slots.slice(2) : '--';
-    return `${this.getAmbitIcon(ambit)} ${slots}`;
+    return this.renderMiniMapRow(ambit, ambitDefenders);
+  }
+
+  /**
+   * @param {Struct} struct
+   * @param {string} ambit
+   * @return {string}
+   */
+  getDefendingByAmbit(struct, ambit) {
+    let defending = [];
+    let commandStruct = null;
+
+    if (struct.defending && struct.defending.operatingAmbit === ambit) {
+      if (struct.defending.isCommandStruct()) {
+        commandStruct = struct.defending;
+      } else {
+        defending.push(struct.defending);
+      }
+    }
+
+    return this.renderMiniMapRow(ambit, defending, true, commandStruct);
   }
 
   /**
@@ -608,32 +684,34 @@ export class UIStructDetails {
    */
   getDefendedByIcons(struct) {
     return `
-      <div class="row">
-        <div class="col p-2 mb-2 struct-details-group">
-          <div class="row">
-            <div class="col">
-              <a href="javascript: void(0)"
-                 data-bs-toggle="popover"
-                 title="Defended By"
-                 data-bs-content="The list of structs defending this struct."
-              ><img src="${IMG.ICONS}icon-defended-info.png" alt="defended"></a> Defended By:
-            </div>
+      <div class="col-5 p-2 mb-2 struct-details-group">
+        <div class="row">
+          <div class="col">
+            <a href="javascript: void(0)"
+               data-bs-toggle="popover"
+               title="Defended By"
+               data-bs-content="The list of structs defending this struct."
+            ><img src="${IMG.ICONS}icon-defended-info.png" alt="defended"></a> Defended By:
           </div>
-          <div class="row">
-            <div class="col">
-              ${this.getDefendersByAmbit(this.struct, AMBITS.SPACE)}
-            </div>
-            <div class="col">
-              ${this.getDefendersByAmbit(this.struct, AMBITS.SKY)}
-            </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            ${this.getDefendersByAmbit(this.struct, AMBITS.SPACE)}
           </div>
-          <div class="row">
-            <div class="col">
-              ${this.getDefendersByAmbit(this.struct, AMBITS.LAND)}
-            </div>
-            <div class="col">
-              ${this.getDefendersByAmbit(this.struct, AMBITS.WATER)}
-            </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            ${this.getDefendersByAmbit(this.struct, AMBITS.SKY)}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            ${this.getDefendersByAmbit(this.struct, AMBITS.LAND)}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            ${this.getDefendersByAmbit(this.struct, AMBITS.WATER)}
           </div>
         </div>
       </div>
@@ -659,7 +737,7 @@ export class UIStructDetails {
 
           ${this.getActionButtons()}
 
-          <div class="attributes-container">
+          <div class="attributes-container container-fluid">
             <div class="row">
               <div class="col-4">
                 <div class="row">
@@ -756,9 +834,11 @@ export class UIStructDetails {
             </div>
           </div>
 
-          <div class="defense-container">
-            ${this.getDefendingIcons(this.struct.defending)}
-            ${this.getDefendedByIcons(this.struct)}
+          <div class="defense-container container-fluid">
+            <div class="row justify-content-between">
+              ${this.getDefendingIcons(this.struct.defending)}
+              ${this.getDefendedByIcons(this.struct)}
+            </div>
           </div>
 
         </div>
