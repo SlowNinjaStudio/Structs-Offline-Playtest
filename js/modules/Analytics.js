@@ -23,10 +23,12 @@ export class Analytics {
   }
 
   trackEarlyExit() {
-    gtag("event", "level_end", {
-      level_name: this.state.gameMode,
-      success: false
-    });
+    if (!this.state.gameOverEventDispatched) {
+      gtag("event", "level_end", {
+        level_name: this.state.gameMode,
+        success: false
+      });
+    }
   }
 
   /**
