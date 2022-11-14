@@ -86,7 +86,10 @@ export class UIGameOverModal {
       return;
     }
 
-    window.dispatchEvent(new CustomEvent(EVENTS.GAME_OVER));
+    if (!this.state.gameOverEventDispatched) {
+      this.state.gameOverEventDispatched = true;
+      window.dispatchEvent(new CustomEvent(EVENTS.GAME_OVER));
+    }
 
     document.getElementById(this.state.modalContainerId).innerHTML = this.render();
 
