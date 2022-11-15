@@ -618,6 +618,45 @@ body {
   border: 2px solid #FFD403;
 }
 
+.mini-map-slot {
+  border: 1px solid #000000;
+  font-size: 0;
+}
+img.mini-map-struct {
+  width: 25px;
+}
+.mini-map-struct-container {
+  border: 0;
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  height: 25px;
+  width: 25px;
+}
+.mini-map-ambit-space .mini-map-struct-container {
+  background-color: #4a4a4a;
+}
+.mini-map-ambit-sky .mini-map-struct-container {
+  background-color: #fefefe;
+}
+.mini-map-ambit-land .mini-map-struct-container {
+  background-color: #52b247;
+}
+.mini-map-ambit-water .mini-map-struct-container {
+  background-color: #477ab3;
+}
+
+.mini-map-slot.mini-map-command-slot.mini-map-ambit-space .mini-map-struct-container,
+.mini-map-slot.mini-map-command-slot.mini-map-ambit-sky .mini-map-struct-container,
+.mini-map-slot.mini-map-command-slot.mini-map-ambit-land .mini-map-struct-container,
+.mini-map-slot.mini-map-command-slot.mini-map-ambit-water .mini-map-struct-container {
+  background-color: #cccccc;
+}
+
+.mini-map-enemy .mini-map-slot .mini-map-struct {
+  transform: scaleX(-1);
+}
+
 /* Bootstrap Overrides - End */
 
 @media (max-width: 800px) {
