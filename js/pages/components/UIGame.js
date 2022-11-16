@@ -11,6 +11,7 @@ import {UIGameStartModal} from "./UIGameStartModal.js";
 import {Analytics} from "../../modules/Analytics.js";
 import {AI} from "../../modules/AI.js";
 import {UICancelAction} from "./UICancelAction.js";
+import {CombatEventLogItem} from "../../modules/CombatEventLogItem.js";
 
 export class UIGame {
 
@@ -266,6 +267,14 @@ export class UIGame {
     }.bind(this));
   }
 
+  initCombatEventLogListener() {
+    Object.keys(EVENTS.COMBAT).forEach(key => {
+      window.addEventListener(EVENTS.COMBAT[key], function(combatEvent) {
+        this.state.combatEventLog.logItem(new CombatEventLogItem(combatEvent, this.state.player, this.state.enemy));
+      }.bind(this));
+    });
+  }
+
   initOneTimeListeners() {
     this.initGameRenderListener();
     this.initFirstTurnListener();
@@ -287,6 +296,7 @@ export class UIGame {
     this.initBeforeUnloadListener();
 
     this.combatEventViewer.initOneTimeListeners();
+    this.initCombatEventLogListener();
   }
 
   render() {

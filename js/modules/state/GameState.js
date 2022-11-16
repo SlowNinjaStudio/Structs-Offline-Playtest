@@ -1,4 +1,5 @@
 import {PlayerMetrics} from "../PlayerMetrics.js";
+import {CombatEventLog} from "../CombatEventLog.js";
 
 export class GameState {
   constructor() {
@@ -23,6 +24,8 @@ export class GameState {
       player: new PlayerMetrics(),
       enemy: new PlayerMetrics()
     };
+
+    this.combatEventLog = new CombatEventLog();
   }
 
   /**
