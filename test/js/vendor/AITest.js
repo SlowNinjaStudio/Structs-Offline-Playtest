@@ -1,13 +1,16 @@
 import {DTest} from "../../DTestFramework.js";
 import {DefenseStrategyTreeNode} from "../../../js/modules/data_structures/DefenseStrategyTreeNode.js";
 import {StructBuilder} from "../../../js/modules/StructBuilder.js";
-import {AMBITS, MANUAL_WEAPON_SLOTS, UNIT_TYPES} from "../../../js/modules/Constants.js";
+import {AMBITS, EVENTS, MANUAL_WEAPON_SLOTS, UNIT_TYPES} from "../../../js/modules/Constants.js";
 import {AmbitDistribution} from "../../../js/modules/AmbitDistribution.js";
 import {AI} from "../../../js/modules/AI.js";
 import {GameState} from "../../../js/modules/state/GameState.js";
 import {IdGenerator} from "../../../js/modules/util/IdGenerator.js";
 import {Player} from "../../../js/modules/Player.js";
 import {CommandStructBuilder} from "../../../js/modules/CommandStructBuilder.js";
+import {CombatEventLogItem} from "../../../js/modules/CombatEventLogItem.js";
+import {CombatEvent} from "../../../js/modules/CombatEvent.js";
+import {AIThreatDTO} from "../../../js/modules/dtos/AIThreatDTO.js";
 
 /**
  * @return {Player}
@@ -147,47 +150,47 @@ const rankTargetTest = new DTest('rankTargetTest', function() {
   this.assertEquals(ai.rankTarget(node2) < ai.rankTarget(node1), true);
 });
 
-const determineTargetTest = new DTest('determineTargetTest', function() {
+const determineTargetOnGoalTest = new DTest('determineTargetOnGoalTest', function() {
   const player = getDummyPlayer();
   setupPlayerDefensiveStrategy(player);
   const state = new GameState();
   state.player = player;
   const ai = new AI(state);
-  let target = ai.determineTarget();
+  let target = ai.determineTargetOnGoal();
 
   this.assertEquals(target.unitType, UNIT_TYPES.STAR_FIGHTER);
 
   const starFighter = state.player.fleet.space.find(struct => struct && struct.unitType === UNIT_TYPES.STAR_FIGHTER);
   starFighter.destroyStruct();
 
-  target = ai.determineTarget();
+  target = ai.determineTargetOnGoal();
 
   this.assertEquals(target.unitType, UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR);
 
   const spaceFrigate = state.player.fleet.space.find(struct => struct && struct.unitType === UNIT_TYPES.SPACE_FRIGATE);
   spaceFrigate.destroyStruct();
 
-  target = ai.determineTarget();
+  target = ai.determineTargetOnGoal();
 
   this.assertEquals(target.unitType, UNIT_TYPES.CRUISER);
 
   target.destroyStruct();
-  target = ai.determineTarget();
+  target = ai.determineTargetOnGoal();
 
   this.assertEquals(target.unitType, UNIT_TYPES.TANK);
 
   target.destroyStruct();
-  target = ai.determineTarget();
+  target = ai.determineTargetOnGoal();
 
   this.assertEquals(target.unitType, UNIT_TYPES.SAM_LAUNCHER);
 
   target.destroyStruct();
-  target = ai.determineTarget();
+  target = ai.determineTargetOnGoal();
 
   this.assertEquals(target.unitType, UNIT_TYPES.GALACTIC_BATTLESHIP);
 
   target.destroyStruct();
-  target = ai.determineTarget();
+  target = ai.determineTargetOnGoal();
 
   this.assertEquals(target.isCommandStruct(), true);
 });
@@ -613,7 +616,209 @@ const findMostOccupiedAmbitTest = new DTest('findMostOccupiedAmbitTest', functio
   this.assertEquals(mostOccupiedAmbit, AMBITS.SPACE);
 });
 
-const turnBasedDefenseTest = new DTest('turnBasedDefenseTest', function() {
+const canAttackIfHiddenTest = new DTest('canAttackIfHiddenTest', function() {
+  const gameState = new GameState();
+  gameState.player = getDummyPlayer();
+  gameState.enemy = getDummyPlayer();
+  const ai = new AI(gameState);
+
+  const playerStealthBomber = gameState.player.fleet.sky[2];
+
+  this.assertEquals(ai.canAttackIfHidden(playerStealthBomber), true);
+
+  playerStealthBomber.defenseComponent.isActive = true;
+
+  this.assertEquals(ai.canAttackIfHidden(playerStealthBomber), true);
+
+  gameState.enemy.fleet.sky[0].destroyStruct(); // Fighter Jet
+  gameState.enemy.fleet.sky[1].destroyStruct(); // High Altitude Interceptor
+  gameState.enemy.fleet.sky[3].destroyStruct(); // Fighter Jet
+
+  this.assertEquals(ai.canAttackIfHidden(playerStealthBomber), false);
+});
+
+const getCannotAttackDefenseScoreTest = new DTest('getCannotAttackDefenseScoreTest', function() {
+  const gameState = new GameState();
+  gameState.player = getDummyPlayer();
+  gameState.enemy = getDummyPlayer();
+  const ai = new AI(gameState);
+
+  const playerTank = gameState.player.fleet.land[0];
+  const enemySAM = gameState.enemy.fleet.land[2];
+  const enemyStarFighter = gameState.enemy.fleet.space[0];
+
+  this.assertEquals(ai.getCannotAttackDefenseScore(enemySAM, playerTank), 0);
+  this.assertEquals(ai.getCannotAttackDefenseScore(enemyStarFighter, playerTank), 1);
+});
+
+const getAlreadyDefendingDefenseScoreTest = new DTest('getAlreadyDefendingDefenseScoreTest', function() {
+  const gameState = new GameState();
+  gameState.player = getDummyPlayer();
+  gameState.enemy = getDummyPlayer();
+  const ai = new AI(gameState);
+
+  const commandShip = gameState.enemy.commandStruct;
+  const tank = gameState.enemy.fleet.land[0];
+  const sam = gameState.enemy.fleet.land[2];
+  const fighterJet = gameState.enemy.fleet.sky[0];
+  const starFighter = gameState.enemy.fleet.space[0];
+
+  tank.defend(sam);
+  starFighter.defend(commandShip);
+
+  this.assertEquals(ai.getAlreadyDefendingDefenseScore(tank), 0);
+  this.assertEquals(ai.getAlreadyDefendingDefenseScore(sam), 2);
+  this.assertEquals(ai.getAlreadyDefendingDefenseScore(fighterJet), 2);
+  this.assertEquals(ai.getAlreadyDefendingDefenseScore(starFighter), 2);
+});
+
+const getStructDefenseScoreTest = new DTest('getStructDefenseScoreTest', function(params) {
+  const ai = new AI(params.gameState);
+
+  this.assertEquals(
+    ai.getStructDefenseScore(params.potentialDefender, params.structToDefend, params.attackingStruct),
+    params.expectedScore
+  )
+}, function() {
+  const gameState = new GameState();
+  gameState.player = getDummyPlayer();
+  gameState.enemy = getDummyPlayer();
+
+  const playerStarFighter1 = gameState.player.fleet.space[0];
+  const enemyStarFighter1 = gameState.enemy.fleet.space[0];
+  const enemySub1 = gameState.enemy.fleet.water[0];
+  const enemyStarFighter2 = gameState.enemy.fleet.space[3];
+  enemyStarFighter2.destroyStruct();
+  const playerStarFighter2 = gameState.player.fleet.space[3];
+  playerStarFighter2.destroyStruct();
+  const enemyTank1 = gameState.enemy.fleet.land[0];
+  const enemySpaceFrigate = gameState.enemy.fleet.space[1];
+  enemySpaceFrigate.defend(gameState.enemy.commandStruct);
+  const enemySAM = gameState.enemy.fleet.land[2];
+  enemySAM.defend(enemyTank1);
+  const enemyGalacticBattleship = gameState.enemy.fleet.space[2];
+
+  return [
+    {
+      expectedScore: -1,
+      potentialDefender: enemyStarFighter1,
+      structToDefend: enemyStarFighter1,
+      attackingStruct: playerStarFighter1,
+      gameState: gameState
+    },
+    {
+      expectedScore: 3,
+      potentialDefender: enemySub1,
+      structToDefend: enemyStarFighter1,
+      attackingStruct: playerStarFighter1,
+      gameState: gameState
+    },
+    {
+      expectedScore: -1,
+      potentialDefender: enemyStarFighter2,
+      structToDefend: enemyStarFighter1,
+      attackingStruct: playerStarFighter1,
+      gameState: gameState
+    },
+    {
+      expectedScore: -1,
+      potentialDefender: enemyStarFighter1,
+      structToDefend: enemyStarFighter2,
+      attackingStruct: playerStarFighter1,
+      gameState: gameState
+    },
+    {
+      expectedScore: -1,
+      potentialDefender: enemySub1,
+      structToDefend: enemyStarFighter1,
+      attackingStruct: playerStarFighter2,
+      gameState: gameState
+    },
+    {
+      expectedScore: -1,
+      potentialDefender: enemyTank1,
+      structToDefend: enemyStarFighter1,
+      attackingStruct: playerStarFighter1,
+      gameState: gameState
+    },
+    {
+      expectedScore: -1,
+      potentialDefender: enemySpaceFrigate,
+      structToDefend: enemyStarFighter1,
+      attackingStruct: playerStarFighter1,
+      gameState: gameState
+    },
+    {
+      expectedScore: 1,
+      potentialDefender: enemySAM,
+      structToDefend: enemyStarFighter1,
+      attackingStruct: playerStarFighter1,
+      gameState: gameState
+    },
+    {
+      expectedScore: 2,
+      potentialDefender: enemyGalacticBattleship,
+      structToDefend: enemyStarFighter1,
+      attackingStruct: playerStarFighter1,
+      gameState: gameState
+    }
+  ];
+});
+
+const chooseDefenseStructTest = new DTest('chooseDefenseStructTest', function() {
+  const gameState = new GameState();
+  gameState.player = getDummyPlayer();
+  gameState.enemy = getDummyPlayer();
+  const ai = new AI(gameState);
+
+  // Blocking for command struct should remove space structs from selection
+  gameState.enemy.fleet.space[0].defend(gameState.enemy.commandStruct);
+  gameState.enemy.fleet.space[1].defend(gameState.enemy.commandStruct);
+  gameState.enemy.fleet.space[2].defend(gameState.enemy.commandStruct);
+  gameState.enemy.fleet.space[3].defend(gameState.enemy.commandStruct);
+
+  // Already defending should deprioritize sky structs from selection
+  gameState.enemy.fleet.sky[0].defend(gameState.enemy.fleet.space[0]);
+  gameState.enemy.fleet.sky[1].defend(gameState.enemy.fleet.space[0]);
+  gameState.enemy.fleet.sky[2].defend(gameState.enemy.fleet.space[0]);
+  gameState.enemy.fleet.sky[3].defend(gameState.enemy.fleet.space[0]);
+
+  // Destroyed struct should be removed from selection
+  gameState.enemy.fleet.land[0].destroyStruct(); // Tank1
+
+  const enemyTank2 = gameState.enemy.fleet.land[3];
+  const playerTank1 = gameState.player.fleet.land[0]
+  const chosenStruct = ai.chooseDefenseStruct(enemyTank2, playerTank1);
+
+  this.assertEquals(chosenStruct.unitType, UNIT_TYPES.CRUISER);
+  this.assertEquals(chosenStruct.id, gameState.enemy.fleet.water[2].id);
+});
+
+const defendLastAttackedStructTest = new DTest('defendLastAttackedStructTest', function() {
+  const gameState = new GameState();
+  gameState.player = getDummyPlayer();
+  gameState.enemy = getDummyPlayer();
+  const ai = new AI(gameState);
+
+  const enemyStarFighter1 = gameState.enemy.fleet.space[0];
+
+  this.assertEquals(enemyStarFighter1.defenders.length, 0);
+
+  const playerSub1 = gameState.player.fleet.water[0];
+  playerSub1.attack(MANUAL_WEAPON_SLOTS.PRIMARY, enemyStarFighter1);
+
+  gameState.combatEventLog.logItem(new CombatEventLogItem(
+    new CombatEvent(EVENTS.COMBAT.COMBAT_ATTACKED, playerSub1, enemyStarFighter1, 2),
+    gameState.player,
+    gameState.enemy
+  ));
+
+  ai.defendLastAttackedStruct();
+
+  this.assertEquals(enemyStarFighter1.defenders.length, 1);
+});
+
+const moveCommandStructToMostDefensibleAmbitTest = new DTest('moveCommandStructToMostDefensibleAmbitTest', function() {
   const player = getDummyPlayer();
   const enemy = getDummyPlayer();
   const state = new GameState();
@@ -653,31 +858,134 @@ const turnBasedDefenseTest = new DTest('turnBasedDefenseTest', function() {
   this.assertEquals(state.enemy.commandStruct.operatingAmbit, AMBITS.SPACE);
 });
 
-const canAttackIfHiddenTest = new DTest('canAttackIfHiddenTest', function() {
+const defendCommandStructWithUnusedTest = new DTest('defendCommandStructWithUnusedTest', function() {
+  const player = getDummyPlayer();
+  const enemy = getDummyPlayer();
+  const gameState = new GameState();
+  gameState.player = player;
+  gameState.enemy = enemy;
+  const ai = new AI(gameState);
+
+  gameState.enemy.fleet.space[0].defend(gameState.enemy.commandStruct);
+  gameState.enemy.fleet.sky[1].defend(gameState.enemy.fleet.space[2]);
+  gameState.enemy.fleet.land[2].defend(gameState.enemy.fleet.sky[0]);
+  gameState.enemy.fleet.water[3].defend(gameState.enemy.fleet.land[3]);
+
+  this.assertEquals(gameState.enemy.commandStruct.defenders.length, 1);
+
+  ai.defendCommandStructWithUnused()
+
+  this.assertEquals(gameState.enemy.commandStruct.defenders.length, 13);
+});
+
+const isAttackingThreatViableTest = new DTest('isAttackingThreatViableTest', function() {
   const gameState = new GameState();
   gameState.player = getDummyPlayer();
   gameState.enemy = getDummyPlayer();
   const ai = new AI(gameState);
 
+  const playerGalacticBattleship = gameState.player.fleet.space[2];
   const playerStealthBomber = gameState.player.fleet.sky[2];
+  const playerTank1 = gameState.player.fleet.land[0];
+  const playerArtillery = gameState.player.fleet.land[1];
+  const playerTank2 = gameState.player.fleet.land[3];
+  const playerCruiser = gameState.player.fleet.water[2];
 
-  this.assertEquals(ai.canAttackIfHidden(playerStealthBomber), true);
+  this.assertEquals(ai.isAttackingThreatViable(new AIThreatDTO(playerArtillery, 8)), true);
 
-  playerStealthBomber.defenseComponent.isActive = true;
+  playerTank1.defend(playerArtillery);
 
-  this.assertEquals(ai.canAttackIfHidden(playerStealthBomber), true);
+  this.assertEquals(ai.isAttackingThreatViable(new AIThreatDTO(playerArtillery, 8)), true);
 
-  gameState.enemy.fleet.sky[0].destroyStruct(); // Fighter Jet
-  gameState.enemy.fleet.sky[1].destroyStruct(); // High Altitude Interceptor
-  gameState.enemy.fleet.sky[3].destroyStruct(); // Fighter Jet
+  playerGalacticBattleship.defend(playerArtillery);
+  playerStealthBomber.defend(playerArtillery);
+  playerCruiser.defend(playerArtillery);
 
-  this.assertEquals(ai.canAttackIfHidden(playerStealthBomber), false);
+  this.assertEquals(ai.isAttackingThreatViable(new AIThreatDTO(playerArtillery, 8)), false);
+
+  this.assertEquals(ai.isAttackingThreatViable(new AIThreatDTO(playerTank2, 6)), true);
+
+  gameState.enemy.fleet.forEachStruct(struct => { struct.destroyStruct(); });
+
+  this.assertEquals(gameState.enemy.commandStruct.isDestroyed, false);
+  this.assertEquals(ai.isAttackingThreatViable(new AIThreatDTO(playerTank2, 6)), false);
+});
+
+const identifyThreatTest = new DTest('identifyThreatTest', function() {
+  const gameState = new GameState();
+  gameState.player = getDummyPlayer();
+  gameState.enemy = getDummyPlayer();
+  gameState.aiThreatTracker.threatThreshold = 4;
+  const ai = new AI(gameState);
+
+  const playerStarFighter1 = gameState.player.fleet.space[0];
+  const playerFighterJet1 = gameState.player.fleet.sky[0];
+  const playerTank1 = gameState.player.fleet.land[0];
+  const playerSub1 = gameState.player.fleet.water[0];
+
+  gameState.aiThreatTracker.trackAttack(playerStarFighter1, 2);
+  gameState.aiThreatTracker.trackAttack(playerFighterJet1, 2);
+  gameState.aiThreatTracker.trackAttack(playerTank1, 2);
+  gameState.aiThreatTracker.trackAttack(playerSub1, 2);
+  let threat = ai.identifyThreat();
+
+  this.assertEquals(threat, null);
+
+  gameState.aiThreatTracker.trackAttack(playerFighterJet1, 2);
+  threat = ai.identifyThreat();
+
+  this.assertEquals(threat.id, playerFighterJet1.id);
+
+  gameState.aiThreatTracker.trackAttack(playerSub1, 2);
+  gameState.aiThreatTracker.trackAttack(playerSub1, 2);
+  threat = ai.identifyThreat();
+
+  this.assertEquals(threat.id, playerSub1.id);
+
+  playerSub1.destroyStruct();
+  threat = ai.identifyThreat();
+
+  this.assertEquals(threat.id, playerFighterJet1.id);
+
+  playerFighterJet1.destroyStruct();
+  threat = ai.identifyThreat();
+
+  this.assertEquals(threat, null);
+});
+
+const chooseTargetTest = new DTest('chooseTargetTest', function() {
+  const gameState = new GameState();
+  gameState.player = getDummyPlayer();
+  gameState.enemy = getDummyPlayer();
+  gameState.aiThreatTracker.threatThreshold = 4;
+  const ai = new AI(gameState);
+
+  let target = ai.chooseTarget();
+
+  this.assertEquals(target.isCommandStruct(), true);
+
+  gameState.player.fleet.space[0].defend(gameState.player.commandStruct);
+
+  target = ai.chooseTarget();
+
+  this.assertEquals(target.id, gameState.player.fleet.space[0].id);
+
+  const playerArtillery = gameState.player.fleet.land[1];
+  gameState.aiThreatTracker.trackAttack(playerArtillery, 6);
+  target = ai.chooseTarget();
+
+  this.assertEquals(target.id, playerArtillery.id);
+
+  gameState.player.fleet.space[0].destroyStruct();
+  target = ai.chooseTarget();
+
+  this.assertEquals(target.isCommandStruct(), true);
 });
 
 // Test execution
 console.log('AITest');
 rankTargetTest.run();
-determineTargetTest.run();
+determineTargetOnGoalTest.run();
 getUncounterableAttackScoreTest.run();
 getBlockingCommandShipAttackScoreTest.run();
 getCurrentHealthAttackScoreTest.run();
@@ -690,5 +998,14 @@ openingDefenseTest.run();
 analyzeFleetAmbitAttackCapabilitiesTest.run();
 findFleetTargetingWeaknessTest.run();
 findMostOccupiedAmbitTest.run();
-turnBasedDefenseTest.run();
 canAttackIfHiddenTest.run();
+getCannotAttackDefenseScoreTest.run();
+getAlreadyDefendingDefenseScoreTest.run();
+getStructDefenseScoreTest.run();
+chooseDefenseStructTest.run();
+defendLastAttackedStructTest.run();
+moveCommandStructToMostDefensibleAmbitTest.run();
+defendCommandStructWithUnusedTest.run();
+isAttackingThreatViableTest.run();
+identifyThreatTest.run();
+chooseTargetTest.run();
