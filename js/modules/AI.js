@@ -46,7 +46,7 @@ export class AI {
   /**
    * @return {Struct}
    */
-  determineTarget() {
+  determineTargetOnGoal() {
     const treeRoot = this.defenseStrategyTree.generate(this.state.player.commandStruct);
     const leafNodes = this.defenseStrategyTree.getLeafNodes(treeRoot);
     let bestChoice = {
@@ -151,6 +151,51 @@ export class AI {
   }
 
   /**
+   * @param {AIThreatDTO} threat
+   * @return {boolean}
+   */
+  isAttackingThreatViable(threat) {
+    let aiAttackStruct = this.chooseAttackStruct(threat.attackingStruct);
+
+    if (aiAttackStruct.isCommandStruct()) {
+      return false;
+    }
+
+    let counterAttacks = threat.attackingStruct.defenders.reduce((counterAttacks, defender) =>
+      defender.canCounterAttack(aiAttackStruct) ? counterAttacks + 1 : counterAttacks
+    , 0);
+
+    return counterAttacks < aiAttackStruct.currentHealth;
+  }
+
+  /**
+   * @return {Struct|null}
+   */
+  identifyThreat() {
+    let maxDamage = 0;
+    let maxThreat = null;
+    this.state.aiThreatTracker.threats.forEach(threat => {
+      if (threat.cumulativeDamage > maxDamage && this.isAttackingThreatViable(threat)) {
+        maxThreat = threat.attackingStruct;
+      }
+    });
+
+    return maxThreat;
+  }
+
+  /**
+   * @return {Struct}
+   */
+  chooseTarget() {
+    const onGoalTarget = this.determineTargetOnGoal();
+    const threat = this.identifyThreat();
+    if (!onGoalTarget.isCommandStruct() && threat) {
+      return threat;
+    }
+    return onGoalTarget;
+  }
+
+  /**
    * @param {Struct} attackStruct
    * @param {string} targetAmbit
    * @return {string}
@@ -174,7 +219,7 @@ export class AI {
    */
   attack() {
     // Determine the best target
-    const target = this.determineTarget();
+    const target = this.chooseTarget();
 
     // Determine the best struct to attack the target with
     const aiStruct = this.chooseAttackStruct(target);

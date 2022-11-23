@@ -275,6 +275,14 @@ export class UIGame {
     });
   }
 
+  initAICombatEventListener() {
+    window.addEventListener(EVENTS.COMBAT.COMBAT_ATTACKED, function(combatEvent) {
+      if (this.state.player.id === combatEvent.sourceStruct.playerId) {
+        this.state.aiThreatTracker.trackAttack(combatEvent.sourceStruct, combatEvent.damageAmount);
+      }
+    }.bind(this));
+  }
+
   initOneTimeListeners() {
     this.initGameRenderListener();
     this.initFirstTurnListener();
@@ -297,6 +305,7 @@ export class UIGame {
 
     this.combatEventViewer.initOneTimeListeners();
     this.initCombatEventLogListener();
+    this.initAICombatEventListener();
   }
 
   render() {

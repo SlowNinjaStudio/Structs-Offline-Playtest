@@ -136,8 +136,8 @@ export const
     ID_PREFIX: 'struct-'
   },
 
-  TRACKING = {
-    DNF: 'DNF'
+  THREAT = {
+    DAMAGE_THRESHOLD: 4
   },
 
   UNIT_TYPES = {

@@ -1,5 +1,6 @@
 import {PlayerMetrics} from "../PlayerMetrics.js";
 import {CombatEventLog} from "../CombatEventLog.js";
+import {AIThreatTracker} from "../AIThreatTracker.js";
 
 export class GameState {
   constructor() {
@@ -26,6 +27,7 @@ export class GameState {
     };
 
     this.combatEventLog = new CombatEventLog();
+    this.aiThreatTracker = new AIThreatTracker();
   }
 
   /**
