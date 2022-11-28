@@ -411,7 +411,7 @@ export class AI {
     if (changeAmbit) {
       this.state.enemy.commandStruct.operatingAmbit = changeAmbit;
       this.state.enemy.fleet[changeAmbit.toLowerCase()].forEach(struct => {
-        if (struct) {
+        if (struct && !struct.isDestroyed) {
           struct.defend(this.state.enemy.commandStruct);
         }
       });

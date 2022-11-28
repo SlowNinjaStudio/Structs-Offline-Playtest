@@ -83,7 +83,7 @@ export class Struct {
    * @param {Struct} struct
    */
   defend(struct) {
-    if (!this.canDefend) {
+    if (!this.canDefend || this.isDestroyed) {
       throw new DefendActionDisabledError('This struct cannot defend other structs');
     }
     this.undefend();

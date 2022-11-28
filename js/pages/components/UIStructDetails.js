@@ -241,7 +241,6 @@ export class UIStructDetails {
             >
               ${this.struct.manualWeaponPrimary.getActionLabel()}
               <img src="${IMG.ICONS}icon-attack-range.png" alt="attack-range">
-              (1)
             </button>
           ` : this.getUnavailableActionButton()}
           </div>
@@ -276,7 +275,6 @@ export class UIStructDetails {
             >
               ${this.struct.manualWeaponSecondary.getActionLabel()}
               <img src="${IMG.ICONS}icon-attack-range.png" alt="attack-range">
-              (2)
             </button>
           ` : this.getUnavailableActionButton()}
           </div>
