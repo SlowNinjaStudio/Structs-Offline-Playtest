@@ -10,6 +10,7 @@ import {InvalidManualWeaponSlotError} from "../../../js/modules/errors/InvalidMa
 import {AftermarketEngine} from "../../../js/modules/struct_components/AftermarketEngine.js";
 import {Fraction} from "../../../js/modules/util/Fraction.js";
 import {StructBuilder} from "../../../js/modules/StructBuilder.js";
+import {CommandStructBuilder} from "../../../js/modules/CommandStructBuilder.js";
 
 /**
  * @return {Struct}
@@ -638,6 +639,40 @@ const getTargetableAmbitsTest = new DTest('getTargetableAmbitsTest', function(pa
   ];
 });
 
+const isBlockingTest = new DTest('isBlockingTest', function() {
+  const builder = new StructBuilder();
+
+  const tank = builder.make(UNIT_TYPES.TANK);
+  const sam = builder.make(UNIT_TYPES.SAM_LAUNCHER);
+  const fighterJet = builder.make(UNIT_TYPES.FIGHTER_JET);
+
+  tank.defend(sam);
+  sam.defend(fighterJet);
+
+  this.assertArrayEquals(tank.isBlocking(), true);
+  this.assertArrayEquals(sam.isBlocking(), false);
+  this.assertArrayEquals(fighterJet.isBlocking(), false);
+});
+
+const isBlockingCommandStructTest = new DTest('isBlockingCommandStructTest', function() {
+  const builder = new StructBuilder();
+  const commandBuilder = new CommandStructBuilder();
+
+  const commandShip = commandBuilder.make(UNIT_TYPES.COMMAND_SHIP);
+  const tank = builder.make(UNIT_TYPES.TANK);
+  const sam = builder.make(UNIT_TYPES.SAM_LAUNCHER);
+  const fighterJet = builder.make(UNIT_TYPES.FIGHTER_JET);
+
+  commandShip.operatingAmbit = AMBITS.LAND;
+  tank.defend(commandShip);
+  sam.defend(fighterJet);
+  fighterJet.defend(commandShip);
+
+  this.assertArrayEquals(tank.isBlockingCommandStruct(), true);
+  this.assertArrayEquals(sam.isBlockingCommandStruct(), false);
+  this.assertArrayEquals(fighterJet.isBlockingCommandStruct(), false);
+});
+
 // Test execution
 console.log('StructTest');
 addDefenderTest.run();
@@ -658,3 +693,5 @@ counterAttackTest.run();
 attackTest.run();
 changeAmbitTest.run();
 getTargetableAmbitsTest.run();
+isBlockingTest.run();
+isBlockingCommandStructTest.run();

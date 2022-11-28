@@ -373,4 +373,18 @@ export class Struct {
   isHidden() {
     return this.defenseComponent.name === DEFENSE_COMPONENTS.STEALTH_MODE && this.defenseComponent.isActive;
   }
+
+  /**
+   * @return {boolean}
+   */
+  isBlocking() {
+    return !!(this.defending && (this.defending.operatingAmbit === this.operatingAmbit));
+  }
+
+  /**
+   * @return {boolean}
+   */
+  isBlockingCommandStruct() {
+    return !!(this.isBlocking() && this.defending.isCommandStruct());
+  }
 }
