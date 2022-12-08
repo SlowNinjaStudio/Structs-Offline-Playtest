@@ -24,4 +24,15 @@ export class Util {
   toLowerCaseArray(original) {
     return [...original].map(element => element.toLowerCase());
   }
+
+  /**
+   * @param {number} min
+   * @param {number} max
+   * @return {number}
+   */
+  getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
 }

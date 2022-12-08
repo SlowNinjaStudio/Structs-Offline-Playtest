@@ -4,10 +4,13 @@ import {UNIT_TYPES} from "../modules/Constants.js";
 import {Player} from "../modules/Player.js";
 import {UIGame} from "./components/UIGame.js";
 import {GameState} from "../modules/state/GameState.js";
+import {FleetGenerator} from "../modules/FleetGenerator.js";
+import {Util} from "../modules/util/Util.js";
 
 (new UINavbar()).init('nav-wrapper');
 
 const structBuilder = new StructBuilder();
+const util = new Util();
 
 const player = new Player('Player');
 const enemy = new Player('Enemy');
@@ -29,22 +32,24 @@ player.fleet.addStruct(structBuilder.make(UNIT_TYPES.DESTROYER));
 player.fleet.addStruct(structBuilder.make(UNIT_TYPES.CRUISER));
 player.fleet.addStruct(structBuilder.make(UNIT_TYPES.SUB));
 
-enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.STAR_FIGHTER));
-enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.SPACE_FRIGATE));
-enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.GALACTIC_BATTLESHIP));
-enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.STAR_FIGHTER));
-enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.FIGHTER_JET));
-enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR));
-enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.STEALTH_BOMBER));
-enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.FIGHTER_JET));
-enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.TANK));
-enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.ARTILLERY));
-enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.SAM_LAUNCHER));
-enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.TANK));
-enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.SUB));
-enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.DESTROYER));
-enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.CRUISER));
-enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.SUB));
+const fleetGenerator = new FleetGenerator();
+fleetGenerator.generateFleet(enemy.fleet, util.getRandomInt(16, 64));
+// enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.STAR_FIGHTER));
+// enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.SPACE_FRIGATE));
+// enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.GALACTIC_BATTLESHIP));
+// enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.STAR_FIGHTER));
+// enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.FIGHTER_JET));
+// enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR));
+// enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.STEALTH_BOMBER));
+// enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.FIGHTER_JET));
+// enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.TANK));
+// enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.ARTILLERY));
+// enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.SAM_LAUNCHER));
+// enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.TANK));
+// enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.SUB));
+// enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.DESTROYER));
+// enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.CRUISER));
+// enemy.fleet.addStruct(structBuilder.make(UNIT_TYPES.SUB));
 
 const state = new GameState();
 state.player = player;
