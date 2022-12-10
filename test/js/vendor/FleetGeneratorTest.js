@@ -85,9 +85,24 @@ const generateFleetTest = new DTest('generateFleetTest', function(params) {
       budget: 20,
       spaceUnitsAsPrices: [2, 2],
       skyUnitsAsPrices: [2, 3],
-      landUnitsAsPrices: [2, 2],
+      landUnitsAsPrices: [2, 3],
       waterUnitsAsPrices: [5],
-    }
+    },
+    {
+      budget: 56,
+      spaceUnitsAsPrices: [4, 4, 4, 2],
+      skyUnitsAsPrices: [3, 3, 3, 3],
+      landUnitsAsPrices: [3, 3, 3, 3],
+      waterUnitsAsPrices: [5, 5, 3, 3],
+    },
+    {
+      budget: 80,
+      spaceUnitsAsPrices: [4, 4, 4, 4],
+      skyUnitsAsPrices: [3, 3, 3, 3],
+      landUnitsAsPrices: [3, 3, 3, 3],
+      waterUnitsAsPrices: [5, 5, 5, 5],
+    },
+
   ];
 });
 

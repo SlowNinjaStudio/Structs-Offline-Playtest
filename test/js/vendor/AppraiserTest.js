@@ -91,7 +91,7 @@ const calcUnitTypeTacticalValueTest = new DTest('calcUnitTypeTacticalValueTest',
     },
     {
       unitType: UNIT_TYPES.ARTILLERY,
-      tacticalValue: 2.5
+      tacticalValue: 3.5
     },
     {
       unitType: UNIT_TYPES.SAM_LAUNCHER,

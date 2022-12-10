@@ -1,5 +1,5 @@
 import {StructBuilder} from "./StructBuilder.js";
-import {DEFENSE_COMPONENT_TYPES, PASSIVE_WEAPONS, UNITS_BY_AMBIT} from "./Constants.js";
+import {DEFENSE_COMPONENT_TYPES, DEFENSE_COMPONENTS, PASSIVE_WEAPONS, UNITS_BY_AMBIT} from "./Constants.js";
 import {AppraisalDTO} from "./dtos/AppraisalDTO.js";
 import {AmbitsUtil} from "./util/AmbitsUtil.js";
 import {AppraisalAmbitSet} from "./AppraisalAmbitSet.js";
@@ -38,8 +38,12 @@ export class Appraiser {
   calcUnitTypeTacticalValue(unitType) {
     const unit = this.structBuilder.make(unitType);
     const targetableAmbits = unit.getTargetableAmbits();
+    const hasIndirectCombatModule = unit.defenseComponent.name === DEFENSE_COMPONENTS.INDIRECT_COMBAT_MODULE;
 
-    return targetableAmbits.length + 0.5;
+    let value = 0.5;
+    value += targetableAmbits.length;
+    value += hasIndirectCombatModule ? 1 : 0;
+    return value;
   }
 
   /**

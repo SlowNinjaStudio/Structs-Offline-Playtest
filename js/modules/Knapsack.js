@@ -1,6 +1,11 @@
 import {KnapsackLookupDTO} from "./dtos/KnapsackLookupDTO.js";
+import {ArrayUtil} from "./util/ArrayUtil.js";
 
 export class Knapsack {
+
+  constructor() {
+    this.arrayUtil = new ArrayUtil();
+  }
 
   /**
    * @param {number} maxIndex
@@ -35,5 +40,45 @@ export class Knapsack {
     }
 
     return lookup[target];
+  }
+
+  bruteForce(values, weights, target, maxItems) {
+    let knapsack = new Array(maxItems).fill(0);
+    let bestValueCombo = new Array(maxItems).fill(0);
+    let bestWeightCombo = new Array(maxItems).fill(0);
+
+    for (let i = 0; i < knapsack.length; i++) {
+      for (let m = 0; m < Math.pow(values.length, i); m++) {
+        for (let j = 1; j <= values.length; j++) {
+          knapsack[i] = j;
+          const knapsackValues = knapsack.map(valueIndex => valueIndex > 0 ? values[valueIndex - 1] : 0);
+          const knapsackWeights = knapsack.map(valueIndex => valueIndex > 0 ? weights[valueIndex - 1] : 0);
+          const valueSum = this.arrayUtil.sum(knapsackValues);
+          const weightsSum = this.arrayUtil.sum(knapsackWeights);
+
+          if (valueSum > this.arrayUtil.sum(bestValueCombo) && weightsSum <= target) {
+            bestValueCombo = [...knapsackValues];
+            bestWeightCombo = [...knapsackWeights];
+          }
+        }
+        knapsack[i] = 1;
+        let k = 1;
+        while (i - k >= 0) {
+          knapsack[i - k]++;
+          if (knapsack[i - k] > values.length) {
+            knapsack[i - k] = 1;
+            k++;
+          } else {
+            break;
+          }
+        }
+      }
+    }
+
+    return new KnapsackLookupDTO(
+      this.arrayUtil.sum(bestValueCombo),
+      bestValueCombo,
+      bestWeightCombo
+    )
   }
 }

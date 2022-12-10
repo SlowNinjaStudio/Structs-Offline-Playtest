@@ -52,7 +52,12 @@ export class FleetGenerator {
       const target = budgetsByAmbit.get(ambit);
       const values = this.fleetUnitAppraisals.getTacticalValuesForAmbit(ambit);
       const weights = this.fleetUnitAppraisals.getPricesForAmbit(ambit);
-      const optimalSpendSuggestion = this.knapsack.unbounded(values, weights, target);
+      const optimalSpendSuggestion = this.knapsack.bruteForce(
+        values,
+        weights,
+        target,
+        MAX_FLEET_STRUCTS_PER_AMBIT[ambit]
+      );
 
       for (let i = 0; i < optimalSpendSuggestion.weights.length; i++) {
         const price = optimalSpendSuggestion.weights[i];
@@ -60,8 +65,9 @@ export class FleetGenerator {
           unitAppraisal.price === price
         );
         const selectedUnit = matchingUnits[Math.floor(Math.random() * matchingUnits.length)];
-
-        fleet.addStruct(this.structBuilder.make(selectedUnit.unitType));
+        if (selectedUnit) {
+          fleet.addStruct(this.structBuilder.make(selectedUnit.unitType));
+        }
       }
 
       leftoverBudget += target - optimalSpendSuggestion.sum;
