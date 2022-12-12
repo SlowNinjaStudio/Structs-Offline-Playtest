@@ -24,6 +24,7 @@ export class Analytics {
 
   trackEarlyExit() {
     if (!this.state.gameOverEventDispatched) {
+      this.submitGameStateToCustom();
       gtag("event", "level_end", {
         level_name: this.state.gameMode,
         success: false
@@ -68,8 +69,33 @@ export class Analytics {
    * @param {Player} winningPlayer
    */
   trackGameOver(winningPlayer) {
+
+    this.submitGameStateToCustom();
+
     this.trackTwoPlayerGameEnded(winningPlayer);
     this.trackPlayerDefeatsAI(winningPlayer);
     this.trackAIDefeatsPlayer(winningPlayer);
+  }
+
+  submitGameStateToCustom() {
+    fetch('http://104.37.192.8/game', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ "identity_address": "fake", "state": this.finiteState() })
+    }).then(response => console.log('Game Submission Received'))
+  }
+
+  finiteState(){
+    return {
+      "gameMode": this.state.gameMode,
+      "numTurns": this.state.numTurns,
+      "gameCompleted": this.state.gameOverEventDispatched,
+      "combatEventLog" : {
+        "log": this.state.combatEventLog.log
+      }
+    }
   }
 }
