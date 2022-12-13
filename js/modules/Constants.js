@@ -154,5 +154,36 @@ export const
     STEALTH_BOMBER: 'STEALTH BOMBER',
     SUB: 'SUB',
     TANK: 'TANK'
+  },
+
+  UNITS_BY_AMBIT = {
+    SPACE: [
+      UNIT_TYPES.STAR_FIGHTER,
+      UNIT_TYPES.SPACE_FRIGATE,
+      UNIT_TYPES.GALACTIC_BATTLESHIP
+    ],
+    SKY: [
+      UNIT_TYPES.FIGHTER_JET,
+      UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
+      UNIT_TYPES.STEALTH_BOMBER
+    ],
+    LAND: [
+      UNIT_TYPES.TANK,
+      UNIT_TYPES.SAM_LAUNCHER,
+      UNIT_TYPES.ARTILLERY
+    ],
+    WATER: [
+      UNIT_TYPES.SUB,
+      UNIT_TYPES.DESTROYER,
+      UNIT_TYPES.CRUISER
+    ]
+  },
+
+  ANALYTICS_DEFAULTS = {
+    IDENTITY_PREFIX: 'cmb-',
+    IDENTITY_COOKIE: 'identity',
+    SERVER: 'http://analytics.structs.so',
+    ENDPOINT: 'game'
   }
+
 ;
