@@ -156,6 +156,40 @@ const addTest = new DTest('addTest', function() {
   this.assertEquals(dist2.water, 9);
 });
 
+const getTotalTest = new DTest('getTotalTest', function(params) {
+  const dist = new AmbitDistribution();
+  dist.space = params.space;
+  dist.sky = params.sky;
+  dist.land = params.land;
+  dist.water = params.water;
+
+  this.assertEquals(dist.getTotal(), params.expected);
+}, function() {
+  return [
+    {
+      space: 0,
+      sky: 0,
+      land: 0,
+      water: 0,
+      expected: 0
+    },
+    {
+      space: 2,
+      sky: 2,
+      land: 2,
+      water: 2,
+      expected: 8
+    },
+    {
+      space: 2,
+      sky: 4,
+      land: 6,
+      water: 12,
+      expected: 24
+    }
+  ];
+});
+
 // Test execution
 console.log('AmbitDistributionTest');
 setGetTest.run();
@@ -163,3 +197,4 @@ incrementTest.run();
 getAverageTest.run();
 getPopulationVarianceTest.run();
 addTest.run();
+getTotalTest.run();
