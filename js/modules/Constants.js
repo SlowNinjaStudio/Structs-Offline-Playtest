@@ -177,5 +177,13 @@ export const
       UNIT_TYPES.DESTROYER,
       UNIT_TYPES.CRUISER
     ]
+  },
+
+  ANALYTICS_DEFAULTS = {
+    IDENTITY_PREFIX: 'cmb-',
+    IDENTITY_COOKIE: 'identity',
+    SERVER: 'http://analytics.structs.so',
+    ENDPOINT: 'game'
   }
+
 ;
