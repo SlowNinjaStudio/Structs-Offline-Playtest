@@ -185,4 +185,5 @@ export const
     SERVER: 'http://analytics.structs.so',
     ENDPOINT: 'game'
   }
+
 ;
