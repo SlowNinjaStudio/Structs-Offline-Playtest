@@ -70,4 +70,11 @@ export class AmbitDistribution {
     newDistribution.water = this.water + ambitDistribution.water;
     return newDistribution;
   }
+
+  /**
+   * @return {number}
+   */
+  getTotal() {
+    return this.space + this.sky + this.land + this.water;
+  }
 }
