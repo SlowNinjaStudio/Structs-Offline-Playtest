@@ -1,4 +1,5 @@
-import {GAME_MODES} from "./Constants.js";
+import {ANALYTICS_DEFAULTS, GAME_MODES} from "./Constants.js";
+import {IdGenerator} from "./util/IdGenerator.js";
 
 export class Analytics {
   /**
@@ -6,6 +7,13 @@ export class Analytics {
    */
   constructor(state) {
     this.state = state;
+
+    this.identity = localStorage.getItem(ANALYTICS_DEFAULTS.IDENTITY_COOKIE);
+    if ((this.identity === null) || (typeof this.identity === 'undefined')) {
+      this.identity = new IdGenerator().generate(ANALYTICS_DEFAULTS.IDENTITY_PREFIX);
+      localStorage.setItem(ANALYTICS_DEFAULTS.IDENTITY_COOKIE, this.identity);
+    }
+
   }
 
   trackGameStart() {
@@ -78,13 +86,13 @@ export class Analytics {
   }
 
   submitGameStateToCustom() {
-    fetch('http://104.37.192.8/game', {
+    fetch(ANALYTICS_DEFAULTS.SERVER + '/' + ANALYTICS_DEFAULTS.ENDPOINT , {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ "identity_address": "fake", "state": this.finiteState() })
+      body: JSON.stringify({ "identity": this.identity, "state": this.finiteState() })
     }).then(response => console.log('Game Submission Received'))
   }
 

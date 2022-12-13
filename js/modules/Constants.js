@@ -154,5 +154,12 @@ export const
     STEALTH_BOMBER: 'STEALTH BOMBER',
     SUB: 'SUB',
     TANK: 'TANK'
+  },
+
+  ANALYTICS_DEFAULTS = {
+    IDENTITY_PREFIX: 'cmb-',
+    IDENTITY_COOKIE: 'identity',
+    SERVER: 'http://analytics.structs.so',
+    ENDPOINT: 'game'
   }
 ;
