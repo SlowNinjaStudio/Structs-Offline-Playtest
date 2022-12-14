@@ -180,9 +180,9 @@ export const
   },
 
   ANALYTICS_DEFAULTS = {
-    IDENTITY_PREFIX: 'cmb-',
+    IDENTITY_PREFIX: 'cmd-',
     IDENTITY_COOKIE: 'identity',
-    SERVER: 'http://analytics.structs.so',
+    SERVER: 'https://analytics.structs.so',
     ENDPOINT: 'game'
   }
 
