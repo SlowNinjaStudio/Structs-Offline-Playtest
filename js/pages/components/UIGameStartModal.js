@@ -1,4 +1,5 @@
-import {EVENTS, GAME_MODES} from "../../modules/Constants.js";
+import {EVENTS, GAME_MODES, GAME_PHASES} from "../../modules/Constants.js";
+import {QualitativeBudgetConverter} from "../../modules/QualitativeBudgetConverter.js";
 
 export class UIGameStartModal {
   /**
@@ -10,24 +11,67 @@ export class UIGameStartModal {
     this.animationContainer = 'animationContainer';
     this.button1PlayerId = 'button1Player';
     this.button2PlayerId = 'button2Player';
+    this.buttonSaveBudgetId = 'buttonSaveBudgetId';
+    this.selectBudgetPlayer1Id = 'selectBudgetPlayer1Id';
+    this.selectBudgetPlayer2Id = 'selectBudgetPlayer2Id';
+    this.qualitativeBudgetConverter = new QualitativeBudgetConverter();
+  }
+
+  hide() {
+    const bsModal = bootstrap.Modal.getOrCreateInstance(document.getElementById(this.modalId));
+    bsModal.hide();
+  }
+
+  show() {
+    const bsModal = bootstrap.Modal.getOrCreateInstance(document.getElementById(this.modalId));
+    bsModal.show();
   }
 
   init1PlayerListener() {
-    document.getElementById(this.button1PlayerId).addEventListener('click', function() {
-      this.state.gameMode = GAME_MODES.ONE_PLAYER;
-      const bsModal = bootstrap.Modal.getOrCreateInstance(document.getElementById(this.modalId));
-      bsModal.hide();
-      window.dispatchEvent(new CustomEvent(EVENTS.TURNS.FIRST_TURN));
-    }.bind(this));
+    const button = document.getElementById(this.button1PlayerId);
+    if (button) {
+      button.addEventListener('click', function() {
+        this.state.gameMode = GAME_MODES.ONE_PLAYER;
+        this.state.gamePhase = GAME_PHASES.BUDGET_SELECT;
+        this.hide();
+        this.init();
+      }.bind(this));
+    }
   }
 
   init2PlayersListener() {
-    document.getElementById(this.button2PlayerId).addEventListener('click', function() {
-      this.state.gameMode = GAME_MODES.TWO_PLAYER;
-      const bsModal = bootstrap.Modal.getOrCreateInstance(document.getElementById(this.modalId));
-      bsModal.hide();
-      window.dispatchEvent(new CustomEvent(EVENTS.TURNS.FIRST_TURN));
-    }.bind(this));
+    const button = document.getElementById(this.button2PlayerId);
+    if (button) {
+      button.addEventListener('click', function() {
+        this.state.gameMode = GAME_MODES.TWO_PLAYER;
+        this.state.gamePhase = GAME_PHASES.BUDGET_SELECT;
+        this.hide();
+        this.init();
+      }.bind(this));
+    }
+  }
+
+  initSaveBudgetListener() {
+    const button = document.getElementById(this.buttonSaveBudgetId);
+    if (button) {
+      button.addEventListener('click', function() {
+        this.state.gamePhase = GAME_PHASES.FLEET_SELECT_P1;
+        this.state.player.qualitativeBudget = document.getElementById(this.selectBudgetPlayer1Id).value;
+        this.state.player.budget = this.qualitativeBudgetConverter.convertToNumber(this.state.player.qualitativeBudget);
+        this.state.player.credits = this.state.player.budget;
+        this.state.enemy.qualitativeBudget = document.getElementById(this.selectBudgetPlayer2Id).value;
+        this.state.enemy.budget = this.qualitativeBudgetConverter.convertToNumber(this.state.enemy.qualitativeBudget);
+        this.state.enemy.credits = this.state.enemy.budget;
+
+        this.state.gamePhase = GAME_PHASES.COMBAT;
+        this.hide();
+
+        // window.dispatchEvent(new CustomEvent(EVENTS.RENDER.RENDER_GAME));
+        console.log(this.state);
+        window.dispatchEvent(new CustomEvent(EVENTS.TURNS.FIRST_TURN));
+
+      }.bind(this));
+    }
   }
 
   /**
@@ -54,6 +98,90 @@ export class UIGameStartModal {
     `;
   }
 
+  /**
+   * @return {string}
+   */
+  renderPlayerSelectContent() {
+    return `
+      <div class="modal-body">
+        <div id="${this.animationContainer}"></div>
+      </div>
+      <div class="modal-footer">
+        <button id="${this.button1PlayerId}" type="button" class="btn btn-primary">1 Player</button>
+        <button id="${this.button2PlayerId}" type="button" class="btn btn-primary">2 Player</button>
+      </div>
+    `;
+  }
+
+  /**
+   * @return {string}
+   */
+  renderBudgetSelectContent() {
+    let player2SelectLabel = 'Player 2 Watt Level';
+    if (this.state.gameMode === GAME_MODES.ONE_PLAYER) {
+      player2SelectLabel = 'CPU Watt Level';
+    }
+
+    return `
+      <div class="modal-header">
+        <div class="w-100 text-center">
+          <img src="img/logo-horizontal.png" alt="Structs" class="modal-logo">
+        </div>
+      </div>
+      <div class="modal-body p-4">
+        <div class="mb-4">Choose how much Watt each player has. Watt is used to deploy Structs. More advanced Structs cost more Watt.</div>
+        <div class="mb-4 fst-italic">If this you first game, we recommend setting both players to "Low."</div>
+        <div class="container-fluid p-0">
+          <div class="row mb-4 align-items-center">
+            <div class="col fw-bold">Player 1 Watt Level</div>
+            <div class="col">
+              <select id="${this.selectBudgetPlayer1Id}" class="form-select">
+                <option value="LOW">Low</option>
+                <option value="MEDIUM">Medium</option>
+                <option value="HIGH">High</option>
+                <option value="RANDOM">Random</option>
+                <option value="CURATED">Curated</option>
+              </select>
+            </div>
+          </div>
+          <div class="row mb-4 align-items-center">
+            <div class="col fw-bold">${player2SelectLabel}</div>
+            <div class="col">
+              <select id="${this.selectBudgetPlayer2Id}" class="form-select">
+                <option value="LOW">Low</option>
+                <option value="MEDIUM">Medium</option>
+                <option value="HIGH">High</option>
+                <option value="RANDOM">Random</option>
+                <option value="CURATED">Curated</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer border-top-0">
+        <button id="${this.buttonSaveBudgetId}" type="button" class="btn btn-primary">Start Game</button>
+      </div>
+    `;
+  }
+
+  /**
+   * @return {string}
+   */
+  renderContent() {
+    let content;
+
+    switch(this.state.gamePhase) {
+      case GAME_PHASES.BUDGET_SELECT:
+        content = this.renderBudgetSelectContent();
+        break;
+      default:
+        content = this.renderPlayerSelectContent();
+        break;
+    }
+
+    return content;
+  }
+
   render() {
     return `
       <div
@@ -65,13 +193,7 @@ export class UIGameStartModal {
       >
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
-            <div class="modal-body">
-              <div id="${this.animationContainer}"></div>
-            </div>
-            <div class="modal-footer">
-              <button id="${this.button1PlayerId}" type="button" class="btn btn-primary">1 Player</button>
-              <button id="${this.button2PlayerId}" type="button" class="btn btn-primary">2 Player</button>
-            </div>
+            ${this.renderContent()}
           </div>
         </div>
       </div>
@@ -79,29 +201,34 @@ export class UIGameStartModal {
   }
 
   init() {
-    if (this.state.numTurns === 0) {
-      if (!window.gtagLoaded) {
-        document.getElementById(this.state.modalContainerId).innerHTML = this.renderAllowGtag();
-        const domModal = document.getElementById(this.modalId);
-        const bsModal = bootstrap.Modal.getOrCreateInstance(domModal);
-        bsModal.show();
-      } else {
-        document.getElementById(this.state.modalContainerId).innerHTML = this.render();
-        this.init1PlayerListener();
-        this.init2PlayersListener();
-        const domModal = document.getElementById(this.modalId);
-        const bsModal = bootstrap.Modal.getOrCreateInstance(domModal);
+    if (this.state.numTurns === 0 && !window.gtagLoaded) {
 
-        window.lottie.loadAnimation({
-          container: document.getElementById(this.animationContainer),
-          renderer: 'svg',
-          loop: true,
-          autoplay: true,
-          path: 'img/lottie/combat_mechanics_intro/data.json'
-        });
+      document.getElementById(this.state.modalContainerId).innerHTML = this.renderAllowGtag();
+      this.show();
 
-        bsModal.show();
-      }
+    } else if (this.state.numTurns === 0 && this.state.gamePhase === GAME_PHASES.BUDGET_SELECT) {
+
+      document.getElementById(this.state.modalContainerId).innerHTML = this.render();
+      this.initSaveBudgetListener();
+      this.show();
+
+    } else if (this.state.numTurns === 0 && !this.state.gamePhase) {
+
+      document.getElementById(this.state.modalContainerId).innerHTML = this.render();
+
+      this.init1PlayerListener();
+      this.init2PlayersListener();
+
+      window.lottie.loadAnimation({
+        container: document.getElementById(this.animationContainer),
+        renderer: 'svg',
+        loop: true,
+        autoplay: true,
+        path: 'img/lottie/combat_mechanics_intro/data.json'
+      });
+
+      this.show();
+
     }
   }
 }

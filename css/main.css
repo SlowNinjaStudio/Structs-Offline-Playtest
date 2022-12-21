@@ -495,7 +495,21 @@ body {
   border-radius: 4px;
 }
 
+.modal-logo {
+  image-rendering: initial;
+  width: 243px;
+}
+
 /* Bootstrap Overrides - Start */
+
+.modal-header {
+  border-bottom: 0 none;
+}
+.modal-body {
+  color: #ffffff;
+  font-size: 14px;
+  text-align: left;
+}
 
 .offcanvas.structDetails {
   margin: 0 auto;

@@ -14,6 +14,9 @@ export class Player {
     commandShip.playerId = this.id;
     this.commandStruct = commandShip;
     this.fleet = new Fleet(this.id);
+    this.qualitativeBudget = null;
+    this.budget = null;
+    this.credits = null;
   }
 
   /**

@@ -76,6 +76,13 @@ export const
     MAX_HEALTH: 3,
   },
 
+  GAME_PHASES = {
+    BUDGET_SELECT: 'BUDGET_SELECT',
+    FLEET_SELECT_P1: 'FLEET_SELECT_P1',
+    FLEET_SELECT_P2: 'FLEET_SELECT_P2',
+    COMBAT: 'COMBAT',
+  },
+
   GAME_MODES = {
     ONE_PLAYER: '1_PLAYER',
     TWO_PLAYER: '2_PLAYER',
@@ -130,6 +137,29 @@ export const
   PLAYER_DEFAULTS = {
     ID_PREFIX: 'player-',
     MAX_ACTIVE_FLEET_STRUCTS: 16
+  },
+
+  QUALITATIVE_BUDGETS = {
+    LOW: {
+      MIN: 24,
+      MAX: 32
+    },
+    MEDIUM: {
+      MIN: 40,
+      MAX: 56
+    },
+    HIGH: {
+      MIN: 64,
+      MAX: 80
+    },
+    RANDOM: {
+      MIN: 24,
+      MAX: 64
+    },
+    CURATED: {
+      MIN: 43,
+      MAX: 43
+    }
   },
 
   STRUCT_DEFAULTS = {
