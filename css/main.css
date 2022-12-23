@@ -273,10 +273,6 @@ body {
   text-align: center;
 }
 
-.play-area .col {
-  padding: 0;
-}
-
 .navbar .logo {
   height: 40px;
 }
@@ -465,7 +461,7 @@ body {
   max-width: 80px;
 }
 
-.game-over-msg {
+.modal .modal-body.game-over-msg {
   font-size: 32px;
 }
 .player .game-over-msg {
@@ -498,6 +494,30 @@ body {
 .modal-logo {
   image-rendering: initial;
   width: 243px;
+}
+
+.fleetSelectActionsContainer {
+  display: inline-block;
+  max-width: 360px;
+  width: 100%;
+}
+
+.fleetSelectHelp .card.side.container-fluid {
+  font-size: 14px;
+  max-width: 450px;
+}
+
+.fleetSelectHelp .card img.section-icon {
+  margin: 4px 20px 4px 4px;
+  width: 32px;
+}
+
+.bg-space-dust-grey {
+  background-color: #C8D1E5;
+}
+
+.font-smaller {
+  font-size: 12px;
 }
 
 /* Bootstrap Overrides - Start */

@@ -91,6 +91,7 @@ export const
   IMG = {
     ICONS: 'img/icons/',
     LARGE_ICONS: 'img/icons/large/',
+    RASTER_ICONS: 'img/icons/raster/',
     STRUCTS: 'img/'
   },
 

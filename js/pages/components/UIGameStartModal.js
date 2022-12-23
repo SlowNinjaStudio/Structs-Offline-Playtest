@@ -63,13 +63,9 @@ export class UIGameStartModal {
         this.state.enemy.budget = this.qualitativeBudgetConverter.convertToNumber(this.state.enemy.qualitativeBudget);
         this.state.enemy.credits = this.state.enemy.budget;
 
-        this.state.gamePhase = GAME_PHASES.COMBAT;
         this.hide();
 
-        // window.dispatchEvent(new CustomEvent(EVENTS.RENDER.RENDER_GAME));
-        console.log(this.state);
-        window.dispatchEvent(new CustomEvent(EVENTS.TURNS.FIRST_TURN));
-
+        window.dispatchEvent(new CustomEvent(EVENTS.RENDER.RENDER_GAME));
       }.bind(this));
     }
   }

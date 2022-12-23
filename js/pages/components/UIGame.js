@@ -1,5 +1,5 @@
 import {UIFleet} from "./UIFleet.js";
-import {EVENTS, GAME_MODES, MANUAL_WEAPON_SLOTS} from "../../modules/Constants.js";
+import {EVENTS, GAME_MODES, GAME_PHASES, IMG, MANUAL_WEAPON_SLOTS} from "../../modules/Constants.js";
 import {UIStructDetails} from "./UIStructDetails.js";
 import {StructRefDTO} from "../../modules/dtos/StructRefDTO.js";
 import {SlotRefDTO} from "../../modules/dtos/SlotRefDTO.js";
@@ -12,6 +12,7 @@ import {Analytics} from "../../modules/Analytics.js";
 import {AI} from "../../modules/AI.js";
 import {UICancelAction} from "./UICancelAction.js";
 import {CombatEventLogItem} from "../../modules/CombatEventLogItem.js";
+import {FleetGenerator} from "../../modules/FleetGenerator.js";
 
 export class UIGame {
 
@@ -29,6 +30,10 @@ export class UIGame {
     this.analytics = new Analytics(this.state);
     this.ai = new AI(this.state);
     this.cancelActionButton = new UICancelAction(this.state);
+    this.fleetGenerator = new FleetGenerator();
+    this.fleetGenerateButtonId = 'fleetGenerateButtonId';
+    this.fleetResetButtonId = 'fleetResetButtonId';
+    this.fleetSetupCompleteButtonId = 'fleetSetupCompleteButtonId';
   }
 
   initEmptyCommandSlotListeners() {
@@ -94,9 +99,55 @@ export class UIGame {
     });
   }
 
+  initFleetGenerateListener() {
+    const button = document.getElementById(this.fleetGenerateButtonId);
+    if (button) {
+      button.addEventListener('click', function () {
+        this.state.turn.fleet.reset();
+        this.fleetGenerator.generateFleet(this.state.turn.fleet, this.state.turn.budget);
+        this.render();
+      }.bind(this))
+    }
+  }
+
+  initFleetResetListener() {
+    const button = document.getElementById(this.fleetResetButtonId);
+    if (button) {
+      button.addEventListener('click', function () {
+        this.state.turn.fleet.reset();
+        this.render();
+      }.bind(this))
+    }
+  }
+
+  initFleetSetupCompleteListener() {
+    const button = document.getElementById(this.fleetSetupCompleteButtonId);
+    if (button) {
+      button.addEventListener('click', function () {
+        if (this.state.gamePhase === GAME_PHASES.FLEET_SELECT_P1 && this.state.gameMode === GAME_MODES.ONE_PLAYER) {
+          this.state.enemy.fleet.reset();
+          this.fleetGenerator.generateFleet(this.state.enemy.fleet, this.state.enemy.budget);
+          this.state.gamePhase = GAME_PHASES.COMBAT;
+          window.dispatchEvent(new CustomEvent(EVENTS.TURNS.FIRST_TURN));
+        } else if (this.state.gamePhase === GAME_PHASES.FLEET_SELECT_P1 && this.state.gameMode === GAME_MODES.TWO_PLAYER) {
+          this.state.gamePhase = GAME_PHASES.FLEET_SELECT_P2;
+          this.state.turn = this.state.enemy;
+          this.render();
+        } else if (this.state.gamePhase === GAME_PHASES.FLEET_SELECT_P2) {
+          this.state.gamePhase = GAME_PHASES.COMBAT;
+          this.state.turn = this.state.player;
+          window.dispatchEvent(new CustomEvent(EVENTS.TURNS.FIRST_TURN));
+        }
+      }.bind(this))
+    }
+  }
+
   initListenersPerRender() {
     this.initEmptyCommandSlotListeners();
     this.initStructListeners();
+    this.initFleetGenerateListener();
+    this.initFleetResetListener();
+    this.initFleetSetupCompleteListener();
     this.prepareDefensesUI.initEndTurnListener();
   }
 
@@ -308,25 +359,236 @@ export class UIGame {
     this.initAICombatEventListener();
   }
 
-  render() {
-    document.getElementById(this.state.gameContainerId).innerHTML = `
-      <div class="container-fluid play-area">
-        <div class="row">
-          <div class="col align-content-center">${this.prepareDefensesUI.render()}</div>
+  /**
+   * @return {string}
+   */
+  renderCombatMap() {
+    return `
+    <div class="container-fluid play-area">
+      <div class="row">
+        <div class="col align-content-center">${this.prepareDefensesUI.render()}</div>
+      </div>
+      <div class="row">
+
+        <div id="playerFleet" class="col">${this.playerFleetUI.render(this.state.player)}</div>
+
+        <div class="col-lg-2">
+          <div class="vs">VS</div><div class="vertical-align-helper"></div>
         </div>
-        <div class="row">
 
-          <div id="playerFleet" class="col">${this.playerFleetUI.render(this.state.player)}</div>
+        <div id="enemyFleet" class="col">${this.enemyFleetUI.render(this.state.player)}</div>
 
-          <div class="col-lg-2">
-            <div class="vs">VS</div><div class="vertical-align-helper"></div>
+      </div>
+    </div>
+  `;
+  }
+
+  /**
+   * @return {string}
+   */
+  renderFleetSelectActions() {
+    return `
+      <div class="fleetSelectActionsContainer mt-3">
+        <div class="row justify-content-between mb-3">
+          <div class="col">
+            <div class="d-grid">
+              <a
+                href="javascript: void(0)"
+                id="${this.fleetGenerateButtonId}"
+                class="btn btn-warning"
+              >Deploy Default</a>
+            </div>
           </div>
-
-          <div id="enemyFleet" class="col">${this.enemyFleetUI.render(this.state.player)}</div>
-
+          <div class="col">
+            <div class="d-grid">
+              <a
+                href="javascript: void(0)"
+                id="${this.fleetResetButtonId}"
+                class="btn btn-warning"
+              >Reset</a>
+            </div>
+          </div>
+        </div>
+        <div class="row justify-content-between">
+          <div class="col">
+            <div class="d-grid">
+              <a
+                href="javascript: void(0)"
+                id="${this.fleetSetupCompleteButtonId}"
+                class="btn btn-primary"
+              >Done</a>
+            </div>
+          </div>
         </div>
       </div>
     `;
+  }
+
+  /**
+   * @return {string}
+   */
+  renderFleetSelectHelp() {
+    const sideClass = (this.state.player.id === this.state.turn.id) ? 'text-lg-start' : 'text-lg-end';
+    return `
+      <style>
+
+      </style>
+      <div class="fleetSelectHelp col ${sideClass} mx-4">
+        <div class="row mb-3">
+          <div class="col">
+
+            <div class="card side container-fluid p-3 text-start">
+              <div class="row g-0">
+                <div class="col-auto">
+                  <img src="${IMG.RASTER_ICONS}icon-watt-grey-40x40.png" alt="Currency Icon" class="me-3">
+                </div>
+                <div class="col">
+                  <div class="fw-bold">Build Your Army</div>
+                  <div>Click on a space to deploy or replace Struct. More advanced Structs cost more Watt.</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+
+            <div class="card side container-fluid p-3 text-start">
+              <div class="row g-0">
+                <div class="col-auto">
+                  <img src="${IMG.ICONS}icon-accuracy.png" alt="Cross Hair" class="section-icon">
+                </div>
+                <div class="col">
+                  <div class="fw-bold">Understanding Struct Abilities</div>
+                  <div class="mb-2">Each Struct has unique systems that allow it to attack and defend against other
+                    Structs. Look for the following to understand a Struct’s capabilities.</div>
+
+                  <div class="fw-bold"><img src="${IMG.ICONS}icon-attack-melee.png" alt="Sword"> Offensive Systems</div>
+                  <div class="card p-2 mb-2 bg-space-dust-grey">
+                    <div class="container-fluid">
+                      <div class="row mb-2">
+                        <div class="col font-smaller">Weapon Type</div>
+                        <div class="col font-smaller">Weapon Range</div>
+                      </div>
+                      <div class="row mb-2">
+                        <div class="col">
+                          <img src="${IMG.ICONS}icon-accuracy.png" alt="Cross Hair">
+                          Guided Weapon
+                        </div>
+                        <div class="col">
+                          <img src="${IMG.ICONS}icon-ambit-land.png" alt="land">
+                          Targets Land
+                        </div>
+                      </div>
+                      <div class="row mb-2">
+                        <div class="col">
+                          <img src="${IMG.ICONS}icon-unguided.png" alt="Cross Hair with X">
+                          Unguided Weapon
+                        </div>
+                        <div class="col">
+                          <img src="${IMG.ICONS}icon-ambit-water.png" alt="water">
+                          Targets Water
+                        </div>
+                      </div>
+                      <div class="row mb-2">
+                        <div class="col">
+                          <img src="${IMG.ICONS}icon-counter-attack.png" alt="Arrow forward above arrow back">
+                          Counter Attack
+                        </div>
+                        <div class="col">
+                          <img src="${IMG.ICONS}icon-ambit-sky.png" alt="sky">
+                          Targets Sky
+                        </div>
+                      </div>
+                      <div class="row mb-2">
+                        <div class="col"></div>
+                        <div class="col">
+                          <img src="${IMG.ICONS}icon-ambit-space.png" alt="space">
+                          Targets Space
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="fw-bold"><img src="${IMG.ICONS}icon-def-melee.png" alt="Sheild"> Defensive Systems</div>
+                  <div class="card p-2 mb-2 bg-space-dust-grey">
+                    <div class="fw-bold">Stealth Mode</div>
+                    <div class="mb-2">When active, prevents any attack from outside a Struct’s ambit.</div>
+                    <div class="fw-bold">Signal Jamming</div>
+                    <div class="mb-2">2/3 Chance to avoid Guided attacks.</div>
+                    <div class="fw-bold">Evasive Maneuver</div>
+                    <div class="mb-2">2/3 Chance to avoid Unguided attacks.</div>
+                    <div class="fw-bold">Indirect Combat</div>
+                    <div class="mb-2">Cannot Counter-Attack or be Counter-Attacked.</div>
+                  </div>
+
+                  <div class="font-smaller fst-italic">Example</div>
+                  <ul class="list-group list-group-horizontal mb-1">
+                    <li class="list-group-item bg-space-dust-grey"><img src="${IMG.ICONS}icon-accuracy.png" alt="cross hair"></li>
+                    <li class="list-group-item">2 <img src="${IMG.ICONS}icon-fire.png" alt="fire"></li>
+                    <li class="list-group-item"><img src="${IMG.ICONS}icon-ambit-space.png" alt="space"></li>
+                    <li class="list-group-item"><img src="${IMG.ICONS}icon-ambit-sky.png" alt="space"></li>
+                  </ul>
+                  <div class="font-smaller">A <span class="fw-bold">Guided Weapon</span> that deals <span class="fw-bold">2 Damage</span> against <span class="fw-bold">Space</span> and <span class="fw-bold">Air</span> units.</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  renderFleetSelectMap() {
+    let firstColumn = `
+      <div id="playerFleet" class="col text-lg-end mx-4">
+        ${this.playerFleetUI.render(this.state.player)}
+        ${this.renderFleetSelectActions()}
+      </div>
+    `;
+    let secondColumn = this.renderFleetSelectHelp();
+
+    if (this.state.turn.id === this.state.enemy.id) {
+      firstColumn = this.renderFleetSelectHelp();
+      secondColumn = `
+        <div id="enemyFleet" class="col text-lg-start mx-4">
+          ${this.enemyFleetUI.render(this.state.player)}
+          ${this.renderFleetSelectActions()}
+        </div>
+      `;
+    }
+
+    return `
+      <div class="container-fluid play-area">
+        <div class="row">
+          ${firstColumn}
+          ${secondColumn}
+        </div>
+      </div>
+    `;
+  }
+
+  render() {
+    let offcanvasClass = (this.state.player.id === this.state.turn.id) ? 'player' : 'enemy';
+    let content = '';
+
+    switch(this.state.gamePhase) {
+      case GAME_PHASES.FLEET_SELECT_P1:
+        content = this.renderFleetSelectMap();
+        offcanvasClass = 'player';
+        break;
+      case GAME_PHASES.FLEET_SELECT_P2:
+        content = this.renderFleetSelectMap();
+        offcanvasClass = 'enemy';
+        break;
+      case GAME_PHASES.COMBAT:
+        content = this.renderCombatMap();
+        break;
+    }
+
+    document.getElementById(this.state.gameContainerId).innerHTML = content;
 
     this.initListenersPerRender();
 
@@ -334,7 +596,6 @@ export class UIGame {
     this.gameOverModal.init();
 
     const domOffcanvas = document.getElementById('offcanvasBottom');
-    const offcanvasClass = (this.state.player.id === this.state.turn.id) ? 'player' : 'enemy';
     domOffcanvas.classList.remove('player');
     domOffcanvas.classList.remove('enemy');
     domOffcanvas.classList.add(offcanvasClass);

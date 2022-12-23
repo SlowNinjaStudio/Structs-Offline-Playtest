@@ -207,4 +207,13 @@ export class Fleet {
 
     return destroyed;
   }
+
+  reset() {
+    this.space = [];
+    this.sky = [];
+    this.land = [];
+    this.water = [];
+
+    this.initAmbits();
+  }
 }
