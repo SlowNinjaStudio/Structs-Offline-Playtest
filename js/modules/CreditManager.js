@@ -27,4 +27,18 @@ export class CreditManager {
     this.budget = this.qualitativeBudgetConverter.convertToNumber(this.qualitativeBudget);
     this.credits = this.budget;
   }
+
+  /**
+   * @return {boolean}
+   */
+  hasBudgetAndCredits() {
+    return this.budget !== null && this.credits !== null;
+  }
+
+  /**
+   * @return {string}
+   */
+  getBudgetUsageString() {
+    return `${this.credits}/${this.budget}`;
+  }
 }
