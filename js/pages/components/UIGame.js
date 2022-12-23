@@ -388,35 +388,37 @@ export class UIGame {
    */
   renderFleetSelectActions() {
     return `
-      <div class="fleetSelectActionsContainer mt-3">
-        <div class="row justify-content-between mb-3">
-          <div class="col">
-            <div class="d-grid">
-              <a
-                href="javascript: void(0)"
-                id="${this.fleetGenerateButtonId}"
-                class="btn btn-warning"
-              >Deploy Default</a>
+      <div class="mb-4">
+        <div class="fleetSelectActionsContainer mt-3">
+          <div class="row justify-content-between mb-3">
+            <div class="col">
+              <div class="d-grid">
+                <a
+                  href="javascript: void(0)"
+                  id="${this.fleetGenerateButtonId}"
+                  class="btn btn-warning"
+                >Deploy Default</a>
+              </div>
+            </div>
+            <div class="col">
+              <div class="d-grid">
+                <a
+                  href="javascript: void(0)"
+                  id="${this.fleetResetButtonId}"
+                  class="btn btn-warning"
+                >Reset</a>
+              </div>
             </div>
           </div>
-          <div class="col">
-            <div class="d-grid">
-              <a
-                href="javascript: void(0)"
-                id="${this.fleetResetButtonId}"
-                class="btn btn-warning"
-              >Reset</a>
-            </div>
-          </div>
-        </div>
-        <div class="row justify-content-between">
-          <div class="col">
-            <div class="d-grid">
-              <a
-                href="javascript: void(0)"
-                id="${this.fleetSetupCompleteButtonId}"
-                class="btn btn-primary"
-              >Done</a>
+          <div class="row justify-content-between">
+            <div class="col">
+              <div class="d-grid">
+                <a
+                  href="javascript: void(0)"
+                  id="${this.fleetSetupCompleteButtonId}"
+                  class="btn btn-primary"
+                >Done</a>
+              </div>
             </div>
           </div>
         </div>
@@ -430,10 +432,7 @@ export class UIGame {
   renderFleetSelectHelp() {
     const sideClass = (this.state.player.id === this.state.turn.id) ? 'text-lg-start' : 'text-lg-end';
     return `
-      <style>
-
-      </style>
-      <div class="fleetSelectHelp col ${sideClass} mx-4">
+      <div class="fleetSelectHelp col ${sideClass}">
         <div class="row mb-3">
           <div class="col">
 
@@ -543,7 +542,7 @@ export class UIGame {
 
   renderFleetSelectMap() {
     let firstColumn = `
-      <div id="playerFleet" class="col text-lg-end mx-4">
+      <div id="playerFleet" class="col text-lg-end">
         ${this.playerFleetUI.render(this.state.player)}
         ${this.renderFleetSelectActions()}
       </div>
@@ -553,7 +552,7 @@ export class UIGame {
     if (this.state.turn.id === this.state.enemy.id) {
       firstColumn = this.renderFleetSelectHelp();
       secondColumn = `
-        <div id="enemyFleet" class="col text-lg-start mx-4">
+        <div id="enemyFleet" class="col text-lg-start order-md-last order-sm-first">
           ${this.enemyFleetUI.render(this.state.player)}
           ${this.renderFleetSelectActions()}
         </div>
