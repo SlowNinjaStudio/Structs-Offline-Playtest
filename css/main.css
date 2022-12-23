@@ -520,6 +520,11 @@ body {
   font-size: 12px;
 }
 
+.icon-raster-small {
+  image-rendering: initial;
+  width: 16px;
+}
+
 /* Bootstrap Overrides - Start */
 
 .modal-header {

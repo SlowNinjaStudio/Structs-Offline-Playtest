@@ -1,4 +1,5 @@
-import {DEFENSE_COMPONENTS, IMG, MAX_HEART_ICONS} from "../../modules/Constants.js";
+import {DEFENSE_COMPONENTS, GAME_PHASES, IMG, MAX_HEART_ICONS} from "../../modules/Constants.js";
+import {Appraiser} from "../../modules/Appraiser.js";
 
 export class UIStructMapView {
   /**
@@ -10,6 +11,7 @@ export class UIStructMapView {
     this.state = state;
     this.struct = struct;
     this.player = player;
+    this.apprasier = new Appraiser();
   }
 
   renderHealthInHearts() {
@@ -95,11 +97,24 @@ export class UIStructMapView {
     return statusIcons;
   }
 
+  renderCost() {
+    if (!this.struct || this.struct.isCommandStruct()) {
+      return '';
+    }
+
+    const cost = this.apprasier.calcUnitTypePrice(this.struct.unitType);
+    return `
+      <span class="font-smaller text-body align-middle fw-bold">${cost} </span>
+      <img src="${IMG.RASTER_ICONS}icon-watt-grey-32x32.png" alt="Currency Icon" class="icon-raster-small">
+    `;
+  }
+
   render() {
     let isSelectable = true;
     if (this.state.action) {
       isSelectable = this.state.action.applicableStructsFilter(this.struct);
     }
+    const isCombatPhase = this.state.gamePhase === GAME_PHASES.COMBAT;
     return `
       ${(this.struct.isDestroyed || !isSelectable) ? '' : `
       <a
@@ -114,7 +129,7 @@ export class UIStructMapView {
         <div class="struct ${(this.struct.isDestroyed || !isSelectable) ? 'unselectable' : ''}">
           <div>${this.renderHealthInHearts()}</div>
           <img src="${this.struct.image}" alt="${this.struct.unitType}">
-          <div>${this.renderStatusIcons()}</div>
+          <div>${isCombatPhase ? this.renderStatusIcons() : this.renderCost()}</div>
         </div>
       ${this.struct.isDestroyed ? '' : `
       </a>
