@@ -2,6 +2,7 @@ import {PLAYER_DEFAULTS, UNIT_TYPES} from "./Constants.js";
 import {CommandStructBuilder} from "./CommandStructBuilder.js";
 import {IdGenerator} from "./util/IdGenerator.js";
 import {Fleet} from "./Fleet.js";
+import {CreditManager} from "./CreditManager.js";
 
 export class Player {
   /**
@@ -14,9 +15,7 @@ export class Player {
     commandShip.playerId = this.id;
     this.commandStruct = commandShip;
     this.fleet = new Fleet(this.id);
-    this.qualitativeBudget = null;
-    this.budget = null;
-    this.credits = null;
+    this.creditManager = new CreditManager();
   }
 
   /**

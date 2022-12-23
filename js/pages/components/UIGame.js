@@ -104,7 +104,7 @@ export class UIGame {
     if (button) {
       button.addEventListener('click', function () {
         this.state.turn.fleet.reset();
-        this.fleetGenerator.generateFleet(this.state.turn.fleet, this.state.turn.budget);
+        this.fleetGenerator.generateFleet(this.state.turn.fleet, this.state.turn.creditManager.budget);
         this.render();
       }.bind(this))
     }
@@ -126,7 +126,7 @@ export class UIGame {
       button.addEventListener('click', function () {
         if (this.state.gamePhase === GAME_PHASES.FLEET_SELECT_P1 && this.state.gameMode === GAME_MODES.ONE_PLAYER) {
           this.state.enemy.fleet.reset();
-          this.fleetGenerator.generateFleet(this.state.enemy.fleet, this.state.enemy.budget);
+          this.fleetGenerator.generateFleet(this.state.enemy.fleet, this.state.enemy.creditManager.budget);
           this.state.gamePhase = GAME_PHASES.COMBAT;
           window.dispatchEvent(new CustomEvent(EVENTS.TURNS.FIRST_TURN));
         } else if (this.state.gamePhase === GAME_PHASES.FLEET_SELECT_P1 && this.state.gameMode === GAME_MODES.TWO_PLAYER) {

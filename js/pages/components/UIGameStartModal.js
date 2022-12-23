@@ -1,5 +1,4 @@
 import {EVENTS, GAME_MODES, GAME_PHASES} from "../../modules/Constants.js";
-import {QualitativeBudgetConverter} from "../../modules/QualitativeBudgetConverter.js";
 
 export class UIGameStartModal {
   /**
@@ -14,7 +13,6 @@ export class UIGameStartModal {
     this.buttonSaveBudgetId = 'buttonSaveBudgetId';
     this.selectBudgetPlayer1Id = 'selectBudgetPlayer1Id';
     this.selectBudgetPlayer2Id = 'selectBudgetPlayer2Id';
-    this.qualitativeBudgetConverter = new QualitativeBudgetConverter();
   }
 
   hide() {
@@ -56,12 +54,10 @@ export class UIGameStartModal {
     if (button) {
       button.addEventListener('click', function() {
         this.state.gamePhase = GAME_PHASES.FLEET_SELECT_P1;
-        this.state.player.qualitativeBudget = document.getElementById(this.selectBudgetPlayer1Id).value;
-        this.state.player.budget = this.qualitativeBudgetConverter.convertToNumber(this.state.player.qualitativeBudget);
-        this.state.player.credits = this.state.player.budget;
-        this.state.enemy.qualitativeBudget = document.getElementById(this.selectBudgetPlayer2Id).value;
-        this.state.enemy.budget = this.qualitativeBudgetConverter.convertToNumber(this.state.enemy.qualitativeBudget);
-        this.state.enemy.credits = this.state.enemy.budget;
+        this.state.player.creditManager.setQualitativeBudget(document.getElementById(this.selectBudgetPlayer1Id).value);
+        this.state.player.creditManager.initFromQualitativeBudget();
+        this.state.enemy.creditManager.setQualitativeBudget(document.getElementById(this.selectBudgetPlayer2Id).value);
+        this.state.enemy.creditManager.initFromQualitativeBudget();
 
         this.hide();
 
