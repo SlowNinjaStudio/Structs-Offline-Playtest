@@ -38,6 +38,7 @@ export class FleetGenerator {
   /**
    * @param {Fleet} fleet
    * @param {number} budget
+   * @return {number} amount spent generating fleet
    */
   generateFleet(fleet, budget) {
     if (fleet.numberOfStructs() !== 0) {
@@ -46,7 +47,7 @@ export class FleetGenerator {
 
     const budgetsByAmbit = this.divideBudget(budget);
     const ambits = this.ambitsUtil.getAmbitsTopFirst();
-    let leftoverBudget = budget - budgetsByAmbit.getTotal();
+    let totalSpend = 0;
 
     ambits.forEach(ambit => {
       const target = budgetsByAmbit.get(ambit);
@@ -67,10 +68,11 @@ export class FleetGenerator {
         const selectedUnit = matchingUnits[Math.floor(Math.random() * matchingUnits.length)];
         if (selectedUnit) {
           fleet.addStruct(this.structBuilder.make(selectedUnit.unitType));
+          totalSpend += this.appraiser.calcUnitTypePrice(selectedUnit.unitType);
         }
       }
-
-      leftoverBudget += target - optimalSpendSuggestion.sum;
     });
+
+    return totalSpend;
   }
 }
