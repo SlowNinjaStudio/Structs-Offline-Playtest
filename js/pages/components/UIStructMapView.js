@@ -111,17 +111,23 @@ export class UIStructMapView {
 
   render() {
     let isSelectable = true;
-    if (this.state.action) {
+    if (([GAME_PHASES.FLEET_SELECT_P1, GAME_PHASES.FLEET_SELECT_P2].includes(this.state.gamePhase))
+      && this.struct.isCommandStruct()) {
+      isSelectable = false;
+    } else if (this.state.action) {
       isSelectable = this.state.action.applicableStructsFilter(this.struct);
     }
     const isCombatPhase = this.state.gamePhase === GAME_PHASES.COMBAT;
     return `
       ${(this.struct.isDestroyed || !isSelectable) ? '' : `
       <a
-        class="struct-map-view-btn"
+        class="map-slot-btn struct-map-view-btn"
         data-player-id="${this.player.id}"
+        data-ambit="${this.struct.operatingAmbit}"
+        data-ambit-slot="${this.struct.ambitSlot}"
         data-struct-id="${this.struct.id}"
         data-is-command-struct="${this.struct.isCommandStruct() ? 1 : 0}"
+        data-is-command-slot="${this.struct.isCommandStruct() ? 1 : 0}"
         href="javascript: void(0)"
         role="button"
       >

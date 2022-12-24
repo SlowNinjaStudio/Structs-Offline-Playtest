@@ -13,6 +13,7 @@ import {AI} from "../../modules/AI.js";
 import {UICancelAction} from "./UICancelAction.js";
 import {CombatEventLogItem} from "../../modules/CombatEventLogItem.js";
 import {FleetGenerator} from "../../modules/FleetGenerator.js";
+import {UIStructSelection} from "./UIStructSelection.js";
 
 export class UIGame {
 
@@ -99,6 +100,46 @@ export class UIGame {
     });
   }
 
+  initFleetSelectionListeners() {
+    if (![GAME_PHASES.FLEET_SELECT_P1, GAME_PHASES.FLEET_SELECT_P2].includes(this.state.gamePhase)) {
+      return;
+    }
+
+    document.querySelectorAll('.map-slot-btn').forEach(slotButton => {
+      slotButton.addEventListener('click', function() {
+        const playerId = slotButton.getAttribute('data-player-id');
+        const ambit = slotButton.getAttribute('data-ambit');
+        const ambitSlot = parseInt(slotButton.getAttribute('data-ambit-slot'));
+        const structId = slotButton.getAttribute('data-struct-id');
+        const isCommandStruct = !!parseInt(slotButton.getAttribute('data-is-command-struct'));
+
+        const player = (this.state.getPlayers()).find(player => player.id === playerId);
+        const struct = isCommandStruct ? player.commandStruct : player.fleet.findStructById(structId);
+
+        const domOffcanvas = document.getElementById('offcanvasBottom');
+        const bsOffcanvas = bootstrap.Offcanvas.getOrCreateInstance(domOffcanvas);
+        const offcanvasClass = (this.state.player.id === playerId) ? 'player' : 'enemy';
+
+        domOffcanvas.classList.remove('player');
+        domOffcanvas.classList.remove('enemy');
+        domOffcanvas.classList.add(offcanvasClass);
+
+        const uiStructSelection = new UIStructSelection(
+          this.state,
+          player,
+          ambit,
+          ambitSlot,
+          struct
+        );
+        domOffcanvas.innerHTML = uiStructSelection.render();
+        uiStructSelection.initListeners();
+
+        bsOffcanvas.show();
+
+      }.bind(this));
+    });
+  }
+
   initFleetGenerateListener() {
     const button = document.getElementById(this.fleetGenerateButtonId);
     if (button) {
@@ -152,6 +193,7 @@ export class UIGame {
   initListenersPerRender() {
     this.initEmptyCommandSlotListeners();
     this.initStructListeners();
+    this.initFleetSelectionListeners();
     this.initFleetGenerateListener();
     this.initFleetResetListener();
     this.initFleetSetupCompleteListener();

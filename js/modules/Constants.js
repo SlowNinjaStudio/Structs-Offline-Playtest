@@ -95,6 +95,18 @@ export const
     STRUCTS: 'img/'
   },
 
+  ICONS = {
+    GUIDED: `<img src="${IMG.ICONS}icon-accuracy.png" alt="Guided Icon" class="icon-pixel-art icon-guided">`,
+    UNGUIDED: `<img src="${IMG.ICONS}icon-unguided.png" alt="Unguided Icon" class="icon-pixel-art icon-unguided">`,
+    SPACE: `<img src="${IMG.ICONS}icon-ambit-space.png" alt="Space Icon" class="icon-pixel-art icon-space">`,
+    SKY: `<img src="${IMG.ICONS}icon-ambit-sky.png" alt="Sky Icon" class="icon-pixel-art icon-sky">`,
+    LAND: `<img src="${IMG.ICONS}icon-ambit-land.png" alt="Land Icon" class="icon-pixel-art icon-land">`,
+    WATER: `<img src="${IMG.ICONS}icon-ambit-water.png" alt="Water Icon" class="icon-pixel-art icon-water">`,
+    DAMAGE: `<img src="${IMG.ICONS}icon-fire.png" alt="Damage Icon" class="icon-pixel-art icon-damage">`,
+    COUNTER_ATTACK: `<img src="${IMG.ICONS}icon-counter-attack.png" alt="Counter Attack Icon" class="icon-pixel-art icon-counter-attack">`,
+    DEFENSE: `<img src="${IMG.ICONS}icon-def-melee.png" alt="Defense Icon" class="icon-pixel-art icon-defense">`,
+  },
+
   MANUAL_WEAPON_CUSTOM_ACTION_LABELS = {
     GUIDED_WEAPONRY: 'Guided Attack',
     UNGUIDED_WEAPONRY: 'Unguided Attack',

@@ -525,6 +525,44 @@ body {
   width: 16px;
 }
 
+.fleet-select-unit {
+  height: 100%;
+}
+.fleet-select-unit-image {
+  border-radius: 0.25rem;
+  width: 40px;
+}
+.fleet-select-unit-image-placeholder {
+  border: 1px solid #CCCCCC;
+  border-radius: 0.25rem;
+  height: 40px;
+  padding: 0;
+  width: 40px;
+}
+.fleet-select-unit-attributes-placeholder {
+  height: 88px;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.text-currency-green {
+  color: #068271;
+}
+
+.pill-cap-left {
+  width: 40px;
+  min-height: 40px;
+  background: #99A9CF;
+  border-top-left-radius: 0.25rem;
+  border-bottom-left-radius: 0.25rem;
+  text-align: center;
+}
+.pill-body {
+  background: #E7E7E7;
+  border-top-right-radius: 0.25rem;
+  border-bottom-right-radius: 0.25rem;
+  min-height: 40px;
+}
 /* Bootstrap Overrides - Start */
 
 .modal-header {
