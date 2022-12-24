@@ -40,13 +40,25 @@ export class UIStructSelection {
     });
   }
 
+  clearSlot() {
+    if (!this.selectingPlayer.fleet.isSlotAvailable(this.ambit, this.ambitSlot)) {
+      const unitType = this.selectingPlayer.fleet[this.ambit.toLowerCase()][this.ambitSlot].unitType;
+      const refundAmount = this.appraiser.calcUnitTypePrice(unitType);
+      this.selectingPlayer.creditManager.addCredits(refundAmount);
+    }
+    this.selectingPlayer.fleet.clearSlot(this.ambit, this.ambitSlot);
+  }
+
   initSaveSelection() {
     document.getElementById(this.fleetSelectSaveBtnId).addEventListener('click', function() {
       if (!this.currentSelectedUnitType) {
-        this.selectingPlayer.fleet.clearSlot(this.ambit, this.ambitSlot);
+        this.clearSlot();
       } else if (!this.preselectedStruct || this.currentSelectedUnitType !== this.preselectedStruct.unitType) {
-        this.selectingPlayer.fleet.clearSlot(this.ambit, this.ambitSlot);
-        this.selectingPlayer.fleet.addStruct(this.structBuilder.make(this.currentSelectedUnitType), this.ambitSlot);
+        this.clearSlot();
+        const selectedUnit = this.structBuilder.make(this.currentSelectedUnitType);
+        const price = this.appraiser.calcUnitTypePrice(this.currentSelectedUnitType);
+        this.selectingPlayer.creditManager.pay(price);
+        this.selectingPlayer.fleet.addStruct(selectedUnit, this.ambitSlot);
       }
 
       const domOffcanvas = document.getElementById(this.state.offcanvasId);

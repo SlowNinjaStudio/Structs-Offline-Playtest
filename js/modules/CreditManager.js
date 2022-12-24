@@ -41,4 +41,21 @@ export class CreditManager {
   getBudgetUsageString() {
     return `${this.credits}/${this.budget}`;
   }
+
+  /**
+   * @param {number} price
+   */
+  pay(price) {
+    if (price > this.credits) {
+      throw new CreditManagerError('Cannot pay, insufficient credits');
+    }
+    this.credits = this.credits - price;
+  }
+
+  /**
+   * @param {number} amount
+   */
+  addCredits(amount) {
+    this.credits += amount;
+  }
 }
