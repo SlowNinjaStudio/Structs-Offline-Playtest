@@ -1,5 +1,12 @@
 import {UIFleet} from "./UIFleet.js";
-import {EVENTS, GAME_MODES, GAME_PHASES, IMG, MANUAL_WEAPON_SLOTS} from "../../modules/Constants.js";
+import {
+  EVENTS,
+  GAME_MODES,
+  GAME_PHASES,
+  IMG,
+  MANUAL_WEAPON_SLOTS,
+  QUALITATIVE_BUDGETS
+} from "../../modules/Constants.js";
 import {UIStructDetails} from "./UIStructDetails.js";
 import {StructRefDTO} from "../../modules/dtos/StructRefDTO.js";
 import {SlotRefDTO} from "../../modules/dtos/SlotRefDTO.js";
@@ -143,11 +150,20 @@ export class UIGame {
     const button = document.getElementById(this.fleetGenerateButtonId);
     if (button) {
       button.addEventListener('click', function () {
-        this.state.turn.fleet.reset();
-        this.state.turn.creditManager.credits = this.state.turn.creditManager.budget - this.fleetGenerator.generateFleet(
-          this.state.turn.fleet,
-          this.state.turn.creditManager.budget
-        );
+        if (this.state.turn.creditManager.qualitativeBudget === 'RANDOM') {
+          this.state.turn.creditManager.initFromQualitativeBudget();
+        }
+        if (this.state.turn.creditManager.qualitativeBudget === 'CURATED') {
+          this.fleetGenerator.generateCuratedFleet(this.state.turn.fleet);
+          this.state.turn.creditManager.pay(QUALITATIVE_BUDGETS.CURATED.MAX);
+        } else {
+          this.state.turn.fleet.reset();
+          this.state.turn.creditManager.credits = this.state.turn.creditManager.budget - this.fleetGenerator.generateFleet(
+            this.state.turn.fleet,
+            this.state.turn.creditManager.budget
+          );
+        }
+
         this.render();
       }.bind(this))
     }

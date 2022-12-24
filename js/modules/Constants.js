@@ -154,15 +154,15 @@ export const
 
   QUALITATIVE_BUDGETS = {
     LOW: {
-      MIN: 24,
-      MAX: 32
+      MIN: 16,
+      MAX: 24
     },
     MEDIUM: {
-      MIN: 40,
-      MAX: 56
+      MIN: 24,
+      MAX: 40
     },
     HIGH: {
-      MIN: 64,
+      MIN: 40,
       MAX: 80
     },
     RANDOM: {
