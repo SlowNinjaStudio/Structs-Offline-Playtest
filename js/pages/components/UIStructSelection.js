@@ -201,7 +201,13 @@ export class UIStructSelection {
     return `
       <div class="col-sm-6">
         <a href="javascript:void(0);" class="${this.fleetSelectOptionBtnClass}" data-unit-type="${unitType}">
-          <div class="fleet-select-unit card pt-2 ${this.currentSelectedUnitType === unitType ? 'fleet-select-selected' : ''} ">
+          <div class="
+            fleet-select-unit
+            card
+            pt-2
+            ${this.currentSelectedUnitType === unitType ? 'fleet-select-selected' : ''}
+            ${unitPrice > this.selectingPlayer.creditManager.credits ? 'fleet-select-over-budget' : ''}
+          ">
 
             <div class="container-fluid">
               <div class="row align-items-center mb-2">
@@ -234,16 +240,24 @@ export class UIStructSelection {
     for (let i = 0; i < units.length; i++) {
       options += this.renderOption(units[i]);
     }
+    const selectedPrice = this.currentSelectedUnitType ? this.appraiser.calcUnitTypePrice(this.currentSelectedUnitType) : 0;
+    const isOverBudget = selectedPrice > this.selectingPlayer.creditManager.credits;
 
     document.getElementById(this.state.offcanvasId).innerHTML =  `
       <div class="offcanvas-header">
         <div class="container-fluid">
-          <div class="row">
+          <div class="row pb-2">
             <div class="col text-start">
               <h5 class="offcanvas-title" id="offcanvasBottomLabel">${this.util.titleCase(this.ambit)} Structs</h5>
             </div>
             <div class="col text-end">
-              <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+              <span class="
+                fw-bold
+                align-middle
+                ${isOverBudget ? 'text-danger' : 'text-void-grey' }
+              ">${this.selectingPlayer.creditManager.getBudgetUsageString()}</span>
+              <img src="${IMG.RASTER_ICONS}icon-watt-${isOverBudget ? 'red' : 'grey' }-16x16.png" alt="Currency Icon">
+              <button type="button" class="btn-close text-reset align-middle" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
           </div>
         </div>
@@ -256,7 +270,11 @@ export class UIStructSelection {
           <div class="row pt-2">
             <div class="col">
               <div class="d-grid">
-                <a href="javascript: void(0)" id="${this.fleetSelectSaveBtnId}" class="btn btn-primary">Save</a>
+                <button
+                  id="${this.fleetSelectSaveBtnId}"
+                  class="btn btn-primary"
+                  ${isOverBudget ? 'disabled' : ''}
+                >Save</button>
               </div>
             </div>
           </div>

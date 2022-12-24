@@ -555,6 +555,9 @@ a:hover.fleet-select-option-btn {
 .fleet-select-selected {
   border: 2px solid #0d6efd;
 }
+.fleet-select-selected.fleet-select-over-budget {
+  border: 2px solid #dc3545;
+}
 
 .text-currency-green {
   color: #068271;
@@ -573,6 +576,10 @@ a:hover.fleet-select-option-btn {
   border-top-right-radius: 0.25rem;
   border-bottom-right-radius: 0.25rem;
   min-height: 40px;
+}
+
+.text-void-grey {
+  color: #424562;
 }
 /* Bootstrap Overrides - Start */
 
