@@ -1,6 +1,6 @@
 import {StructBuilder} from "../../modules/StructBuilder.js";
 import {Appraiser} from "../../modules/Appraiser.js";
-import {DEFENSE_COMPONENT_TYPES, ICONS, IMG, UNITS_BY_AMBIT} from "../../modules/Constants.js";
+import {DEFENSE_COMPONENT_TYPES, EVENTS, ICONS, IMG, UNITS_BY_AMBIT} from "../../modules/Constants.js";
 import {Util} from "../../modules/util/Util.js";
 
 export class UIStructSelection {
@@ -26,10 +26,40 @@ export class UIStructSelection {
     this.structBuilder = new StructBuilder();
     this.appraiser = new Appraiser();
     this.util = new Util();
+    this.fleetSelectOptionBtnClass = 'fleet-select-option-btn';
+    this.fleetSelectSaveBtnId = 'fleetSelectSaveBtn';
+    this.currentSelectedUnitType = this.preselectedStruct ? this.preselectedStruct.unitType : '';
+  }
+
+  initFleetSelectOptionsListeners() {
+    document.querySelectorAll(`.${this.fleetSelectOptionBtnClass}`).forEach(button => {
+      button.addEventListener('click', function() {
+        this.currentSelectedUnitType = button.getAttribute('data-unit-type');
+        this.render();
+      }.bind(this));
+    });
+  }
+
+  initSaveSelection() {
+    document.getElementById(this.fleetSelectSaveBtnId).addEventListener('click', function() {
+      if (!this.currentSelectedUnitType) {
+        this.selectingPlayer.fleet.clearSlot(this.ambit, this.ambitSlot);
+      } else if (!this.preselectedStruct || this.currentSelectedUnitType !== this.preselectedStruct.unitType) {
+        this.selectingPlayer.fleet.clearSlot(this.ambit, this.ambitSlot);
+        this.selectingPlayer.fleet.addStruct(this.structBuilder.make(this.currentSelectedUnitType), this.ambitSlot);
+      }
+
+      const domOffcanvas = document.getElementById(this.state.offcanvasId);
+      const bsOffcanvas = bootstrap.Offcanvas.getOrCreateInstance(domOffcanvas);
+      bsOffcanvas.hide();
+
+      window.dispatchEvent(new CustomEvent(EVENTS.RENDER.RENDER_GAME));
+    }.bind(this));
   }
 
   initListeners() {
-    // TO DO
+    this.initFleetSelectOptionsListeners();
+    this.initSaveSelection();
   }
 
   /**
@@ -158,28 +188,30 @@ export class UIStructSelection {
 
     return `
       <div class="col-sm-6">
-        <div class="fleet-select-unit card pt-2">
+        <a href="javascript:void(0);" class="${this.fleetSelectOptionBtnClass}" data-unit-type="${unitType}">
+          <div class="fleet-select-unit card pt-2 ${this.currentSelectedUnitType === unitType ? 'fleet-select-selected' : ''} ">
 
-          <div class="container-fluid">
-            <div class="row align-items-center mb-2">
-              <div class="col-auto">
-                ${unitImage}
-              </div>
-              <div class="col ps-0">
-                <div class="row align-items-center">
-                  <div class="col">
-                    ${this.util.titleCase(unitName)}
-                  </div>
-                  <div class="col-auto text-currency-green fw-bold">
-                    ${unitPrice} <img src="${IMG.RASTER_ICONS}icon-watt-green-16x16.png" alt="Currency Icon">
+            <div class="container-fluid">
+              <div class="row align-items-center mb-2">
+                <div class="col-auto">
+                  ${unitImage}
+                </div>
+                <div class="col ps-0">
+                  <div class="row align-items-center">
+                    <div class="col">
+                      ${this.util.titleCase(unitName)}
+                    </div>
+                    <div class="col-auto text-currency-green fw-bold">
+                      ${unitPrice} <img src="${IMG.RASTER_ICONS}icon-watt-green-16x16.png" alt="Currency Icon">
+                    </div>
                   </div>
                 </div>
               </div>
+              ${unitAttributes}
             </div>
-            ${unitAttributes}
-          </div>
 
-        </div>
+          </div>
+        </a>
       </div>
     `;
   }
@@ -191,7 +223,7 @@ export class UIStructSelection {
       options += this.renderOption(units[i]);
     }
 
-    return `
+    document.getElementById(this.state.offcanvasId).innerHTML =  `
       <div class="offcanvas-header">
         <div class="container-fluid">
           <div class="row">
@@ -209,8 +241,17 @@ export class UIStructSelection {
           <div class="row g-2">
             ${options}
           </div>
+          <div class="row pt-2">
+            <div class="col">
+              <div class="d-grid">
+                <a href="javascript: void(0)" id="${this.fleetSelectSaveBtnId}" class="btn btn-primary">Save</a>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     `;
+
+    this.initListeners();
   }
 }

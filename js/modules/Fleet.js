@@ -175,6 +175,18 @@ export class Fleet {
 
   /**
    * @param {string} ambit
+   * @param {number} index
+   */
+  clearSlot(ambit, index) {
+    if (this[ambit.toLowerCase()][index]) {
+      this[ambit.toLowerCase()][index].playerId = '';
+      this[ambit.toLowerCase()][index].clearAmbitSlot();
+      this[ambit.toLowerCase()][index] = null;
+    }
+  }
+
+  /**
+   * @param {string} ambit
    * @param {string} id
    * @return {boolean}
    */
@@ -183,9 +195,7 @@ export class Fleet {
     if (index < 0) {
       return false;
     }
-    this[ambit.toLowerCase()][index].playerId = '';
-    this[ambit.toLowerCase()][index].clearAmbitSlot();
-    this[ambit.toLowerCase()][index] = null;
+    this.clearSlot(ambit, index);
     return true;
   }
 

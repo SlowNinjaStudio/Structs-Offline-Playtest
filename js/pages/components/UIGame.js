@@ -116,7 +116,7 @@ export class UIGame {
         const player = (this.state.getPlayers()).find(player => player.id === playerId);
         const struct = isCommandStruct ? player.commandStruct : player.fleet.findStructById(structId);
 
-        const domOffcanvas = document.getElementById('offcanvasBottom');
+        const domOffcanvas = document.getElementById(this.state.offcanvasId);
         const bsOffcanvas = bootstrap.Offcanvas.getOrCreateInstance(domOffcanvas);
         const offcanvasClass = (this.state.player.id === playerId) ? 'player' : 'enemy';
 
@@ -131,8 +131,7 @@ export class UIGame {
           ambitSlot,
           struct
         );
-        domOffcanvas.innerHTML = uiStructSelection.render();
-        uiStructSelection.initListeners();
+        uiStructSelection.render();
 
         bsOffcanvas.show();
 
