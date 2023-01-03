@@ -2,7 +2,7 @@ import {Appraiser} from "./Appraiser.js";
 import {AmbitsUtil} from "./util/AmbitsUtil.js";
 import {AmbitDistribution} from "./AmbitDistribution.js";
 import {Knapsack} from "./Knapsack.js";
-import {MAX_FLEET_STRUCTS_PER_AMBIT} from "./Constants.js";
+import {MAX_FLEET_STRUCTS_PER_AMBIT, UNIT_TYPES} from "./Constants.js";
 import {FleetGeneratorError} from "./errors/FleetGeneratorError.js";
 import {StructBuilder} from "./StructBuilder.js";
 
@@ -38,6 +38,7 @@ export class FleetGenerator {
   /**
    * @param {Fleet} fleet
    * @param {number} budget
+   * @return {number} amount spent generating fleet
    */
   generateFleet(fleet, budget) {
     if (fleet.numberOfStructs() !== 0) {
@@ -46,7 +47,7 @@ export class FleetGenerator {
 
     const budgetsByAmbit = this.divideBudget(budget);
     const ambits = this.ambitsUtil.getAmbitsTopFirst();
-    let leftoverBudget = budget - budgetsByAmbit.getTotal();
+    let totalSpend = 0;
 
     ambits.forEach(ambit => {
       const target = budgetsByAmbit.get(ambit);
@@ -67,10 +68,34 @@ export class FleetGenerator {
         const selectedUnit = matchingUnits[Math.floor(Math.random() * matchingUnits.length)];
         if (selectedUnit) {
           fleet.addStruct(this.structBuilder.make(selectedUnit.unitType));
+          totalSpend += this.appraiser.calcUnitTypePrice(selectedUnit.unitType);
         }
       }
-
-      leftoverBudget += target - optimalSpendSuggestion.sum;
     });
+
+    return totalSpend;
+  }
+
+  /**
+   * @param {Fleet} fleet
+   */
+  generateCuratedFleet(fleet) {
+    fleet.reset();
+    fleet.addStruct(this.structBuilder.make(UNIT_TYPES.STAR_FIGHTER));
+    fleet.addStruct(this.structBuilder.make(UNIT_TYPES.SPACE_FRIGATE));
+    fleet.addStruct(this.structBuilder.make(UNIT_TYPES.GALACTIC_BATTLESHIP));
+    fleet.addStruct(this.structBuilder.make(UNIT_TYPES.STAR_FIGHTER));
+    fleet.addStruct(this.structBuilder.make(UNIT_TYPES.FIGHTER_JET));
+    fleet.addStruct(this.structBuilder.make(UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR));
+    fleet.addStruct(this.structBuilder.make(UNIT_TYPES.STEALTH_BOMBER));
+    fleet.addStruct(this.structBuilder.make(UNIT_TYPES.FIGHTER_JET));
+    fleet.addStruct(this.structBuilder.make(UNIT_TYPES.TANK));
+    fleet.addStruct(this.structBuilder.make(UNIT_TYPES.ARTILLERY));
+    fleet.addStruct(this.structBuilder.make(UNIT_TYPES.SAM_LAUNCHER));
+    fleet.addStruct(this.structBuilder.make(UNIT_TYPES.TANK));
+    fleet.addStruct(this.structBuilder.make(UNIT_TYPES.SUB));
+    fleet.addStruct(this.structBuilder.make(UNIT_TYPES.DESTROYER));
+    fleet.addStruct(this.structBuilder.make(UNIT_TYPES.CRUISER));
+    fleet.addStruct(this.structBuilder.make(UNIT_TYPES.SUB));
   }
 }

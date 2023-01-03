@@ -76,6 +76,13 @@ export const
     MAX_HEALTH: 3,
   },
 
+  GAME_PHASES = {
+    BUDGET_SELECT: 'BUDGET_SELECT',
+    FLEET_SELECT_P1: 'FLEET_SELECT_P1',
+    FLEET_SELECT_P2: 'FLEET_SELECT_P2',
+    COMBAT: 'COMBAT',
+  },
+
   GAME_MODES = {
     ONE_PLAYER: '1_PLAYER',
     TWO_PLAYER: '2_PLAYER',
@@ -84,7 +91,20 @@ export const
   IMG = {
     ICONS: 'img/icons/',
     LARGE_ICONS: 'img/icons/large/',
+    RASTER_ICONS: 'img/icons/raster/',
     STRUCTS: 'img/'
+  },
+
+  ICONS = {
+    GUIDED: `<img src="${IMG.ICONS}icon-accuracy.png" alt="Guided Icon" class="icon-pixel-art icon-guided">`,
+    UNGUIDED: `<img src="${IMG.ICONS}icon-unguided.png" alt="Unguided Icon" class="icon-pixel-art icon-unguided">`,
+    SPACE: `<img src="${IMG.ICONS}icon-ambit-space.png" alt="Space Icon" class="icon-pixel-art icon-space">`,
+    SKY: `<img src="${IMG.ICONS}icon-ambit-sky.png" alt="Sky Icon" class="icon-pixel-art icon-sky">`,
+    LAND: `<img src="${IMG.ICONS}icon-ambit-land.png" alt="Land Icon" class="icon-pixel-art icon-land">`,
+    WATER: `<img src="${IMG.ICONS}icon-ambit-water.png" alt="Water Icon" class="icon-pixel-art icon-water">`,
+    DAMAGE: `<img src="${IMG.ICONS}icon-fire.png" alt="Damage Icon" class="icon-pixel-art icon-damage">`,
+    COUNTER_ATTACK: `<img src="${IMG.ICONS}icon-counter-attack.png" alt="Counter Attack Icon" class="icon-pixel-art icon-counter-attack">`,
+    DEFENSE: `<img src="${IMG.ICONS}icon-def-melee.png" alt="Defense Icon" class="icon-pixel-art icon-defense">`,
   },
 
   MANUAL_WEAPON_CUSTOM_ACTION_LABELS = {
@@ -130,6 +150,29 @@ export const
   PLAYER_DEFAULTS = {
     ID_PREFIX: 'player-',
     MAX_ACTIVE_FLEET_STRUCTS: 16
+  },
+
+  QUALITATIVE_BUDGETS = {
+    LOW: {
+      MIN: 16,
+      MAX: 24
+    },
+    MEDIUM: {
+      MIN: 24,
+      MAX: 40
+    },
+    HIGH: {
+      MIN: 40,
+      MAX: 80
+    },
+    RANDOM: {
+      MIN: 24,
+      MAX: 64
+    },
+    CURATED: {
+      MIN: 43,
+      MAX: 43
+    }
   },
 
   STRUCT_DEFAULTS = {
