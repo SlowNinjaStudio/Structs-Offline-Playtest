@@ -1,4 +1,4 @@
-import {EVENTS} from "../../modules/Constants.js";
+import {EVENTS, GAME_PHASES} from "../../modules/Constants.js";
 
 export class UIEmptyMapSlot {
 
@@ -21,9 +21,12 @@ export class UIEmptyMapSlot {
    * @return {boolean}
    */
   isSelectableSlot() {
-    return !this.state.action
-      || (
-        this.state.action.getType() === EVENTS.ACTIONS.ACTION_MOVE
+    return (
+        ![GAME_PHASES.FLEET_SELECT_P1, GAME_PHASES.FLEET_SELECT_P2].includes(this.state.gamePhase)
+        || !this.isCommandSlot
+      ) || (
+        this.state.action
+        && this.state.action.getType() === EVENTS.ACTIONS.ACTION_MOVE
         && this.state.action.source.playerId === this.player.id
         && this.isCommandSlot
       );
@@ -37,10 +40,12 @@ export class UIEmptyMapSlot {
     return `
       ${isSelectable ? `
       <a
-        class="empty-slot ${this.isCommandSlot ? 'command' : 'fleet'}"
+        class="map-slot-btn empty-slot ${this.isCommandSlot ? 'command' : 'fleet'}"
         data-player-id="${this.player.id}"
         data-ambit="${this.ambit}"
         data-ambit-slot="${this.ambitSlot}"
+        data-struct-id=""
+        data-is-command-struct="0"
         data-is-command-slot="${this.isCommandSlot ? 1 : 0}"
         href="javascript: void(0)"
         role="button"

@@ -273,10 +273,6 @@ body {
   text-align: center;
 }
 
-.play-area .col {
-  padding: 0;
-}
-
 .navbar .logo {
   height: 40px;
 }
@@ -465,7 +461,7 @@ body {
   max-width: 80px;
 }
 
-.game-over-msg {
+.modal .modal-body.game-over-msg {
   font-size: 32px;
 }
 .player .game-over-msg {
@@ -495,7 +491,106 @@ body {
   border-radius: 4px;
 }
 
+.modal-logo {
+  image-rendering: initial;
+  width: 243px;
+}
+
+.fleetSelectActionsContainer {
+  display: inline-block;
+  max-width: 360px;
+  width: 100%;
+}
+
+.fleetSelectHelp .card.side.container-fluid {
+  font-size: 14px;
+  max-width: 450px;
+}
+
+.fleetSelectHelp .card img.section-icon {
+  margin: 4px 20px 4px 4px;
+  width: 32px;
+}
+
+.bg-space-dust-grey {
+  background-color: #C8D1E5;
+}
+
+.font-smaller {
+  font-size: 12px;
+}
+
+.icon-raster-small {
+  image-rendering: initial;
+  width: 16px;
+}
+
+a.fleet-select-option-btn,
+a:link.fleet-select-option-btn,
+a:visited.fleet-select-option-btn,
+a:hover.fleet-select-option-btn {
+  color: #222222;
+  text-decoration: none;
+}
+
+.fleet-select-unit {
+  height: 100%;
+}
+.fleet-select-unit-image {
+  border-radius: 0.25rem;
+  width: 40px;
+}
+.fleet-select-unit-image-placeholder {
+  border: 1px solid #CCCCCC;
+  border-radius: 0.25rem;
+  height: 40px;
+  padding: 0;
+  width: 40px;
+}
+.fleet-select-unit-attributes-placeholder {
+  height: 88px;
+  margin-bottom: 8px;
+  text-align: center;
+}
+.fleet-select-selected {
+  border: 2px solid #0d6efd;
+}
+.fleet-select-selected.fleet-select-over-budget {
+  border: 2px solid #dc3545;
+}
+
+.text-currency-green {
+  color: #068271;
+}
+
+.pill-cap-left {
+  width: 40px;
+  min-height: 40px;
+  background: #99A9CF;
+  border-top-left-radius: 0.25rem;
+  border-bottom-left-radius: 0.25rem;
+  text-align: center;
+}
+.pill-body {
+  background: #E7E7E7;
+  border-top-right-radius: 0.25rem;
+  border-bottom-right-radius: 0.25rem;
+  min-height: 40px;
+}
+
+.text-void-grey {
+  color: #424562;
+}
 /* Bootstrap Overrides - Start */
+
+.modal-header {
+  border-bottom: 0 none;
+}
+.modal-body {
+  color: #ffffff;
+  font-size: 14px;
+  text-align: left;
+}
 
 .offcanvas.structDetails {
   margin: 0 auto;

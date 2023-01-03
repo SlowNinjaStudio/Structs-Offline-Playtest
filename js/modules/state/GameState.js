@@ -5,6 +5,7 @@ import {AIThreatTracker} from "../AIThreatTracker.js";
 export class GameState {
   constructor() {
     this.gameMode = '';
+    this.gamePhase = '';
 
     this.player = null;
     this.enemy = null;
