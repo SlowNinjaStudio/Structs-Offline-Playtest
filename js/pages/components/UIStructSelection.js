@@ -29,6 +29,8 @@ export class UIStructSelection {
     this.fleetSelectOptionBtnClass = 'fleet-select-option-btn';
     this.fleetSelectSaveBtnId = 'fleetSelectSaveBtn';
     this.currentSelectedUnitType = this.preselectedStruct ? this.preselectedStruct.unitType : '';
+    this.preselectedStructPrice = this.preselectedStruct
+      ? this.appraiser.calcUnitTypePrice(this.preselectedStruct.unitType) : 0;
   }
 
   initFleetSelectOptionsListeners() {
@@ -206,7 +208,7 @@ export class UIStructSelection {
             card
             pt-2
             ${this.currentSelectedUnitType === unitType ? 'fleet-select-selected' : ''}
-            ${unitPrice > this.selectingPlayer.creditManager.credits ? 'fleet-select-over-budget' : ''}
+            ${unitPrice > this.getAvailableCredits() ? 'fleet-select-over-budget' : ''}
           ">
 
             <div class="container-fluid">
@@ -234,6 +236,13 @@ export class UIStructSelection {
     `;
   }
 
+  /**
+   * @return {number}
+   */
+  getAvailableCredits() {
+    return this.selectingPlayer.creditManager.credits + this.preselectedStructPrice;
+  }
+
   render() {
     let options = '';
     let units = [...UNITS_BY_AMBIT[this.ambit], ''];
@@ -241,7 +250,7 @@ export class UIStructSelection {
       options += this.renderOption(units[i]);
     }
     const selectedPrice = this.currentSelectedUnitType ? this.appraiser.calcUnitTypePrice(this.currentSelectedUnitType) : 0;
-    const isOverBudget = selectedPrice > this.selectingPlayer.creditManager.credits;
+    const isOverBudget = selectedPrice > this.getAvailableCredits();
 
     document.getElementById(this.state.offcanvasId).innerHTML =  `
       <div class="offcanvas-header">
@@ -255,7 +264,7 @@ export class UIStructSelection {
                 fw-bold
                 align-middle
                 ${isOverBudget ? 'text-danger' : 'text-void-grey' }
-              ">${this.selectingPlayer.creditManager.getBudgetUsageString()}</span>
+              ">${this.selectingPlayer.creditManager.getBudgetUsageString(this.preselectedStructPrice)}</span>
               <img src="${IMG.RASTER_ICONS}icon-watt-${isOverBudget ? 'red' : 'grey' }-16x16.png" alt="Currency Icon">
               <button type="button" class="btn-close text-reset align-middle" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
