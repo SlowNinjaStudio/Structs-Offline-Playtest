@@ -36,10 +36,21 @@ export class CreditManager {
   }
 
   /**
+   * @param {number} creditOffset
    * @return {string}
    */
-  getBudgetUsageString() {
-    return `${this.credits}/${this.budget}`;
+  getBudgetUsageString(creditOffset = 0) {
+    let creditOffsetString = '';
+
+    if (creditOffset) {
+      if (creditOffset > 0) {
+        creditOffsetString = `+${creditOffset}`;
+      } else {
+        creditOffsetString = `-${creditOffset}`;
+      }
+    }
+
+    return `${this.credits}${creditOffsetString}/${this.budget}`;
   }
 
   /**
