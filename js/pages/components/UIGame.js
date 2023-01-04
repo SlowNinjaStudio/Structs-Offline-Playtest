@@ -362,7 +362,7 @@ export class UIGame {
         this.state.metrics[defenderMetric].incrementStructsLost(e.damageAmount);
         this.state.metrics[attackerMetric].incrementKills(e.damageAmount);
       }
-    })
+    }.bind(this));
   }
 
   initCombatDefenderCounteredListener() {
