@@ -461,7 +461,7 @@ export class UIGame {
                   href="javascript: void(0)"
                   id="${this.fleetGenerateButtonId}"
                   class="btn btn-warning"
-                >Deploy Default</a>
+                >Auto Deploy</a>
               </div>
             </div>
             <div class="col">
