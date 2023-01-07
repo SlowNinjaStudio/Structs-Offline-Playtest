@@ -122,7 +122,7 @@ export class UIGameStartModal {
       </div>
       <div class="modal-body p-4">
         <div class="mb-4">Choose how much Watt each player has. Watt is used to deploy Structs. More advanced Structs cost more Watt.</div>
-        <div class="mb-4 fst-italic">If this you first game, we recommend setting both players to "Low."</div>
+        <div class="mb-4 fst-italic">If this is your first game, we recommend setting both players to "Low."</div>
         <div class="container-fluid p-0">
           <div class="row mb-4 align-items-center">
             <div class="col fw-bold">Player 1 Watt Level</div>
