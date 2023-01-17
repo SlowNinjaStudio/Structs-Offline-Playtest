@@ -226,4 +226,17 @@ export class Fleet {
 
     this.initAmbits();
   }
+
+  /**
+   * @return {number}
+   */
+  generatePower() {
+    let powerGenerated = 0;
+    this.forEachStruct(function(struct) {
+      if (struct.powerGenerator) {
+        powerGenerated += struct.powerGenerator.powerOutput;
+      }
+    });
+    return powerGenerated;
+  }
 }

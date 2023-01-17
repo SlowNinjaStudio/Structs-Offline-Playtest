@@ -15,6 +15,7 @@ export class Struct {
    * @param {ManualWeapon} manualWeaponSecondary
    * @param {PassiveWeapon} passiveWeapon
    * @param {DefenseComponent} defenseComponent
+   * @param {PowerGenerator} powerGenerator
    * @param {string} image
    */
   constructor(
@@ -24,8 +25,8 @@ export class Struct {
     manualWeaponSecondary,
     passiveWeapon = null,
     defenseComponent = null,
-    image = ''
-  ) {
+    powerGenerator = null,
+    image = '') {
     this.id = (new IdGenerator()).generate(STRUCT_DEFAULTS.ID_PREFIX);
     this.unitType = unitType;
     this.operatingAmbit = operatingAmbit;
@@ -43,6 +44,7 @@ export class Struct {
     this.manualWeaponSecondary = manualWeaponSecondary;
     this.passiveWeapon = passiveWeapon;
     this.defenseComponent = defenseComponent ? defenseComponent : new DefenseComponent();
+    this.powerGenerator = powerGenerator;
     this.util = new Util();
     this.combatEventDispatcher = new CombatEventDispatcher();
   }
@@ -386,5 +388,12 @@ export class Struct {
    */
   isBlockingCommandStruct() {
     return !!(this.isBlocking() && this.defending.isCommandStruct());
+  }
+
+  /**
+   * @return {boolean}
+   */
+  isPlanetaryStruct() {
+    return false;
   }
 }

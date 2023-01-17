@@ -6,6 +6,7 @@ export class GameState {
   constructor() {
     this.gameMode = '';
     this.gamePhase = '';
+    this.arePlanetsEnabled = false;
 
     this.player = null;
     this.enemy = null;
