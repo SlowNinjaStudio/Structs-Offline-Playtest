@@ -21,6 +21,7 @@ import {UICancelAction} from "./UICancelAction.js";
 import {CombatEventLogItem} from "../../modules/CombatEventLogItem.js";
 import {FleetGenerator} from "../../modules/FleetGenerator.js";
 import {UIStructSelection} from "./UIStructSelection.js";
+import {PowerManager} from "../../modules/PowerManager.js";
 
 export class UIGame {
 
@@ -42,6 +43,7 @@ export class UIGame {
     this.fleetGenerateButtonId = 'fleetGenerateButtonId';
     this.fleetResetButtonId = 'fleetResetButtonId';
     this.fleetSetupCompleteButtonId = 'fleetSetupCompleteButtonId';
+    this.powerManager = new PowerManager(this.state);
   }
 
   initEmptyCommandSlotListeners() {
@@ -310,6 +312,7 @@ export class UIGame {
       if (this.state.numTurns === 3) {
         this.analytics.trackDefensePhaseEnd();
       }
+      this.powerManager.managePowerPerRound();
       this.render();
 
       if (this.state.gameMode === GAME_MODES.ONE_PLAYER && this.state.turn.id === this.state.enemy.id) {

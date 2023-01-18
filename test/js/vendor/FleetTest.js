@@ -1,8 +1,9 @@
 import {DTest} from "../../DTestFramework.js";
-import {AMBITS, UNIT_TYPES} from "../../../js/modules/Constants.js";
+import {AMBITS, POWER_GENERATORS, UNIT_TYPES} from "../../../js/modules/Constants.js";
 import {StructBuilder} from "../../../js/modules/StructBuilder.js";
 import {Fleet} from "../../../js/modules/Fleet.js";
 import {IdGenerator} from "../../../js/modules/util/IdGenerator.js";
+import {PowerGeneratorFactory} from "../../../js/modules/struct_components/PowerGeneratorFactory.js";
 
 const findStructByAmbitAndIdTest = new DTest('findStructByAmbitAndIdTest', function() {
   const fleet = new Fleet();
@@ -283,6 +284,35 @@ const forEachStructTest = new DTest('forEachStructTest', function() {
   this.assertEquals(structCount.WATER, 1);
 });
 
+const generatePowerTest = new DTest('generatePowerTest', function() {
+  const structBuilder = new StructBuilder();
+  const generatorFactory = new PowerGeneratorFactory();
+
+  const fleet = new Fleet();
+  fleet.initAmbits();
+
+  const galacticBattleship = structBuilder.make(UNIT_TYPES.GALACTIC_BATTLESHIP);
+  galacticBattleship.powerGenerator = generatorFactory.make(POWER_GENERATORS.GENERIC.NAME);
+  const starFighter = structBuilder.make(UNIT_TYPES.STAR_FIGHTER);
+
+  const artillery = structBuilder.make(UNIT_TYPES.ARTILLERY);
+  artillery.powerGenerator = generatorFactory.make(POWER_GENERATORS.GENERIC.NAME);
+  const samLauncher = structBuilder.make(UNIT_TYPES.SAM_LAUNCHER);
+  samLauncher.powerGenerator = generatorFactory.make(POWER_GENERATORS.GENERIC.NAME);
+
+  const cruiser = structBuilder.make(UNIT_TYPES.CRUISER);
+
+  fleet.space[1] = starFighter;
+  fleet.space[3] = galacticBattleship;
+  fleet.land[0] = artillery;
+  fleet.land[2] = samLauncher;
+  fleet.water[3] = cruiser;
+
+  fleet.generatePower();
+
+  this.assertEquals(fleet.generatePower(), 3);
+});
+
 // Test execution
 console.log('FleetTest');
 findStructByAmbitAndIdTest.run();
@@ -297,3 +327,4 @@ addStructTest.run();
 removeStructByAmbitAndIdTest.run();
 isDestroyedTest.run();
 forEachStructTest.run();
+generatePowerTest.run();

@@ -1,7 +1,6 @@
 import {Struct} from "./Struct.js";
-import {COMMAND_STRUCT_DEFAULTS} from "./Constants.js";
 
-export class CommandStruct extends Struct {
+export class PlanetaryStruct extends Struct {
   /**
    * @param {string} unitType
    * @param {string} operatingAmbit
@@ -32,16 +31,14 @@ export class CommandStruct extends Struct {
       powerGenerator,
       image
     );
-    this.maxHealth = COMMAND_STRUCT_DEFAULTS.MAX_HEALTH;
-    this.currentHealth = this.maxHealth;
     this.canDefend = false;
-    this.ambitSlot = -1;
+    this.ambitSlot = -2;
   }
 
   /**
    * @return {boolean}
    */
-  isCommandStruct() {
+  isPlanetaryStruct() {
     return true;
   }
 }
