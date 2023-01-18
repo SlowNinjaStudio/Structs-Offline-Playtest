@@ -105,7 +105,7 @@ export class UIStructMapView {
     const cost = this.apprasier.calcUnitTypePrice(this.struct.unitType);
     return `
       <span class="font-smaller text-body align-middle fw-bold">${cost} </span>
-      <img src="${IMG.RASTER_ICONS}icon-watt-grey-32x32.png" alt="Currency Icon" class="icon-raster-small">
+      <div class="watt-icon text-void-grey"></div>
     `;
   }
 

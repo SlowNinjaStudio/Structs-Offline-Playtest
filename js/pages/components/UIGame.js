@@ -502,8 +502,8 @@ export class UIGame {
 
             <div class="card side container-fluid p-3 text-start">
               <div class="row g-0">
-                <div class="col-auto">
-                  <img src="${IMG.RASTER_ICONS}icon-watt-grey-40x40.png" alt="Currency Icon" class="me-3">
+                <div class="col-auto text-void-grey">
+                  <div class="watt-icon section-icon"></div>
                 </div>
                 <div class="col">
                   <div class="fw-bold">Build Your Army</div>

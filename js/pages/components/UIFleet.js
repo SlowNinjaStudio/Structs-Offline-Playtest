@@ -2,7 +2,7 @@ import {UIFleetCommand} from "./UIFleetCommand.js";
 import {UIStructMapView} from "./UIStructMapView.js";
 import {AmbitsUtil} from "../../modules/util/AmbitsUtil.js";
 import {UIEmptyMapSlot} from "./UIEmptyMapSlot.js";
-import {GAME_PHASES, IMG} from "../../modules/Constants.js";
+import {GAME_PHASES} from "../../modules/Constants.js";
 
 export class UIFleet {
   /**
@@ -60,7 +60,7 @@ export class UIFleet {
             <div class="col-auto">${this.player.name}</div>
             <div class="col-auto fs-5">
               <span class="align-middle">${this.player.creditManager.getBudgetUsageString()}</span>
-              <img src="${IMG.RASTER_ICONS}icon-watt-white-14x16.png" alt="Currency Icon">
+              <div class="watt-icon fleet-title-watt-icon"></div>
             </div>
           </div>
         </div>

@@ -507,9 +507,15 @@ body {
   max-width: 450px;
 }
 
-.fleetSelectHelp .card img.section-icon {
+.fleetSelectHelp .card img.section-icon  {
   margin: 4px 20px 4px 4px;
   width: 32px;
+}
+
+.fleetSelectHelp .card .section-icon.watt-icon  {
+  margin: 4px 20px 4px 4px;
+  height: 32px;
+  width: 28px;
 }
 
 .bg-space-dust-grey {
@@ -581,6 +587,29 @@ a:hover.fleet-select-option-btn {
 .text-void-grey {
   color: #424562;
 }
+
+.watt-icon {
+  background-color: currentColor;
+  display: inline-block;
+  vertical-align: middle;
+  height: 16px;
+  width: 14px;
+
+  -webkit-mask-image: url(../img/icons/svg/icon-watt.svg);
+  -webkit-mask-size:cover; /* OR cover OR fixed values */
+  -webkit-mask-position:center;
+  -webkit-mask-repeat:no-repeat;
+
+  mask-image: url(../img/icons/svg/icon-watt.svg);
+  mask-size:cover; /* OR cover OR fixed values */
+  mask-position:center;
+  mask-repeat:no-repeat;
+}
+.fleet-title-watt-icon.watt-icon {
+  height: 18px;
+  width: 16px;
+}
+
 /* Bootstrap Overrides - Start */
 
 .modal-header {

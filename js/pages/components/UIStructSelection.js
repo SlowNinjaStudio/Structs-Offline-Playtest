@@ -1,6 +1,6 @@
 import {StructBuilder} from "../../modules/StructBuilder.js";
 import {Appraiser} from "../../modules/Appraiser.js";
-import {DEFENSE_COMPONENT_TYPES, EVENTS, ICONS, IMG, UNITS_BY_AMBIT} from "../../modules/Constants.js";
+import {DEFENSE_COMPONENT_TYPES, EVENTS, ICONS, UNITS_BY_AMBIT} from "../../modules/Constants.js";
 import {Util} from "../../modules/util/Util.js";
 
 export class UIStructSelection {
@@ -222,7 +222,7 @@ export class UIStructSelection {
                       ${this.util.titleCase(unitName)}
                     </div>
                     <div class="col-auto text-currency-green fw-bold">
-                      ${unitPrice} <img src="${IMG.RASTER_ICONS}icon-watt-green-16x16.png" alt="Currency Icon">
+                      ${unitPrice} <div class="watt-icon"></div>
                     </div>
                   </div>
                 </div>
@@ -265,7 +265,7 @@ export class UIStructSelection {
                 align-middle
                 ${isOverBudget ? 'text-danger' : 'text-void-grey' }
               ">${this.selectingPlayer.creditManager.getBudgetUsageString(this.preselectedStructPrice)}</span>
-              <img src="${IMG.RASTER_ICONS}icon-watt-${isOverBudget ? 'red' : 'grey' }-16x16.png" alt="Currency Icon">
+              <div class="watt-icon ${isOverBudget ? 'text-danger' : 'text-void-grey' }"></div>
               <button type="button" class="btn-close text-reset align-middle" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
           </div>
