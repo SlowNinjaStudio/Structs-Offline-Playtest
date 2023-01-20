@@ -1,5 +1,5 @@
 import {DTest} from "../../DTestFramework.js";
-import {AMBITS, UNIT_TYPES} from "../../../js/modules/Constants.js";
+import {AMBITS, POWER_GENERATORS, UNIT_TYPES} from "../../../js/modules/Constants.js";
 import {PowerManager} from "../../../js/modules/PowerManager.js";
 import {Player} from "../../../js/modules/Player.js";
 import {GameState} from "../../../js/modules/state/GameState.js";
@@ -54,13 +54,13 @@ const managePowerPerRoundTest = new DTest('managePowerPerRoundTest', function() 
   manager = new PowerManager(state);
   manager.managePowerPerRound();
 
-  this.assertEquals(state.player.creditManager.credits, 1);
-  this.assertEquals(state.enemy.creditManager.credits, 1);
+  this.assertEquals(state.player.creditManager.credits, POWER_GENERATORS.GENERIC.POWER_OUTPUT);
+  this.assertEquals(state.enemy.creditManager.credits, POWER_GENERATORS.GENERIC.POWER_OUTPUT);
 
   manager.managePowerPerRound();
 
-  this.assertEquals(state.player.creditManager.credits, 2);
-  this.assertEquals(state.enemy.creditManager.credits, 2);
+  this.assertEquals(state.player.creditManager.credits, POWER_GENERATORS.GENERIC.POWER_OUTPUT * 2);
+  this.assertEquals(state.enemy.creditManager.credits, POWER_GENERATORS.GENERIC.POWER_OUTPUT * 2);
 });
 
 // Test execution

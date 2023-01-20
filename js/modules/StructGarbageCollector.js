@@ -1,3 +1,5 @@
+import {STRUCT_GARBAGE_COLLECTION} from "./Constants.js";
+
 export class StructGarbageCollector {
   constructor(state) {
     this.state = state;
@@ -11,7 +13,7 @@ export class StructGarbageCollector {
       }
       if (this.garbageStructs.has(struct.id)) {
         const garbage = this.garbageStructs.get(struct.id);
-        if (this.state.numTurns - garbage.destroyedAtTurn >= 2) {
+        if (this.state.numTurns - garbage.destroyedAtTurn >= STRUCT_GARBAGE_COLLECTION.MAX_TURNS) {
           player.fleet.clearSlot(garbage.struct.operatingAmbit, garbage.struct.ambitSlot);
           this.garbageStructs.delete(struct.id);
         }

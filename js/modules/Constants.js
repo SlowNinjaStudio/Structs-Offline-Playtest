@@ -170,7 +170,7 @@ export const
   POWER_GENERATORS = {
     GENERIC: {
       NAME: 'GENERIC',
-      POWER_OUTPUT: 1
+      POWER_OUTPUT: 0.5
     }
   },
 
@@ -199,6 +199,10 @@ export const
 
   STRUCT_DEFAULTS = {
     ID_PREFIX: 'struct-'
+  },
+
+  STRUCT_GARBAGE_COLLECTION = {
+    MAX_TURNS: 4
   },
 
   THREAT = {

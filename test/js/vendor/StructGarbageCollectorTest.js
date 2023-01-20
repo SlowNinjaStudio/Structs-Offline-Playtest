@@ -3,6 +3,7 @@ import {Player} from "../../../js/modules/Player.js";
 import {GameState} from "../../../js/modules/state/GameState.js";
 import {FleetGenerator} from "../../../js/modules/FleetGenerator.js";
 import {StructGarbageCollector} from "../../../js/modules/StructGarbageCollector.js";
+import {STRUCT_GARBAGE_COLLECTION} from "../../../js/modules/Constants.js";
 
 const cleanUpTest = new DTest('cleanUpTest', function() {
   const player = new Player('Player');
@@ -35,7 +36,7 @@ const cleanUpTest = new DTest('cleanUpTest', function() {
   this.assertEquals(state.player.fleet.numberOfStructs(), 16);
   this.assertEquals(state.enemy.fleet.numberOfStructs(), 16);
 
-  state.numTurns += 2;
+  state.numTurns += STRUCT_GARBAGE_COLLECTION.MAX_TURNS;
   garbageCollector.cleanUp();
 
   this.assertEquals(state.player.fleet.numberOfStructs(), 13);
