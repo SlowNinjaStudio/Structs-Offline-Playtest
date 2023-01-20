@@ -19,7 +19,7 @@ state.modalContainerId = 'modalContainer';
 state.offcanvasId = 'offcanvasBottom';
 state.offcanvasTopId = 'offcanvasTop';
 state.turn = state.player;
-// state.arePlanetsEnabled = (new URLSearchParams(window.location.search)).get('planets') !== 'false';
+state.arePlanetsEnabled = (new URLSearchParams(window.location.search)).get('planets') !== 'false';
 
 if (state.arePlanetsEnabled) {
   state.player.planet = new Planet(state.player.id);

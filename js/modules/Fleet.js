@@ -233,7 +233,7 @@ export class Fleet {
   generatePower() {
     let powerGenerated = 0;
     this.forEachStruct(function(struct) {
-      if (struct.powerGenerator) {
+      if (!struct.isDestroyed && struct.powerGenerator) {
         powerGenerated += struct.powerGenerator.powerOutput;
       }
     });

@@ -115,11 +115,11 @@ const calcUnitTypeTacticalValueTest = new DTest('calcUnitTypeTacticalValueTest',
 const getUnitAppraisalsByAmbitTest = new DTest('getUnitAppraisalsByAmbitTest', function(params) {
   const appraiser = new Appraiser();
   const appraisals = appraiser.getUnitAppraisalsByAmbit(params.ambit);
-  this.assertEquals(appraisals.length, UNITS_BY_AMBIT[params.ambit].length);
-  for (let i = 0; i < UNITS_BY_AMBIT[params.ambit].length; i++) {
-    this.assertEquals(appraisals[i].unitType, UNITS_BY_AMBIT[params.ambit][i]);
-    this.assertEquals(appraisals[i].price, appraiser.calcUnitTypePrice(UNITS_BY_AMBIT[params.ambit][i]));
-    this.assertEquals(appraisals[i].tacticalValue, appraiser.calcUnitTypeTacticalValue(UNITS_BY_AMBIT[params.ambit][i]));
+  this.assertEquals(appraisals.length, UNITS_BY_AMBIT.FLEET[params.ambit].length);
+  for (let i = 0; i < UNITS_BY_AMBIT.FLEET[params.ambit].length; i++) {
+    this.assertEquals(appraisals[i].unitType, UNITS_BY_AMBIT.FLEET[params.ambit][i]);
+    this.assertEquals(appraisals[i].price, appraiser.calcUnitTypePrice(UNITS_BY_AMBIT.FLEET[params.ambit][i]));
+    this.assertEquals(appraisals[i].tacticalValue, appraiser.calcUnitTypeTacticalValue(UNITS_BY_AMBIT.FLEET[params.ambit][i]));
   }
 }, function () {
   return [
@@ -133,10 +133,10 @@ const getUnitAppraisalsByAmbitTest = new DTest('getUnitAppraisalsByAmbitTest', f
 const getAllFleetUnitAppraisalsTest = new DTest('getAllFleetUnitAppraisalsTest', function() {
   const appraiser = new Appraiser();
   const appraisalAmbitSet = appraiser.getAllFleetUnitAppraisals();
-  this.assertEquals(appraisalAmbitSet[AMBITS.SPACE].length, UNITS_BY_AMBIT[AMBITS.SPACE].length);
-  this.assertEquals(appraisalAmbitSet[AMBITS.SKY].length, UNITS_BY_AMBIT[AMBITS.SKY].length);
-  this.assertEquals(appraisalAmbitSet[AMBITS.LAND].length, UNITS_BY_AMBIT[AMBITS.LAND].length);
-  this.assertEquals(appraisalAmbitSet[AMBITS.WATER].length, UNITS_BY_AMBIT[AMBITS.WATER].length);
+  this.assertEquals(appraisalAmbitSet[AMBITS.SPACE].length, UNITS_BY_AMBIT.FLEET[AMBITS.SPACE].length);
+  this.assertEquals(appraisalAmbitSet[AMBITS.SKY].length, UNITS_BY_AMBIT.FLEET[AMBITS.SKY].length);
+  this.assertEquals(appraisalAmbitSet[AMBITS.LAND].length, UNITS_BY_AMBIT.FLEET[AMBITS.LAND].length);
+  this.assertEquals(appraisalAmbitSet[AMBITS.WATER].length, UNITS_BY_AMBIT.FLEET[AMBITS.WATER].length);
 });
 
 // Test execution

@@ -25,4 +25,19 @@ export class Player {
   isDefeated() {
     return this.commandStruct.isDestroyed;
   }
+
+  /**
+   * @param {string} structId
+   * @param {boolean} isCommandStruct
+   * @param {boolean} isPlanetaryStruct
+   * @return {Struct}
+   */
+  getStruct(structId, isCommandStruct = false, isPlanetaryStruct = false) {
+    if (isCommandStruct){
+      return this.commandStruct;
+    } else if (isPlanetaryStruct) {
+      return this.planet.findStructById(structId);
+    }
+    return this.fleet.findStructById(structId);
+  }
 }

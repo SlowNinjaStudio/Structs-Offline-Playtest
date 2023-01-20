@@ -1,15 +1,26 @@
-import {AMBITS, DEFENSE_COMPONENTS, IMG, MANUAL_WEAPONS, PASSIVE_WEAPONS, UNIT_TYPES} from "./Constants.js";
+import {
+  AMBITS,
+  DEFENSE_COMPONENTS,
+  IMG,
+  MANUAL_WEAPONS,
+  PASSIVE_WEAPONS,
+  POWER_GENERATORS,
+  UNIT_TYPES
+} from "./Constants.js";
 import {Struct} from "./Struct.js";
 import {ManualWeaponFactory} from "./struct_components/ManualWeaponFactory.js";
 import {PassiveWeaponFactory} from "./struct_components/PassiveWeaponFactory.js";
 import {DefenseComponentFactory} from "./struct_components/DefenseComponentFactory.js";
 import {StructBuilderError} from "./errors/StructBuilderError.js";
+import {PlanetaryStruct} from "./PlanetaryStruct.js";
+import {PowerGeneratorFactory} from "./struct_components/PowerGeneratorFactory.js";
 
 export class StructBuilder {
   constructor() {
     this.defenseComponentFactory = new DefenseComponentFactory();
     this.manualWeaponFactory = new ManualWeaponFactory();
     this.passiveWeaponFactory = new PassiveWeaponFactory();
+    this.powerGeneratorFactory = new PowerGeneratorFactory();
   }
 
   /**
@@ -33,6 +44,9 @@ export class StructBuilder {
         break;
       case UNIT_TYPES.GALACTIC_BATTLESHIP:
         struct = this.makeGalacticBattleship();
+        break;
+      case UNIT_TYPES.GENERATOR:
+        struct = this.makeGenerator();
         break;
       case UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR:
         struct = this.makeHighAltitudeInterceptor();
@@ -156,6 +170,22 @@ export class StructBuilder {
       this.defenseComponentFactory.make(DEFENSE_COMPONENTS.SIGNAL_JAMMING),
       null,
       IMG.STRUCTS + 'space-galatic-battleship.jpg'
+    );
+  }
+
+  /**
+   * @return {Struct}
+   */
+  makeGenerator() {
+    return new PlanetaryStruct(
+      UNIT_TYPES.GENERATOR,
+      AMBITS.LAND,
+      null,
+      null,
+      null,
+      null,
+      this.powerGeneratorFactory.make(POWER_GENERATORS.GENERIC.NAME),
+      IMG.STRUCTS + 'generator.jpg'
     );
   }
 

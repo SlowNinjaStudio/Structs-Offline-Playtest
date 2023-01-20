@@ -4,9 +4,9 @@ import {PowerManager} from "../../../js/modules/PowerManager.js";
 import {Player} from "../../../js/modules/Player.js";
 import {GameState} from "../../../js/modules/state/GameState.js";
 import {Planet} from "../../../js/modules/Planet.js";
-import {PlanetaryStructBuilder} from "../../../js/modules/PlanetaryStructBuilder.js";
+import {StructBuilder} from "../../../js/modules/StructBuilder.js";
 
-const managePowerPerRoundTest = new DTest('managePowerPerRoundTest', function(params) {
+const managePowerPerRoundTest = new DTest('managePowerPerRoundTest', function() {
   const player = new Player('Player');
   const enemy = new Player('Enemy');
 
@@ -32,7 +32,7 @@ const managePowerPerRoundTest = new DTest('managePowerPerRoundTest', function(pa
   this.assertEquals(state.player.creditManager.credits, 0);
   this.assertEquals(state.enemy.creditManager.credits, 0);
 
-  const builder = new PlanetaryStructBuilder();
+  const builder = new StructBuilder();
   const generator1 = builder.make(UNIT_TYPES.GENERATOR);
   generator1.operatingAmbit = AMBITS.LAND;
   const generator2 = builder.make(UNIT_TYPES.GENERATOR);
@@ -42,7 +42,6 @@ const managePowerPerRoundTest = new DTest('managePowerPerRoundTest', function(pa
 
   this.assertEquals(state.player.planet.addStruct(generator1), true);
   this.assertEquals(state.enemy.planet.addStruct(generator2), true);
-  this.assertEquals(state.enemy.planet.addStruct(generator3), true);
 
   manager = new PowerManager(state);
   manager.managePowerPerRound();
@@ -50,18 +49,18 @@ const managePowerPerRoundTest = new DTest('managePowerPerRoundTest', function(pa
   this.assertEquals(state.player.creditManager.credits, 0);
   this.assertEquals(state.enemy.creditManager.credits, 0);
 
-  state.numTurns = 4;
+  state.numTurns = 5;
 
   manager = new PowerManager(state);
   manager.managePowerPerRound();
 
   this.assertEquals(state.player.creditManager.credits, 1);
-  this.assertEquals(state.enemy.creditManager.credits, 2);
+  this.assertEquals(state.enemy.creditManager.credits, 1);
 
   manager.managePowerPerRound();
 
   this.assertEquals(state.player.creditManager.credits, 2);
-  this.assertEquals(state.enemy.creditManager.credits, 4);
+  this.assertEquals(state.enemy.creditManager.credits, 2);
 });
 
 // Test execution

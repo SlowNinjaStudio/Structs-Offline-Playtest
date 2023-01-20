@@ -1,6 +1,6 @@
 import {StructBuilder} from "../../modules/StructBuilder.js";
 import {Appraiser} from "../../modules/Appraiser.js";
-import {DEFENSE_COMPONENT_TYPES, EVENTS, ICONS, UNITS_BY_AMBIT} from "../../modules/Constants.js";
+import {DEFENSE_COMPONENT_TYPES, EVENTS, ICONS, PLAYER_FLEET_TYPES, UNITS_BY_AMBIT} from "../../modules/Constants.js";
 import {Util} from "../../modules/util/Util.js";
 
 export class UIStructSelection {
@@ -10,19 +10,23 @@ export class UIStructSelection {
    * @param {string} ambit
    * @param {number} ambitSlot
    * @param {Struct} preselectedStruct
+   * @param {boolean} isPlanetarySlot
    */
   constructor(
     state,
     selectingPlayer,
     ambit,
     ambitSlot,
-    preselectedStruct = null
+    preselectedStruct = null,
+    isPlanetarySlot = false
   ) {
     this.state = state;
     this.selectingPlayer = selectingPlayer;
     this.ambit = ambit;
     this.ambitSlot = ambitSlot;
     this.preselectedStruct = preselectedStruct;
+    this.isPlanetarySlot = isPlanetarySlot;
+    this.fleetType = this.isPlanetarySlot ? PLAYER_FLEET_TYPES.PLANET : PLAYER_FLEET_TYPES.FLEET;
     this.structBuilder = new StructBuilder();
     this.appraiser = new Appraiser();
     this.util = new Util();
@@ -43,12 +47,12 @@ export class UIStructSelection {
   }
 
   clearSlot() {
-    if (!this.selectingPlayer.fleet.isSlotAvailable(this.ambit, this.ambitSlot)) {
-      const unitType = this.selectingPlayer.fleet[this.ambit.toLowerCase()][this.ambitSlot].unitType;
+    if (!this.selectingPlayer[this.fleetType].isSlotAvailable(this.ambit, this.ambitSlot)) {
+      const unitType = this.selectingPlayer[this.fleetType][this.ambit.toLowerCase()][this.ambitSlot].unitType;
       const refundAmount = this.appraiser.calcUnitTypePrice(unitType);
       this.selectingPlayer.creditManager.addCredits(refundAmount);
     }
-    this.selectingPlayer.fleet.clearSlot(this.ambit, this.ambitSlot);
+    this.selectingPlayer[this.fleetType].clearSlot(this.ambit, this.ambitSlot);
   }
 
   initSaveSelection() {
@@ -60,7 +64,8 @@ export class UIStructSelection {
         const selectedUnit = this.structBuilder.make(this.currentSelectedUnitType);
         const price = this.appraiser.calcUnitTypePrice(this.currentSelectedUnitType);
         this.selectingPlayer.creditManager.pay(price);
-        this.selectingPlayer.fleet.addStruct(selectedUnit, this.ambitSlot);
+        selectedUnit.operatingAmbit = this.ambit;
+        this.selectingPlayer[this.fleetType].addStruct(selectedUnit, this.ambitSlot);
       }
 
       const domOffcanvas = document.getElementById(this.state.offcanvasId);
@@ -150,6 +155,20 @@ export class UIStructSelection {
    * @param {Struct} struct
    * @return {string}
    */
+  renderPowerGeneratorAttributeSet(struct) {
+    if (!struct.powerGenerator) {
+      return '';
+    }
+    return this.renderOptionAttributeSet(
+      ICONS.POWER_OUTPUT,
+      this.util.titleCase(`+${struct.powerGenerator.powerOutput} Watt per turn`)
+    );
+  }
+
+  /**
+   * @param {Struct} struct
+   * @return {string}
+   */
   renderPassiveWeaponAttributeSet(struct) {
     if (!struct.passiveWeapon) {
       return '';
@@ -197,8 +216,12 @@ export class UIStructSelection {
         ${this.renderManualWeaponAttributeSet(unit.manualWeaponSecondary)}
         ${this.renderPassiveWeaponAttributeSet(unit)}
         ${this.renderDefenseComponentAttributeSet(unit.defenseComponent)}
+        ${this.renderPowerGeneratorAttributeSet(unit)}
       `;
     }
+
+    const isOverBudget = unitPrice > this.getAvailableCredits();
+    const isUnselectable = isOverBudget || (this.exceedsMaxStructs() && unitType);
 
     return `
       <div class="col-sm-6">
@@ -208,7 +231,7 @@ export class UIStructSelection {
             card
             pt-2
             ${this.currentSelectedUnitType === unitType ? 'fleet-select-selected' : ''}
-            ${unitPrice > this.getAvailableCredits() ? 'fleet-select-over-budget' : ''}
+            ${isUnselectable ? 'fleet-select-over-budget' : ''}
           ">
 
             <div class="container-fluid">
@@ -243,14 +266,22 @@ export class UIStructSelection {
     return this.selectingPlayer.creditManager.credits + this.preselectedStructPrice;
   }
 
+  /**
+   * @return {boolean}
+   */
+  exceedsMaxStructs() {
+    return !this.preselectedStruct && !this.selectingPlayer[this.fleetType].capacityRemaining();
+  }
+
   render() {
     let options = '';
-    let units = [...UNITS_BY_AMBIT[this.ambit], ''];
+    let units = [...UNITS_BY_AMBIT[this.fleetType.toUpperCase()][this.ambit], ''];
     for (let i = 0; i < units.length; i++) {
       options += this.renderOption(units[i]);
     }
     const selectedPrice = this.currentSelectedUnitType ? this.appraiser.calcUnitTypePrice(this.currentSelectedUnitType) : 0;
     const isOverBudget = selectedPrice > this.getAvailableCredits();
+    const isUnselectable = isOverBudget || (this.exceedsMaxStructs() && this.currentSelectedUnitType);
 
     document.getElementById(this.state.offcanvasId).innerHTML =  `
       <div class="offcanvas-header">
@@ -282,7 +313,7 @@ export class UIStructSelection {
                 <button
                   id="${this.fleetSelectSaveBtnId}"
                   class="btn btn-primary"
-                  ${isOverBudget ? 'disabled' : ''}
+                  ${isUnselectable ? 'disabled' : ''}
                 >Save</button>
               </div>
             </div>

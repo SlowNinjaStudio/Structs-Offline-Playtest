@@ -314,6 +314,10 @@ body {
   background: rgba(255, 255, 255, 0.25);
   border: 1px dashed #cccccc;
 }
+.fleet-select-map .planetContainer .struct.empty {
+  background: url(/img/icons/icon-power-bolt.png) no-repeat center rgba(255, 255, 255, 0.25);
+  background-size: 32px 32px;
+}
 .struct.selected {
   border: 4px solid #00bfff;
 }
@@ -326,6 +330,12 @@ body {
 .struct.unselectable, .struct.unselectable:hover {
   border: 1px solid #454545;
   filter: brightness(0.5);
+}
+.is-planet-enabled .struct {
+  width: 54px;
+}
+.is-planet-enabled .struct > img {
+  margin: 2px 0;
 }
 .struct-map-view-btn {
   display: inline-block;
@@ -396,6 +406,10 @@ body {
   vertical-align: middle;
 }
 .fleetContainer {
+  display: inline-block;
+  vertical-align: middle;
+}
+.planetContainer {
   display: inline-block;
   vertical-align: middle;
 }
@@ -774,6 +788,13 @@ img.mini-map-struct {
 .mini-map-slot.mini-map-command-slot.mini-map-ambit-sky .mini-map-struct-container,
 .mini-map-slot.mini-map-command-slot.mini-map-ambit-land .mini-map-struct-container,
 .mini-map-slot.mini-map-command-slot.mini-map-ambit-water .mini-map-struct-container {
+  background-color: #cccccc;
+}
+
+.mini-map-slot.mini-map-planetary-slot.mini-map-ambit-space .mini-map-struct-container,
+.mini-map-slot.mini-map-planetary-slot.mini-map-ambit-sky .mini-map-struct-container,
+.mini-map-slot.mini-map-planetary-slot.mini-map-ambit-land .mini-map-struct-container,
+.mini-map-slot.mini-map-planetary-slot.mini-map-ambit-water .mini-map-struct-container {
   background-color: #cccccc;
 }
 

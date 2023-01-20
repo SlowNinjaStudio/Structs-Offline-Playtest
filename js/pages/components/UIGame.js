@@ -22,6 +22,7 @@ import {CombatEventLogItem} from "../../modules/CombatEventLogItem.js";
 import {FleetGenerator} from "../../modules/FleetGenerator.js";
 import {UIStructSelection} from "./UIStructSelection.js";
 import {PowerManager} from "../../modules/PowerManager.js";
+import {StructGarbageCollector} from "../../modules/StructGarbageCollector.js";
 
 export class UIGame {
 
@@ -44,6 +45,7 @@ export class UIGame {
     this.fleetResetButtonId = 'fleetResetButtonId';
     this.fleetSetupCompleteButtonId = 'fleetSetupCompleteButtonId';
     this.powerManager = new PowerManager(this.state);
+    this.structGarbageCollector = new StructGarbageCollector(this.state);
   }
 
   initEmptyCommandSlotListeners() {
@@ -65,11 +67,15 @@ export class UIGame {
   }
 
   initStructListeners() {
+    if (this.state.gamePhase !== GAME_PHASES.COMBAT) {
+      return;
+    }
     document.querySelectorAll('.struct-map-view-btn').forEach(structButton => {
       structButton.addEventListener('click', function() {
         const playerId = structButton.getAttribute('data-player-id');
         const structId = structButton.getAttribute('data-struct-id');
         const isCommandStruct = !!parseInt(structButton.getAttribute('data-is-command-struct'));
+        const isPlanetarySlot = !!parseInt(structButton.getAttribute('data-is-planetary-slot'));
         const action = this.state.action;
 
         if (action && [
@@ -78,11 +84,11 @@ export class UIGame {
           EVENTS.ACTIONS.ACTION_DEFEND
         ].includes(action.getType())) {
           this.state.action = null;
-          action.data = new StructRefDTO(playerId, structId, isCommandStruct);
+          action.data = new StructRefDTO(playerId, structId, isCommandStruct, isPlanetarySlot);
           action.dispatchEvent();
         } else {
           const player = (this.state.getPlayers()).find(player => player.id === playerId);
-          const struct = isCommandStruct ? player.commandStruct : player.fleet.findStructById(structId);
+          const struct = player.getStruct(structId, isCommandStruct, isPlanetarySlot);
           const domOffcanvas = document.getElementById('offcanvasBottom');
           const bsOffcanvas = bootstrap.Offcanvas.getOrCreateInstance(domOffcanvas);
           const offcanvasClass = (this.state.player.id === playerId) ? 'player' : 'enemy';
@@ -109,43 +115,55 @@ export class UIGame {
     });
   }
 
-  initFleetSelectionListeners() {
-    if (![GAME_PHASES.FLEET_SELECT_P1, GAME_PHASES.FLEET_SELECT_P2].includes(this.state.gamePhase)) {
-      return;
+  /**
+   * @param {Element} slotButton
+   * @return {function}
+   */
+  fleetSelectionListener(slotButton) {
+    return function() {
+      const playerId = slotButton.getAttribute('data-player-id');
+      const ambit = slotButton.getAttribute('data-ambit');
+      const ambitSlot = parseInt(slotButton.getAttribute('data-ambit-slot'));
+      const structId = slotButton.getAttribute('data-struct-id');
+      const isCommandStruct = !!parseInt(slotButton.getAttribute('data-is-command-struct'));
+      const isPlanetarySlot = !!parseInt(slotButton.getAttribute('data-is-planetary-slot'));
+
+      const player = (this.state.getPlayers()).find(player => player.id === playerId);
+      let struct = player.getStruct(structId, isCommandStruct, isPlanetarySlot);
+
+      const domOffcanvas = document.getElementById(this.state.offcanvasId);
+      const bsOffcanvas = bootstrap.Offcanvas.getOrCreateInstance(domOffcanvas);
+      const offcanvasClass = (this.state.player.id === playerId) ? 'player' : 'enemy';
+
+      domOffcanvas.classList.remove('player');
+      domOffcanvas.classList.remove('enemy');
+      domOffcanvas.classList.add(offcanvasClass);
+
+      const uiStructSelection = new UIStructSelection(
+        this.state,
+        player,
+        ambit,
+        ambitSlot,
+        struct,
+        isPlanetarySlot
+      );
+      uiStructSelection.render();
+
+      bsOffcanvas.show();
     }
+  }
 
-    document.querySelectorAll('.map-slot-btn').forEach(slotButton => {
-      slotButton.addEventListener('click', function() {
-        const playerId = slotButton.getAttribute('data-player-id');
-        const ambit = slotButton.getAttribute('data-ambit');
-        const ambitSlot = parseInt(slotButton.getAttribute('data-ambit-slot'));
-        const structId = slotButton.getAttribute('data-struct-id');
-        const isCommandStruct = !!parseInt(slotButton.getAttribute('data-is-command-struct'));
-
-        const player = (this.state.getPlayers()).find(player => player.id === playerId);
-        const struct = isCommandStruct ? player.commandStruct : player.fleet.findStructById(structId);
-
-        const domOffcanvas = document.getElementById(this.state.offcanvasId);
-        const bsOffcanvas = bootstrap.Offcanvas.getOrCreateInstance(domOffcanvas);
-        const offcanvasClass = (this.state.player.id === playerId) ? 'player' : 'enemy';
-
-        domOffcanvas.classList.remove('player');
-        domOffcanvas.classList.remove('enemy');
-        domOffcanvas.classList.add(offcanvasClass);
-
-        const uiStructSelection = new UIStructSelection(
-          this.state,
-          player,
-          ambit,
-          ambitSlot,
-          struct
-        );
-        uiStructSelection.render();
-
-        bsOffcanvas.show();
-
-      }.bind(this));
-    });
+  initFleetSelectionListeners() {
+    if ([GAME_PHASES.FLEET_SELECT_P1, GAME_PHASES.FLEET_SELECT_P2].includes(this.state.gamePhase)) {
+      document.querySelectorAll('.map-slot-btn').forEach(slotButton => {
+        slotButton.addEventListener('click', this.fleetSelectionListener(slotButton).bind(this));
+      });
+    } else if (this.state.gamePhase === GAME_PHASES.COMBAT) {
+      const fleetElmId = this.state.turn.id === this.state.player.id ? '#playerFleet' : '#enemyFleet';
+      document.querySelectorAll(`${fleetElmId} .map-slot-btn.empty-slot.fleet`).forEach(slotButton => {
+        slotButton.addEventListener('click', this.fleetSelectionListener(slotButton).bind(this));
+      });
+    }
   }
 
   initFleetGenerateListener() {
@@ -313,6 +331,7 @@ export class UIGame {
         this.analytics.trackDefensePhaseEnd();
       }
       this.powerManager.managePowerPerRound();
+      this.structGarbageCollector.cleanUp();
       this.render();
 
       if (this.state.gameMode === GAME_MODES.ONE_PLAYER && this.state.turn.id === this.state.enemy.id) {
@@ -480,11 +499,11 @@ export class UIGame {
           <div class="row justify-content-between">
             <div class="col">
               <div class="d-grid">
-                <a
-                  href="javascript: void(0)"
+                <button
                   id="${this.fleetSetupCompleteButtonId}"
                   class="btn btn-primary"
-                >Done</a>
+                  ${!this.state.arePlanetsEnabled || this.state.turn.planet.numberOfStructs() > 0 ? '' : 'disabled'}
+                >Done</button>
               </div>
             </div>
           </div>
@@ -496,10 +515,35 @@ export class UIGame {
   /**
    * @return {string}
    */
+  renderGeneratorHelp() {
+    return `
+      <div class="row mb-3">
+        <div class="col">
+
+          <div class="card side container-fluid p-3 text-start">
+            <div class="row g-0">
+              <div class="col-auto text-void-grey">
+                <img src="${IMG.ICONS}icon-power-bolt.png" alt="Lightning Bolt" class="section-icon">
+              </div>
+              <div class="col">
+                <div class="fw-bold">Deploy Your Power Generator</div>
+                <div>Click a space with the <img src="${IMG.ICONS}icon-power-bolt.png" alt="Lightning Bolt"> icon to deploy your Power Generator there. This Struct generates 1 Watt per turn, which you can use to deploy new units during the game.</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    `
+  }
+  /**
+   * @return {string}
+   */
   renderFleetSelectHelp() {
     const sideClass = (this.state.player.id === this.state.turn.id) ? 'text-lg-start' : 'text-lg-end';
+    const generatorHelp = (this.state.arePlanetsEnabled) ? this.renderGeneratorHelp() : '';
     return `
-      <div class="fleetSelectHelp col ${sideClass}">
+      <div class="fleetSelectHelp col ${sideClass} mb-4">
         <div class="row mb-3">
           <div class="col">
 
@@ -510,13 +554,14 @@ export class UIGame {
                 </div>
                 <div class="col">
                   <div class="fw-bold">Build Your Army</div>
-                  <div>Click on a space to deploy or replace Struct. More advanced Structs cost more Watt.</div>
+                  <div>Click on a space to deploy or replace Struct. More advanced Structs cost more Watt. Your fleet must defend your Command Ship; if your Command Ship is destroyed, you lose.</div>
                 </div>
               </div>
             </div>
 
           </div>
         </div>
+        ${generatorHelp}
         <div class="row">
           <div class="col">
 
@@ -627,7 +672,7 @@ export class UIGame {
     }
 
     return `
-      <div class="container-fluid play-area">
+      <div class="container-fluid play-area fleet-select-map">
         <div class="row">
           ${firstColumn}
           ${secondColumn}

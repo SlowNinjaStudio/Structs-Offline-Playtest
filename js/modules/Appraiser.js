@@ -51,7 +51,7 @@ export class Appraiser {
    * @return {AppraisalDTO[]}
    */
   getUnitAppraisalsByAmbit(ambit) {
-    return UNITS_BY_AMBIT[ambit].map(unitType => new AppraisalDTO(
+    return UNITS_BY_AMBIT.FLEET[ambit].map(unitType => new AppraisalDTO(
       unitType,
       this.calcUnitTypePrice(unitType),
       this.calcUnitTypeTacticalValue(unitType)
