@@ -211,16 +211,21 @@ export class UIGame {
             this.state.enemy.creditManager.budget
           );
           this.state.gamePhase = GAME_PHASES.COMBAT;
+          this.state.metrics.unitsBuilt.logAllPlayerStructs(this.state.player, this.state.numTurns);
+          this.state.metrics.unitsBuilt.logAllPlayerStructs(this.state.enemy, this.state.numTurns);
           window.dispatchEvent(new CustomEvent(EVENTS.TURNS.FIRST_TURN));
         } else if (this.state.gamePhase === GAME_PHASES.FLEET_SELECT_P1 && this.state.gameMode === GAME_MODES.TWO_PLAYER) {
           this.state.gamePhase = GAME_PHASES.FLEET_SELECT_P2;
           this.state.turn = this.state.enemy;
+          this.state.metrics.unitsBuilt.logAllPlayerStructs(this.state.player, this.state.numTurns);
           this.render();
         } else if (this.state.gamePhase === GAME_PHASES.FLEET_SELECT_P2) {
           this.state.gamePhase = GAME_PHASES.COMBAT;
           this.state.turn = this.state.player;
+          this.state.metrics.unitsBuilt.logAllPlayerStructs(this.state.enemy, this.state.numTurns);
           window.dispatchEvent(new CustomEvent(EVENTS.TURNS.FIRST_TURN));
         }
+        console.log(this.state.metrics.unitsBuilt);
       }.bind(this))
     }
   }

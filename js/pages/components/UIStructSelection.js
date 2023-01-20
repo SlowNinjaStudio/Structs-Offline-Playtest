@@ -1,6 +1,13 @@
 import {StructBuilder} from "../../modules/StructBuilder.js";
 import {Appraiser} from "../../modules/Appraiser.js";
-import {DEFENSE_COMPONENT_TYPES, EVENTS, ICONS, PLAYER_FLEET_TYPES, UNITS_BY_AMBIT} from "../../modules/Constants.js";
+import {
+  DEFENSE_COMPONENT_TYPES,
+  EVENTS,
+  GAME_PHASES,
+  ICONS,
+  PLAYER_FLEET_TYPES,
+  UNITS_BY_AMBIT
+} from "../../modules/Constants.js";
 import {Util} from "../../modules/util/Util.js";
 
 export class UIStructSelection {
@@ -66,6 +73,10 @@ export class UIStructSelection {
         this.selectingPlayer.creditManager.pay(price);
         selectedUnit.operatingAmbit = this.ambit;
         this.selectingPlayer[this.fleetType].addStruct(selectedUnit, this.ambitSlot);
+
+        if (this.state.gamePhase === GAME_PHASES.COMBAT) {
+          this.state.metrics.unitsBuilt.logStruct(this.selectingPlayer, selectedUnit, this.state.numTurns);
+        }
       }
 
       const domOffcanvas = document.getElementById(this.state.offcanvasId);
