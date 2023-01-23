@@ -172,6 +172,8 @@ export class UIGame {
       button.addEventListener('click', function () {
         if (this.state.turn.creditManager.qualitativeBudget === 'RANDOM') {
           this.state.turn.creditManager.initFromQualitativeBudget();
+          const turnPlayer = this.state.turn.id === this.state.player.id ? 'player' : 'enemy'
+          this.state.metrics[turnPlayer].initialWatt = this.state.player.creditManager.credits;
         }
         if (this.state.turn.creditManager.qualitativeBudget === 'CURATED') {
           this.fleetGenerator.generateCuratedFleet(this.state.turn.fleet);
@@ -213,19 +215,22 @@ export class UIGame {
           this.state.gamePhase = GAME_PHASES.COMBAT;
           this.state.metrics.unitsBuilt.logAllPlayerStructs(this.state.player, this.state.numTurns);
           this.state.metrics.unitsBuilt.logAllPlayerStructs(this.state.enemy, this.state.numTurns);
+          this.state.metrics.player.setInitialStructCount(this.state.player.getStructCount());
+          this.state.metrics.enemy.setInitialStructCount(this.state.enemy.getStructCount());
           window.dispatchEvent(new CustomEvent(EVENTS.TURNS.FIRST_TURN));
         } else if (this.state.gamePhase === GAME_PHASES.FLEET_SELECT_P1 && this.state.gameMode === GAME_MODES.TWO_PLAYER) {
           this.state.gamePhase = GAME_PHASES.FLEET_SELECT_P2;
           this.state.turn = this.state.enemy;
           this.state.metrics.unitsBuilt.logAllPlayerStructs(this.state.player, this.state.numTurns);
+          this.state.metrics.player.setInitialStructCount(this.state.player.getStructCount());
           this.render();
         } else if (this.state.gamePhase === GAME_PHASES.FLEET_SELECT_P2) {
           this.state.gamePhase = GAME_PHASES.COMBAT;
           this.state.turn = this.state.player;
           this.state.metrics.unitsBuilt.logAllPlayerStructs(this.state.enemy, this.state.numTurns);
+          this.state.metrics.enemy.setInitialStructCount(this.state.enemy.getStructCount());
           window.dispatchEvent(new CustomEvent(EVENTS.TURNS.FIRST_TURN));
         }
-        console.log(this.state.metrics.unitsBuilt);
       }.bind(this))
     }
   }

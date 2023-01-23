@@ -76,6 +76,8 @@ export class UIStructSelection {
 
         if (this.state.gamePhase === GAME_PHASES.COMBAT) {
           this.state.metrics.unitsBuilt.logStruct(this.selectingPlayer, selectedUnit, this.state.numTurns);
+          const selectingPlayerName = this.selectingPlayer.id === this.state.player.id ? 'player' : 'enemy';
+          this.state.metrics[selectingPlayerName].incrementStructsBuilt();
         }
       }
 

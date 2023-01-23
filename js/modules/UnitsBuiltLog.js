@@ -1,5 +1,4 @@
 import {UnitsBuiltLogItem} from "./UnitsBuiltLogItem.js";
-import {PLAYER_FLEET_TYPES} from "./Constants.js";
 
 export class UnitsBuiltLog {
   constructor() {
@@ -24,24 +23,11 @@ export class UnitsBuiltLog {
 
   /**
    * @param {Player} player
-   * @param {string} playerFleetType
-   * @param {number} turnBuilt
-   */
-  logFleet(player, playerFleetType, turnBuilt) {
-    player[playerFleetType].forEachStruct(function(struct) {
-      this.logItem(new UnitsBuiltLogItem(player, struct, turnBuilt));
-    }.bind(this));
-  }
-
-  /**
-   * @param {Player} player
    * @param {number} turnBuilt
    */
   logAllPlayerStructs(player, turnBuilt) {
-    this.logItem(new UnitsBuiltLogItem(player, player.commandStruct, turnBuilt));
-    if (player.planet) {
-      this.logFleet(player, PLAYER_FLEET_TYPES.PLANET, turnBuilt);
-    }
-    this.logFleet(player, PLAYER_FLEET_TYPES.FLEET, turnBuilt);
+    player.forEachStruct(function(struct) {
+      this.logStruct(player, struct, turnBuilt);
+    }.bind(this));
   }
 }

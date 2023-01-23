@@ -40,4 +40,26 @@ export class Player {
     }
     return this.fleet.findStructById(structId);
   }
+
+  /**
+   * @return {Struct[]}
+   */
+  getAllStructs() {
+    return [
+      this.commandStruct,
+      ...(this.planet ? this.planet.toFlatArray(): []),
+      ...this.fleet.toFlatArray()
+    ].filter(struct => !!struct);
+  }
+
+  /**
+   * @param {function} callback
+   */
+  forEachStruct(callback) {
+    (this.getAllStructs()).forEach(callback);
+  }
+
+  getStructCount() {
+    return (this.getAllStructs()).length;
+  }
 }

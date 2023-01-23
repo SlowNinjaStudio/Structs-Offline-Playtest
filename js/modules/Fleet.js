@@ -1,4 +1,4 @@
-import {AMBITS, MAX_FLEET_STRUCTS_PER_AMBIT, PLAYER_DEFAULTS} from "./Constants.js";
+import {AMBITS, MAX_FLEET_STRUCTS_PER_AMBIT, ORDER_OF_AMBITS, PLAYER_DEFAULTS} from "./Constants.js";
 
 export class Fleet {
   /**
@@ -238,5 +238,14 @@ export class Fleet {
       }
     });
     return powerGenerated;
+  }
+
+  /**
+   * @return {Struct[]}
+   */
+  toFlatArray() {
+    return Object.values(ORDER_OF_AMBITS).reduce((structs, ambit) =>
+        [...structs, ...this[ambit.toLowerCase()].filter(ambitStruct => !!ambitStruct)]
+      , []);
   }
 }

@@ -310,7 +310,30 @@ const generatePowerTest = new DTest('generatePowerTest', function() {
 
   fleet.generatePower();
 
-  this.assertEquals(fleet.generatePower(), 3);
+  this.assertEquals(fleet.generatePower(), POWER_GENERATORS.GENERIC.POWER_OUTPUT * 3);
+});
+
+const toFlatArrayTest = new DTest('toFlatArrayTest', function() {
+  const structBuilder = new StructBuilder();
+  const fleet = new Fleet();
+
+  const starFighter = structBuilder.make(UNIT_TYPES.STAR_FIGHTER);
+  const highAltitudeInterceptor = structBuilder.make(UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR);
+  const samLauncher = structBuilder.make(UNIT_TYPES.SAM_LAUNCHER);
+  const sub = structBuilder.make(UNIT_TYPES.SUB);
+
+  fleet.initAmbits();
+  fleet.space[0] = starFighter;
+  fleet.sky[1] = highAltitudeInterceptor;
+  fleet.land[2] = samLauncher;
+  fleet.water[3] = sub;
+
+  const unitTypes = (fleet.toFlatArray()).map(struct => struct.unitType);
+
+  this.assertSetEquality(
+    unitTypes,
+    [UNIT_TYPES.STAR_FIGHTER, UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR, UNIT_TYPES.SAM_LAUNCHER, UNIT_TYPES.SUB]
+  );
 });
 
 // Test execution
@@ -328,3 +351,4 @@ removeStructByAmbitAndIdTest.run();
 isDestroyedTest.run();
 forEachStructTest.run();
 generatePowerTest.run();
+toFlatArrayTest.run();
