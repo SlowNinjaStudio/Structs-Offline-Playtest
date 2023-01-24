@@ -160,6 +160,7 @@ export const
     ID_PREFIX: 'player-',
     MAX_ACTIVE_FLEET_STRUCTS: 16,
     MAX_ACTIVE_PLANETARY_STRUCTS: 1,
+    WATT_CAP: null
   },
 
   PLAYER_FLEET_TYPES = {

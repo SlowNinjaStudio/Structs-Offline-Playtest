@@ -61,6 +61,18 @@ const managePowerPerRoundTest = new DTest('managePowerPerRoundTest', function() 
 
   this.assertEquals(state.player.creditManager.credits, POWER_GENERATORS.GENERIC.POWER_OUTPUT * 2);
   this.assertEquals(state.enemy.creditManager.credits, POWER_GENERATORS.GENERIC.POWER_OUTPUT * 2);
+
+  manager.wattCap = POWER_GENERATORS.GENERIC.POWER_OUTPUT * 4;
+  state.player.creditManager.addCredits(POWER_GENERATORS.GENERIC.POWER_OUTPUT);
+  manager.managePowerPerRound();
+
+  this.assertEquals(state.player.creditManager.credits, POWER_GENERATORS.GENERIC.POWER_OUTPUT * 4);
+  this.assertEquals(state.enemy.creditManager.credits, POWER_GENERATORS.GENERIC.POWER_OUTPUT * 3);
+
+  manager.managePowerPerRound();
+
+  this.assertEquals(state.player.creditManager.credits, POWER_GENERATORS.GENERIC.POWER_OUTPUT * 4);
+  this.assertEquals(state.enemy.creditManager.credits, POWER_GENERATORS.GENERIC.POWER_OUTPUT * 4);
 });
 
 // Test execution
