@@ -46,9 +46,11 @@ export class UIGameOverModal {
   render() {
     let playerCSSClass = 'player';
     let playerLabel = 'Player';
+    let winner = 'player';
     if (this.state.player.isDefeated()) {
       playerCSSClass = 'enemy';
       playerLabel = 'Enemy';
+      winner = 'enemy';
     }
 
     return `
@@ -64,8 +66,50 @@ export class UIGameOverModal {
             <div class="modal-header">
               <h5 class="modal-title">Game Over</h5>
             </div>
-            <div class="modal-body game-over-msg">
-              ${playerLabel} Wins!
+            <div class="modal-body text-center">
+              <div class="container-fluid game-over-msg">
+                <div class="row">
+                  <div class="col">
+                    ${playerLabel} Wins!
+                  </div>
+                </div>
+              </div>
+              <div class="container-fluid my-4 game-over-stats">
+                <div class="row">
+                  <div class="col">
+                    <div class="row">
+                      <div class="col-auto text-start fw-bold">
+                        <span class="align-middle">Starting Watt</span>
+                        <div class="watt-icon"></div>:
+                      </div>
+                      <div class="col text-end">${this.state.metrics[winner].initialWatt}</div>
+                    </div>
+                    <div class="row">
+                      <div class="col-auto text-start fw-bold">
+                        <span class="align-middle">Ending Watt</span>
+                        <div class="watt-icon"></div>:
+                      </div>
+                      <div class="col text-end">${this.state[winner].creditManager.credits}</div>
+                    </div>
+                    <div class="row">
+                      <div class="col-auto text-start fw-bold">Structs Built:</div>
+                      <div class="col text-end">${this.state.metrics[winner].structsBuilt}</div>
+                    </div>
+                    <div class="row">
+                      <div class="col-auto text-start fw-bold">Structs Destroyed:</div>
+                      <div class="col text-end">${this.state.metrics[winner].kills}</div>
+                    </div>
+                    <div class="row">
+                      <div class="col-auto text-start fw-bold">Structs Lost:</div>
+                      <div class="col text-end">${this.state.metrics[winner].structsLost}</div>
+                    </div>
+                    <div class="row">
+                      <div class="col-auto text-start fw-bold">Number of Turns:</div>
+                      <div class="col text-end">${this.state.numTurns}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
             <div class="modal-footer">
               <button
