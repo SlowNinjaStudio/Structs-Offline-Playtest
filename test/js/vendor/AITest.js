@@ -597,7 +597,7 @@ const findFleetTargetingWeaknessTest = new DTest('findFleetTargetingWeaknessTest
   this.assertEquals(ambitWeakness, AMBITS.LAND);
 });
 
-const findMostOccupiedAmbitTest = new DTest('findMostOccupiedAmbitTest', function() {
+const findAmbitForBestDefenseTest = new DTest('findAmbitForBestDefenseTest', function() {
   const player = getDummyPlayer();
   const enemy = getDummyPlayer();
   const state = new GameState();
@@ -605,13 +605,13 @@ const findMostOccupiedAmbitTest = new DTest('findMostOccupiedAmbitTest', functio
   state.enemy = enemy;
   const ai = new AI(state);
 
-  let mostOccupiedAmbit = ai.findMostOccupiedAmbit(state.enemy.fleet);
+  let mostOccupiedAmbit = ai.findAmbitForBestDefense(state.enemy);
 
   this.assertEquals(mostOccupiedAmbit, AMBITS.WATER);
 
   destroySelectStructs(state.enemy.fleet);
 
-  mostOccupiedAmbit = ai.findMostOccupiedAmbit(state.enemy.fleet);
+  mostOccupiedAmbit = ai.findAmbitForBestDefense(state.enemy);
 
   this.assertEquals(mostOccupiedAmbit, AMBITS.SPACE);
 });
@@ -997,7 +997,7 @@ attackTest.run();
 openingDefenseTest.run();
 analyzeFleetAmbitAttackCapabilitiesTest.run();
 findFleetTargetingWeaknessTest.run();
-findMostOccupiedAmbitTest.run();
+findAmbitForBestDefenseTest.run();
 canAttackIfHiddenTest.run();
 getCannotAttackDefenseScoreTest.run();
 getAlreadyDefendingDefenseScoreTest.run();

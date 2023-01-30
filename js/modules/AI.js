@@ -12,6 +12,10 @@ export class AI {
     this.defenseStrategyTree = new DefenseStrategyTree();
   }
 
+  placeGenerator() {
+    // Override
+  }
+
   /**
    * @param {Struct} playerStruct
    * @return {boolean}
@@ -46,8 +50,15 @@ export class AI {
   /**
    * @return {Struct}
    */
+  getAttackGoal() {
+    return this.state.player.commandStruct;
+  }
+
+  /**
+   * @return {Struct}
+   */
   determineTargetOnGoal() {
-    const treeRoot = this.defenseStrategyTree.generate(this.state.player.commandStruct);
+    const treeRoot = this.defenseStrategyTree.generate(this.getAttackGoal());
     const leafNodes = this.defenseStrategyTree.getLeafNodes(treeRoot);
     let bestChoice = {
       struct: treeRoot.struct,
@@ -300,13 +311,13 @@ export class AI {
   /**
    * Find the ambit where the fleet has the most structs.
    *
-   * @param fleet
+   * @param {Player} player
    * @return {string|null}
    */
-  findMostOccupiedAmbit(fleet) {
+  findAmbitForBestDefense(player) {
     let mostOccupiedAmbit = null;
     let mostStructs = 0;
-    const ambitPositions = this.analyzeFleetAmbitPositions(fleet);
+    const ambitPositions = this.analyzeFleetAmbitPositions(player.fleet);
     const ambits = ORDER_OF_AMBITS;
     for (let i = 0; i < ambits.length; i++) {
       if (ambitPositions[ambits[i].toLowerCase()] > mostStructs) {
@@ -405,7 +416,7 @@ export class AI {
     let changeAmbit = this.findFleetTargetingWeakness(this.state.player.fleet);
 
     if (!changeAmbit) {
-      changeAmbit = this.findMostOccupiedAmbit(this.state.enemy.fleet);
+      changeAmbit = this.findAmbitForBestDefense(this.state.enemy);
     }
 
     if (changeAmbit) {

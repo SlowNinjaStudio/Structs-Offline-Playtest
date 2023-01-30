@@ -267,6 +267,11 @@ export const
 
   },
 
+  VIP_UNIT_TYPES = [
+    UNIT_TYPES.COMMAND_SHIP,
+    UNIT_TYPES.GENERATOR
+  ],
+
   ANALYTICS_DEFAULTS = {
     IDENTITY_PREFIX: 'cmd-',
     IDENTITY_COOKIE: 'identity',

@@ -16,13 +16,13 @@ import {UICombatEventViewer} from "./UICombatEventViewer.js";
 import {UIPrepareDefenses} from "./UIPrepareDefenses.js";
 import {UIGameStartModal} from "./UIGameStartModal.js";
 import {Analytics} from "../../modules/Analytics.js";
-import {AI} from "../../modules/AI.js";
 import {UICancelAction} from "./UICancelAction.js";
 import {CombatEventLogItem} from "../../modules/CombatEventLogItem.js";
 import {FleetGenerator} from "../../modules/FleetGenerator.js";
 import {UIStructSelection} from "./UIStructSelection.js";
 import {PowerManager} from "../../modules/PowerManager.js";
 import {StructGarbageCollector} from "../../modules/StructGarbageCollector.js";
+import {AIFactory} from "../../modules/AIFactory.js";
 
 export class UIGame {
 
@@ -38,7 +38,7 @@ export class UIGame {
     this.enemyFleetUI = new UIFleet(this.state, this.state.enemy);
     this.prepareDefensesUI = new UIPrepareDefenses(this.state);
     this.analytics = new Analytics(this.state);
-    this.ai = new AI(this.state);
+    this.ai = (new AIFactory()).make(this.state);
     this.cancelActionButton = new UICancelAction(this.state);
     this.fleetGenerator = new FleetGenerator();
     this.fleetGenerateButtonId = 'fleetGenerateButtonId';
@@ -212,6 +212,7 @@ export class UIGame {
             this.state.enemy.fleet,
             this.state.enemy.creditManager.budget
           );
+          this.ai.placeGenerator();
           this.state.gamePhase = GAME_PHASES.COMBAT;
           this.state.metrics.unitsBuilt.logAllPlayerStructs(this.state.player, this.state.numTurns);
           this.state.metrics.unitsBuilt.logAllPlayerStructs(this.state.enemy, this.state.numTurns);
