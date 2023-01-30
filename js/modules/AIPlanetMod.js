@@ -135,8 +135,8 @@ export class AIPlanetMod extends AI {
    * @return {number}
    */
   countBlockingDefenders(struct) {
-    return this.state.enemy.commandStruct.defenders.reduce((count, struct) =>
-      count + ((struct.operatingAmbit === this.state.enemy.commandStruct.operatingAmbit) ? 1 : 0)
+    return struct.defenders.reduce((count, defender) =>
+      count + ((defender.operatingAmbit === struct.operatingAmbit) ? 1 : 0)
     , 0)
   }
 
@@ -164,7 +164,7 @@ export class AIPlanetMod extends AI {
       struct
       && !struct.isDestroyed
       && struct.defending
-      && (forCommandStruct || struct.defending.defenders.length >= 2)
+      && (forCommandStruct || this.countBlockingDefenders(struct) >= 2)
     );
   }
 
