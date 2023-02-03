@@ -694,6 +694,143 @@ const countBlockingDefendersTest = new DTest('countBlockingDefendersTest', funct
   this.assertArrayEquals(commandShip.isBlockingCommandStruct(), 2);
 });
 
+const chooseWeaponTest = new DTest('chooseWeaponTest', function(params) {
+  try {
+    const weaponSlot = params.attackStruct.chooseWeapon(params.targetAmbit);
+    this.assertEquals(weaponSlot, params.expectedWeaponSlot);
+  } catch(e) {
+    this.assertEquals(params.exceptionExpected, true);
+  }
+}, function() {
+  const structBuilder = new StructBuilder();
+  const tank = structBuilder.make(UNIT_TYPES.TANK);
+  const sub = structBuilder.make(UNIT_TYPES.SUB);
+  const cruiser = structBuilder.make(UNIT_TYPES.CRUISER);
+  return [
+    {
+      attackStruct: tank,
+      targetAmbit: AMBITS.LAND,
+      expectedWeaponSlot: MANUAL_WEAPON_SLOTS.PRIMARY,
+      exceptionExpected: false
+    },
+    {
+      attackStruct: sub,
+      targetAmbit: AMBITS.WATER,
+      expectedWeaponSlot: MANUAL_WEAPON_SLOTS.PRIMARY,
+      exceptionExpected: false
+    },
+    {
+      attackStruct: sub,
+      targetAmbit: AMBITS.SPACE,
+      expectedWeaponSlot: MANUAL_WEAPON_SLOTS.PRIMARY,
+      exceptionExpected: false
+    },
+    {
+      attackStruct: cruiser,
+      targetAmbit: AMBITS.WATER,
+      expectedWeaponSlot: MANUAL_WEAPON_SLOTS.PRIMARY,
+      exceptionExpected: false
+    },
+    {
+      attackStruct: cruiser,
+      targetAmbit: AMBITS.SKY,
+      expectedWeaponSlot: MANUAL_WEAPON_SLOTS.SECONDARY,
+      exceptionExpected: false
+    },
+    {
+      attackStruct: tank,
+      targetAmbit: AMBITS.SKY,
+      expectedWeaponSlot: null,
+      exceptionExpected: true
+    }
+  ];
+});
+
+const isCounterUnitToTest = new DTest('isCounterUnitToTest', function (params) {
+  const structBuilder = new StructBuilder();
+  const target = structBuilder.make(params.targetUnitType);
+  const counter = structBuilder.make(params.counterUnitType);
+  this.assertEquals(counter.isCounterUnitTo(target), params.expected);
+}, function() {
+  return [
+    {
+      targetUnitType: UNIT_TYPES.TANK,
+      counterUnitType: UNIT_TYPES.TANK,
+      expected: false
+    },
+    {
+      targetUnitType: UNIT_TYPES.TANK,
+      counterUnitType: UNIT_TYPES.ARTILLERY,
+      expected: true
+    },
+    {
+      targetUnitType: UNIT_TYPES.TANK,
+      counterUnitType: UNIT_TYPES.STEALTH_BOMBER,
+      expected: true
+    },
+    {
+      targetUnitType: UNIT_TYPES.STEALTH_BOMBER,
+      counterUnitType: UNIT_TYPES.SAM_LAUNCHER,
+      expected: false
+    },
+    {
+      targetUnitType: UNIT_TYPES.FIGHTER_JET,
+      counterUnitType: UNIT_TYPES.CRUISER,
+      expected: true
+    },
+  ];
+});
+
+const canDefeatStructsCounterMeasureTest = new DTest('canDefeatStructsCounterMeasureTest', function(params) {
+  const structBuilder = new StructBuilder();
+  const target = structBuilder.make(params.targetUnitType);
+  const attacker = structBuilder.make(params.attackerUnitType);
+  this.assertEquals(attacker.canDefeatStructsCounterMeasure(target), params.expected);
+}, function () {
+  return [
+    {
+      targetUnitType: UNIT_TYPES.TANK,
+      attackerUnitType: UNIT_TYPES.STEALTH_BOMBER,
+      expected: true // Vacuously true
+    },
+    {
+      targetUnitType: UNIT_TYPES.TANK,
+      attackerUnitType: UNIT_TYPES.TANK,
+      expected: true // Vacuously true
+    },
+    {
+      targetUnitType: UNIT_TYPES.FIGHTER_JET,
+      attackerUnitType: UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
+      expected: false
+    },
+    {
+      targetUnitType: UNIT_TYPES.FIGHTER_JET,
+      attackerUnitType: UNIT_TYPES.CRUISER,
+      expected: true
+    },
+    {
+      targetUnitType: UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
+      attackerUnitType: UNIT_TYPES.CRUISER,
+      expected: false
+    },
+    {
+      targetUnitType: UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
+      attackerUnitType: UNIT_TYPES.DESTROYER,
+      expected: true
+    },
+    {
+      targetUnitType: UNIT_TYPES.CRUISER,
+      attackerUnitType: UNIT_TYPES.STEALTH_BOMBER,
+      expected: false
+    },
+    {
+      targetUnitType: UNIT_TYPES.CRUISER,
+      attackerUnitType: UNIT_TYPES.GALACTIC_BATTLESHIP,
+      expected: true
+    },
+  ];
+});
+
 // Test execution
 DTestSuite.printSuiteHeader('StructTest');
 addDefenderTest.run();
@@ -717,3 +854,6 @@ getTargetableAmbitsTest.run();
 isBlockingTest.run();
 isBlockingCommandStructTest.run();
 countBlockingDefendersTest.run();
+chooseWeaponTest.run();
+isCounterUnitToTest.run();
+canDefeatStructsCounterMeasureTest.run();

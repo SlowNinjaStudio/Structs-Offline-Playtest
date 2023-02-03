@@ -421,60 +421,6 @@ const chooseAttackStructTest = new DTest('chooseAttackStructTest', function(para
   ];
 });
 
-const chooseWeaponTest = new DTest('chooseWeaponTest', function(params) {
-  const ai = new AI(new GameState());
-
-  try {
-    const weaponSlot = ai.chooseWeapon(params.attackStruct, params.targetAmbit);
-    this.assertEquals(weaponSlot, params.expectedWeaponSlot);
-  } catch(e) {
-    this.assertEquals(params.exceptionExpected, true);
-  }
-}, function() {
-  const structBuilder = new StructBuilder();
-  const tank = structBuilder.make(UNIT_TYPES.TANK);
-  const sub = structBuilder.make(UNIT_TYPES.SUB);
-  const cruiser = structBuilder.make(UNIT_TYPES.CRUISER);
-  return [
-    {
-      attackStruct: tank,
-      targetAmbit: AMBITS.LAND,
-      expectedWeaponSlot: MANUAL_WEAPON_SLOTS.PRIMARY,
-      exceptionExpected: false
-    },
-    {
-      attackStruct: sub,
-      targetAmbit: AMBITS.WATER,
-      expectedWeaponSlot: MANUAL_WEAPON_SLOTS.PRIMARY,
-      exceptionExpected: false
-    },
-    {
-      attackStruct: sub,
-      targetAmbit: AMBITS.SPACE,
-      expectedWeaponSlot: MANUAL_WEAPON_SLOTS.PRIMARY,
-      exceptionExpected: false
-    },
-    {
-      attackStruct: cruiser,
-      targetAmbit: AMBITS.WATER,
-      expectedWeaponSlot: MANUAL_WEAPON_SLOTS.PRIMARY,
-      exceptionExpected: false
-    },
-    {
-      attackStruct: cruiser,
-      targetAmbit: AMBITS.SKY,
-      expectedWeaponSlot: MANUAL_WEAPON_SLOTS.SECONDARY,
-      exceptionExpected: false
-    },
-    {
-      attackStruct: tank,
-      targetAmbit: AMBITS.SKY,
-      expectedWeaponSlot: null,
-      exceptionExpected: true
-    }
-  ];
-});
-
 const attackTest = new DTest('attackTest', function() {
   const player = getDummyPlayer();
   const playerSpaceFrigate = player.fleet.space[1];
@@ -1003,7 +949,6 @@ getCurrentHealthAttackScoreTest.run();
 getAmbitTargetingCostAttackScoreTest.run();
 getStructAttackScoreTest.run();
 chooseAttackStructTest.run();
-chooseWeaponTest.run();
 attackTest.run();
 openingDefenseTest.run();
 analyzeFleetAmbitAttackCapabilitiesTest.run();

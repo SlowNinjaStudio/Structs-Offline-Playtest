@@ -1,4 +1,11 @@
-import {DEFENSE_COMPONENTS, EVENTS, FLEET_STRUCT_DEFAULTS, MANUAL_WEAPON_SLOTS, STRUCT_DEFAULTS} from "./Constants.js";
+import {
+  DEFENSE_COMPONENT_TYPES,
+  DEFENSE_COMPONENTS,
+  EVENTS,
+  FLEET_STRUCT_DEFAULTS,
+  MANUAL_WEAPON_SLOTS,
+  STRUCT_DEFAULTS
+} from "./Constants.js";
 import {DefenseComponent} from "./struct_components/DefenseComponent.js";
 import {PassiveWeapon} from "./struct_components/PassiveWeapon.js";
 import {DefendActionDisabledError} from "./errors/DefendActionDisabledError.js";
@@ -402,5 +409,40 @@ export class Struct {
    */
   countBlockingDefenders() {
     return this.defenders.reduce((count, defender) => count + (defender.canTakeDamageFor(this) ? 1 : 0), 0);
+  }
+
+  /**
+   * @param {string} targetAmbit
+   * @return {string}
+   */
+  chooseWeapon(targetAmbit) {
+    if (this.manualWeaponPrimary && this.manualWeaponPrimary.canTargetAmbit(targetAmbit)) {
+      return MANUAL_WEAPON_SLOTS.PRIMARY;
+    }
+    if (this.manualWeaponSecondary && this.manualWeaponSecondary.canTargetAmbit(targetAmbit)) {
+      return MANUAL_WEAPON_SLOTS.SECONDARY;
+    }
+
+    throw new Error(`Struct cannot target given ambit: ${targetAmbit}`);
+  }
+
+  /**
+   * @param {Struct} unit
+   * @return {boolean}
+   */
+  isCounterUnitTo(unit) {
+    return this.canAttackAnyWeapon(unit) && !unit.canCounterAttack(this);
+  }
+
+  /**
+   * @param {Struct} struct
+   * @return {boolean}
+   */
+  canDefeatStructsCounterMeasure(struct) {
+    const weaponName = this.chooseWeapon(struct.operatingAmbit);
+    const weapon = this.getManualWeapon(weaponName);
+    return !struct.defenseComponent
+      || struct.defenseComponent.type !== DEFENSE_COMPONENT_TYPES.COUNTER_MEASURE
+      || struct.defenseComponent.guided !== weapon.isGuided;
   }
 }

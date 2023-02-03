@@ -1,5 +1,5 @@
 import {DefenseStrategyTree} from "./DefenseStrategyTree.js";
-import {AMBITS, EVENTS, MANUAL_WEAPON_SLOTS, ORDER_OF_AMBITS} from "./Constants.js";
+import {AMBITS, EVENTS, ORDER_OF_AMBITS} from "./Constants.js";
 import {AIAttackChoiceDTO} from "./dtos/AIAttackChoiceDTO.js";
 import {AmbitDistribution} from "./AmbitDistribution.js";
 import {AIAttackParamsDTO} from "./dtos/AIAttackParamsDTO.js";
@@ -208,25 +208,6 @@ export class AI {
   }
 
   /**
-   * @param {Struct} attackStruct
-   * @param {string} targetAmbit
-   * @return {string}
-   */
-  chooseWeapon(attackStruct, targetAmbit) {
-    const primary = attackStruct.manualWeaponPrimary;
-    const secondary = attackStruct.manualWeaponSecondary;
-
-    if (primary && primary.canTargetAmbit(targetAmbit)) {
-      return MANUAL_WEAPON_SLOTS.PRIMARY;
-    }
-    if (secondary && secondary.canTargetAmbit(targetAmbit)) {
-      return MANUAL_WEAPON_SLOTS.SECONDARY;
-    }
-
-    throw new Error(`Struct cannot target given ambit: ${targetAmbit}`);
-  }
-
-  /**
    * @param {AIAttackParamsDTO} params
    * @return {AIAttackChoiceDTO}
    */
@@ -235,7 +216,7 @@ export class AI {
     const attackingAIStruct = params.attackingAIStruct;
 
     // Choose a weapon
-    const weaponSlot = this.chooseWeapon(attackingAIStruct, target.operatingAmbit);
+    const weaponSlot = attackingAIStruct.chooseWeapon(target.operatingAmbit);
 
     // If it's a Command Struct, it needs to be in the same ambit as the target to attack
     if (attackingAIStruct.isCommandStruct() && attackingAIStruct.operatingAmbit !== target.operatingAmbit

@@ -3,6 +3,7 @@ import {AttackStructConstraint} from "./AttackStructConstraint.js";
 import {CommandStructBlockerConstraint} from "./CommandStructBlockerConstraint.js";
 import {AIConstraintFactoryError} from "../errors/AIConstraintFactoryError.js";
 import {GeneratorBlockerConstraint} from "./GeneratorBlockerConstraint.js";
+import {CounterUnitAttackerConstraint} from "./CounterUnitAttackerConstraint.js";
 
 export class AIConstraintFactory {
   /**
@@ -24,6 +25,9 @@ export class AIConstraintFactory {
         break;
       case CONSTRAINTS.COMMAND_STRUCT_BLOCKER:
         constraint = new CommandStructBlockerConstraint(this.state);
+        break;
+      case CONSTRAINTS.COUNTER_UNIT_ATTACKER:
+        constraint = new CounterUnitAttackerConstraint(this.state);
         break;
       case CONSTRAINTS.GENERATOR_BLOCKER:
         constraint = new GeneratorBlockerConstraint(this.state);
