@@ -1,5 +1,5 @@
 import {AIConstraintFactory} from "./constraints/AIConstraintFactory.js";
-import {ATTACK_STRUCT_CONSTRAINTS, CONSTRAINT_ORDER, FLEET_UNIT_TYPES} from "./Constants.js";
+import {CONSTRAINT_ORDER, FLEET_UNIT_TYPES} from "./Constants.js";
 import {StructBuilder} from "./StructBuilder.js";
 import {Appraiser} from "./Appraiser.js";
 import {AIConstraintSatisfyingStructDTO} from "./dtos/AIConstraintSatisfyingStructDTO.js";
@@ -23,7 +23,6 @@ export class AIBuyingStrategyManager {
     this.appraiser = new Appraiser();
     this.orderedConstrainstList = CONSTRAINT_ORDER;
     this.fleetUnitTypes = FLEET_UNIT_TYPES;
-    this.attackStructContraintsList = ATTACK_STRUCT_CONSTRAINTS;
 
     this.initConstraints();
   }
@@ -93,16 +92,6 @@ export class AIBuyingStrategyManager {
 
   /**
    * @param {AIAttackParamsDTO} attackParams
-   * @param {AIConstraintSatisfyingStructDTO} satisfyingStructDTO
-   */
-  updateAttackingAIStruct(attackParams, satisfyingStructDTO) {
-    if (this.attackStructContraintsList.includes(satisfyingStructDTO.forConstraint)) {
-      attackParams.attackingAIStruct = satisfyingStructDTO.unit;
-    }
-  }
-
-  /**
-   * @param {AIAttackParamsDTO} attackParams
    */
   execute(attackParams) {
     this.orderedConstrainstList.forEach((constraintName, constraintIndex) => {
@@ -115,7 +104,7 @@ export class AIBuyingStrategyManager {
 
         this.state.enemy.creditManager.pay(satisfyingStructDTO.appraisal.price);
         this.state.enemy.fleet.addStruct(satisfyingStructDTO.unit);
-        this.updateAttackingAIStruct(attackParams, satisfyingStructDTO);
+        this.constraints[constraintName].satisfy(satisfyingStructDTO, attackParams);
       }
     });
   }

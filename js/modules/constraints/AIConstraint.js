@@ -24,4 +24,22 @@ export class AIConstraint {
   couldSatisfy(potentialStruct, attackParams) {
     return 0;
   }
+
+  /**
+   * @param {AIConstraintSatisfyingStructDTO} aiConstraintSatisfyingStructDTO
+   * @param {AIAttackParamsDTO} attackParams
+   */
+  satisfyHelper(aiConstraintSatisfyingStructDTO, attackParams) {
+    // Override
+  }
+
+  /**
+   * @param {AIConstraintSatisfyingStructDTO} aiConstraintSatisfyingStructDTO
+   * @param {AIAttackParamsDTO} attackParams
+   */
+  satisfy(aiConstraintSatisfyingStructDTO, attackParams) {
+    if (this.name === aiConstraintSatisfyingStructDTO.forConstraint) {
+      this.satisfyHelper(aiConstraintSatisfyingStructDTO, attackParams);
+    }
+  }
 }

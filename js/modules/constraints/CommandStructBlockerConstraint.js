@@ -25,4 +25,12 @@ export class CommandStructBlockerConstraint extends AIConstraint {
   couldSatisfy(potentialStruct, attackParams) {
     return potentialStruct.canTakeDamageFor(this.state.enemy.commandStruct) ? 1 : 0;
   }
+
+  /**
+   * @param {AIConstraintSatisfyingStructDTO} aiConstraintSatisfyingStructDTO
+   * @param {AIAttackParamsDTO} attackParams
+   */
+  satisfyHelper(aiConstraintSatisfyingStructDTO, attackParams) {
+    aiConstraintSatisfyingStructDTO.unit.defend(this.state.enemy.commandStruct);
+  }
 }

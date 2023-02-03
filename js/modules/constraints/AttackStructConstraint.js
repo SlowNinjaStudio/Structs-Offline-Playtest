@@ -26,4 +26,12 @@ export class AttackStructConstraint extends AIConstraint {
   couldSatisfy(potentialStruct, attackParams) {
     return (!potentialStruct.isCommandStruct() && potentialStruct.canAttackAnyWeapon(attackParams.target)) ? 1 : 0;
   }
+
+  /**
+   * @param {AIConstraintSatisfyingStructDTO} aiConstraintSatisfyingStructDTO
+   * @param {AIAttackParamsDTO} attackParams
+   */
+  satisfyHelper(aiConstraintSatisfyingStructDTO, attackParams) {
+    attackParams.attackingAIStruct = aiConstraintSatisfyingStructDTO.unit;
+  }
 }
