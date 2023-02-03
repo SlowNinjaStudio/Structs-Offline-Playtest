@@ -1,4 +1,4 @@
-import {DTest} from "../../DTestFramework.js";
+import {DTest, DTestSuite} from "../../DTestFramework.js";
 import {DefenseStrategyTreeNode} from "../../../js/modules/data_structures/DefenseStrategyTreeNode.js";
 import {StructBuilder} from "../../../js/modules/StructBuilder.js";
 import {AMBITS, EVENTS, MANUAL_WEAPON_SLOTS, UNIT_TYPES} from "../../../js/modules/Constants.js";
@@ -994,7 +994,7 @@ const chooseTargetTest = new DTest('chooseTargetTest', function() {
 });
 
 // Test execution
-console.log('AITest');
+DTestSuite.printSuiteHeader('AITest');
 rankTargetTest.run();
 determineTargetOnGoalTest.run();
 getUncounterableAttackScoreTest.run();

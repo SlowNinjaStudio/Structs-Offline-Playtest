@@ -1,4 +1,4 @@
-import {DTest} from "../../DTestFramework.js";
+import {DTest, DTestSuite} from "../../DTestFramework.js";
 import {POWER_GENERATORS} from "../../../js/modules/Constants.js";
 import {PowerGeneratorFactory} from "../../../js/modules/struct_components/PowerGeneratorFactory.js";
 
@@ -17,5 +17,5 @@ const makeTest = new DTest('makeTest', function(params) {
 });
 
 // Test execution
-console.log('PowerGeneratorFactoryTest');
+DTestSuite.printSuiteHeader('PowerGeneratorFactoryTest');
 makeTest.run();

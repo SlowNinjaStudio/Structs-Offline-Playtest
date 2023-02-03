@@ -1,4 +1,4 @@
-import {DTest} from "../../DTestFramework.js";
+import {DTest, DTestSuite} from "../../DTestFramework.js";
 import {
   AMBITS,
   DEFENSE_COMPONENTS,
@@ -190,5 +190,5 @@ const makeTest = new DTest('makeTest', function(params) {
 });
 
 // Test execution
-console.log('StructBuilderTest');
+DTestSuite.printSuiteHeader('StructBuilderTest');
 makeTest.run();

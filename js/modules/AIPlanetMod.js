@@ -35,25 +35,11 @@ export class AIPlanetMod extends AI {
   }
 
   /**
-   * @param {Planet} planet
-   * @return {Struct|null}
-   */
-  findGenerator(planet) {
-    let generator = null;
-    planet.forEachStruct(struct => {
-      if (struct.unitType === UNIT_TYPES.GENERATOR) {
-        generator = struct;
-      }
-    });
-    return generator;
-  }
-
-  /**
    * @return {Struct}
    */
   getAttackGoal() {
     if (this.state.arePlanetsEnabled) {
-      const generator = this.findGenerator(this.state.player.planet);
+      const generator = this.state.player.planet.findGenerator();
       if (generator && !generator.isDestroyed && this.state.player.commandStruct.defenders.length > 0) {
         return generator;
       }
@@ -64,7 +50,7 @@ export class AIPlanetMod extends AI {
   openingDefense() {
     const vipStructs = {
       commandStruct: this.state.enemy.commandStruct,
-      generator: this.findGenerator(this.state.enemy.planet)
+      generator: this.state.enemy.planet.findGenerator()
     };
     let assignTo = 'commandStruct';
     this.state.enemy.fleet.forEachStruct(aiStruct => {
@@ -95,7 +81,7 @@ export class AIPlanetMod extends AI {
     let mostStructs = 0;
     let secondMostOccupiedAmbit = null;
     let secondMostStructs = 0;
-    const generator = this.findGenerator(player.planet);
+    const generator = player.planet.findGenerator();
     const ambitPositions = this.analyzeFleetAmbitPositions(player.fleet);
     const ambits = ORDER_OF_AMBITS;
     for (let i = 0; i < ambits.length; i++) {
@@ -118,7 +104,7 @@ export class AIPlanetMod extends AI {
   }
 
   defendVIPStructsWithUnused() {
-    const generator = this.findGenerator(this.state.enemy.planet);
+    const generator = this.state.enemy.planet.findGenerator();
     const isGeneratorAvailable = generator && !generator.isDestroyed;
     let numDefendersCommandStruct = this.state.enemy.commandStruct.defenders.length;
     let numDefendersGenerator = isGeneratorAvailable ? generator.defenders.length : Infinity;
@@ -197,7 +183,7 @@ export class AIPlanetMod extends AI {
   }
 
   reviewGeneratorBlockingDefenders() {
-    const generator = this.findGenerator(this.state.enemy.planet);
+    const generator = this.state.enemy.planet.findGenerator();
     if (generator || !generator.isDestroyed) {
       this.reviewBlockingDefenders(generator);
     }

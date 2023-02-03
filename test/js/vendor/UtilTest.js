@@ -1,4 +1,4 @@
-import {DTest} from "../../DTestFramework.js";
+import {DTest, DTestSuite} from "../../DTestFramework.js";
 import {Util} from "../../../js/modules/util/Util.js";
 
 const titleCaseTest = new DTest('titleCaseTest', function(params) {
@@ -26,5 +26,5 @@ const titleCaseTest = new DTest('titleCaseTest', function(params) {
 });
 
 // Test execution
-console.log('UtilTest');
+DTestSuite.printSuiteHeader('UtilTest');
 titleCaseTest.run();

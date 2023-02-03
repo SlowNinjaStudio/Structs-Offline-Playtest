@@ -1,4 +1,4 @@
-import {DTest} from "../../DTestFramework.js";
+import {DTest, DTestSuite} from "../../DTestFramework.js";
 import {StructBuilder} from "../../../js/modules/StructBuilder.js";
 import {Player} from "../../../js/modules/Player.js";
 import {UNIT_TYPES} from "../../../js/modules/Constants.js";
@@ -169,6 +169,6 @@ const getLeafNodesTest = new DTest('getLeafNodesTest', function() {
 });
 
 // Test execution
-console.log('DefenseStrategyTreeTest');
+DTestSuite.printSuiteHeader('DefenseStrategyTreeTest');
 generateTest.run();
 getLeafNodesTest.run();

@@ -1,4 +1,4 @@
-import {DTest} from "../../DTestFramework.js";
+import {DTest, DTestSuite} from "../../DTestFramework.js";
 import {Appraiser} from "../../../js/modules/Appraiser.js";
 import {AMBITS, UNIT_TYPES, UNITS_BY_AMBIT} from "../../../js/modules/Constants.js";
 
@@ -140,7 +140,7 @@ const getAllFleetUnitAppraisalsTest = new DTest('getAllFleetUnitAppraisalsTest',
 });
 
 // Test execution
-console.log('AppraiserTest');
+DTestSuite.printSuiteHeader('AppraiserTest');
 calcUnitTypePriceTest.run();
 calcUnitTypeTacticalValueTest.run();
 getUnitAppraisalsByAmbitTest.run();

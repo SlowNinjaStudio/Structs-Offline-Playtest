@@ -1,4 +1,4 @@
-import {AMBITS, MAX_FLEET_STRUCTS_PER_AMBIT, ORDER_OF_AMBITS, PLAYER_DEFAULTS} from "./Constants.js";
+import {AMBITS, MAX_FLEET_STRUCTS_PER_AMBIT, ORDER_OF_AMBITS, PLAYER_DEFAULTS, UNIT_TYPES} from "./Constants.js";
 
 export class Fleet {
   /**
@@ -247,5 +247,18 @@ export class Fleet {
     return Object.values(ORDER_OF_AMBITS).reduce((structs, ambit) =>
         [...structs, ...this[ambit.toLowerCase()].filter(ambitStruct => !!ambitStruct)]
       , []);
+  }
+
+  /**
+   * @return {Struct|null}
+   */
+  findGenerator() {
+    let generator = null;
+    this.forEachStruct(struct => {
+      if (struct.unitType === UNIT_TYPES.GENERATOR) {
+        generator = struct;
+      }
+    });
+    return generator;
   }
 }

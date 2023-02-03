@@ -1,4 +1,4 @@
-import {DTest} from "../../DTestFramework.js";
+import {DTest, DTestSuite} from "../../DTestFramework.js";
 import {GameState} from "../../../js/modules/state/GameState.js";
 import {StructBuilder} from "../../../js/modules/StructBuilder.js";
 import {AMBITS, UNIT_TYPES} from "../../../js/modules/Constants.js";
@@ -109,46 +109,6 @@ const placeGeneratorTest = new DTest('placeGeneratorTest', function(params) {
       unitsToAdd: [UNIT_TYPES.SUB, UNIT_TYPES.ARTILLERY, UNIT_TYPES.FIGHTER_JET, UNIT_TYPES.STAR_FIGHTER],
       expectedAmbit: AMBITS.SKY
     },
-  ];
-});
-
-const findGeneratorTest = new DTest('findGeneratorTest', function(params) {
-  const structBuilder = new StructBuilder();
-  const enemy = new Player('Enemy');
-  const state = new GameState();
-  state.enemy = enemy;
-  state.enemy.planet = new Planet(state.enemy.id);
-
-  params.unitsToAdd.forEach(unitType => {
-    state.enemy.fleet.addStruct(structBuilder.make(unitType));
-  })
-
-  const ai = new AIPlanetMod(state);
-
-  this.assertEquals(ai.findGenerator(state.enemy.planet), null);
-
-  ai.placeGenerator();
-  let generator = ai.findGenerator(state.enemy.planet);
-
-  this.assertEquals(generator.unitType, params.expectedUnitType);
-  this.assertEquals(generator.operatingAmbit, params.expectedAmbit);
-}, function() {
-  return [
-    {
-      unitsToAdd: [],
-      expectedUnitType: UNIT_TYPES.GENERATOR,
-      expectedAmbit: AMBITS.LAND
-    },
-    {
-      unitsToAdd: [UNIT_TYPES.TANK],
-      expectedUnitType: UNIT_TYPES.GENERATOR,
-      expectedAmbit: AMBITS.LAND
-    },
-    {
-      unitsToAdd: [UNIT_TYPES.FIGHTER_JET],
-      expectedUnitType: UNIT_TYPES.GENERATOR,
-      expectedAmbit: AMBITS.SKY
-    }
   ];
 });
 
@@ -343,10 +303,9 @@ const reviewBlockingDefendersTest = new DTest('reviewBlockingDefendersTest', fun
 });
 
 // Test execution
-console.log('AIPlanetModTest');
+DTestSuite.printSuiteHeader('AIPlanetModTest');
 countUnitTypeTest.run();
 placeGeneratorTest.run();
-findGeneratorTest.run();
 getAttackGoalTest.run();
 openingDefenseTest.run();
 findAmbitForBestDefenseTest.run();

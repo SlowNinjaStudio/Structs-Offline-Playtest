@@ -1,4 +1,4 @@
-import {DTest} from "../../DTestFramework.js";
+import {DTest, DTestSuite} from "../../DTestFramework.js";
 import {
   AMBITS,
   DEFENSE_COMPONENT_TYPES,
@@ -273,5 +273,5 @@ const makeTest = new DTest('makeTest', function(params) {
 });
 
 // Test execution
-console.log('DefenseComponentFactoryTest');
+DTestSuite.printSuiteHeader('DefenseComponentFactoryTest');
 makeTest.run();

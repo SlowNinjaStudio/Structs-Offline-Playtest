@@ -1,4 +1,4 @@
-import {DTest} from "../../DTestFramework.js";
+import {DTest, DTestSuite} from "../../DTestFramework.js";
 import {StructBuilder} from "../../../js/modules/StructBuilder.js";
 import {Player} from "../../../js/modules/Player.js";
 import {GameState} from "../../../js/modules/state/GameState.js";
@@ -93,5 +93,5 @@ const findConstraintSatisfyingStructTest = new DTest('findConstraintSatisfyingSt
 });
 
 // Test execution
-console.log('AIBuyingStrategyManagerTest');
+DTestSuite.printSuiteHeader('AIBuyingStrategyManagerTest');
 findConstraintSatisfyingStructTest.run();

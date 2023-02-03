@@ -1,4 +1,4 @@
-import {DTest} from "../../DTestFramework.js";
+import {DTest, DTestSuite} from "../../DTestFramework.js";
 import {AMBITS, POWER_GENERATORS, UNIT_TYPES} from "../../../js/modules/Constants.js";
 import {PowerManager} from "../../../js/modules/PowerManager.js";
 import {Player} from "../../../js/modules/Player.js";
@@ -76,5 +76,5 @@ const managePowerPerRoundTest = new DTest('managePowerPerRoundTest', function() 
 });
 
 // Test execution
-console.log('PowerManagerTest');
+DTestSuite.printSuiteHeader('PowerManagerTest');
 managePowerPerRoundTest.run();

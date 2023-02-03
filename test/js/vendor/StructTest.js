@@ -1,4 +1,4 @@
-import {DTest} from "../../DTestFramework.js";
+import {DTest, DTestSuite} from "../../DTestFramework.js";
 import {Struct} from "../../../js/modules/Struct.js";
 import {ManualWeapon} from "../../../js/modules/struct_components/ManualWeapon.js";
 import {AMBITS, FLEET_STRUCT_DEFAULTS, MANUAL_WEAPON_SLOTS, UNIT_TYPES} from "../../../js/modules/Constants.js";
@@ -695,7 +695,7 @@ const countBlockingDefendersTest = new DTest('countBlockingDefendersTest', funct
 });
 
 // Test execution
-console.log('StructTest');
+DTestSuite.printSuiteHeader('StructTest');
 addDefenderTest.run();
 removeDefenderTest.run();
 defendTest.run();

@@ -1,4 +1,4 @@
-import {DTest} from "../../DTestFramework.js";
+import {DTest, DTestSuite} from "../../DTestFramework.js";
 import {Player} from "../../../js/modules/Player.js";
 import {GameState} from "../../../js/modules/state/GameState.js";
 import {FleetGenerator} from "../../../js/modules/FleetGenerator.js";
@@ -44,5 +44,5 @@ const cleanUpTest = new DTest('cleanUpTest', function() {
 });
 
 // Test execution
-console.log('StructGarbageCollectorTest');
+DTestSuite.printSuiteHeader('StructGarbageCollectorTest');
 cleanUpTest.run();

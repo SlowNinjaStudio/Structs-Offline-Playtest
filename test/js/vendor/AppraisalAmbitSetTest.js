@@ -1,4 +1,4 @@
-import {DTest} from "../../DTestFramework.js";
+import {DTest, DTestSuite} from "../../DTestFramework.js";
 import {AppraisalAmbitSet} from "../../../js/modules/AppraisalAmbitSet.js";
 import {AMBITS, UNIT_TYPES} from "../../../js/modules/Constants.js";
 import {AppraisalDTO} from "../../../js/modules/dtos/AppraisalDTO.js";
@@ -56,7 +56,7 @@ const getTacticalValuesForAmbitTest = new DTest('getTacticalValuesForAmbitTest',
 });
 
 // Test execution
-console.log('AppraisalAmbitSetTest');
+DTestSuite.printSuiteHeader('AppraisalAmbitSetTest');
 getMostExpensiveForAmbitTest.run();
 getPricesForAmbitTest.run();
 getTacticalValuesForAmbitTest.run();

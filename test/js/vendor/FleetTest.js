@@ -1,9 +1,10 @@
-import {DTest} from "../../DTestFramework.js";
+import {DTest, DTestSuite} from "../../DTestFramework.js";
 import {AMBITS, POWER_GENERATORS, UNIT_TYPES} from "../../../js/modules/Constants.js";
 import {StructBuilder} from "../../../js/modules/StructBuilder.js";
 import {Fleet} from "../../../js/modules/Fleet.js";
 import {IdGenerator} from "../../../js/modules/util/IdGenerator.js";
 import {PowerGeneratorFactory} from "../../../js/modules/struct_components/PowerGeneratorFactory.js";
+import {Planet} from "../../../js/modules/Planet.js";
 
 const findStructByAmbitAndIdTest = new DTest('findStructByAmbitAndIdTest', function() {
   const fleet = new Fleet();
@@ -336,8 +337,36 @@ const toFlatArrayTest = new DTest('toFlatArrayTest', function() {
   );
 });
 
+const findGeneratorTest = new DTest('findGeneratorTest', function(params) {
+  const structBuilder = new StructBuilder();
+  const generator = structBuilder.make(UNIT_TYPES.GENERATOR);
+  const planet = new Planet();
+
+  this.assertEquals(planet.findGenerator(), null);
+
+  generator.operatingAmbit = params.generatorAmbit;
+  planet.addStruct(generator);
+
+  this.assertEquals((planet.findGenerator()).operatingAmbit, params.generatorAmbit);
+}, function() {
+  return [
+    {
+      generatorAmbit: AMBITS.SPACE
+    },
+    {
+      generatorAmbit: AMBITS.SKY
+    },
+    {
+      generatorAmbit: AMBITS.LAND
+    },
+    {
+      generatorAmbit: AMBITS.WATER
+    }
+  ];
+});
+
 // Test execution
-console.log('FleetTest');
+DTestSuite.printSuiteHeader('FleetTest');
 findStructByAmbitAndIdTest.run();
 findStructByIdTest.run();
 includesTest.run();
@@ -352,3 +381,4 @@ isDestroyedTest.run();
 forEachStructTest.run();
 generatePowerTest.run();
 toFlatArrayTest.run();
+findGeneratorTest.run();

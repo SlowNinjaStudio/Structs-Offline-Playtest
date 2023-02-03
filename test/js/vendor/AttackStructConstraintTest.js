@@ -1,4 +1,4 @@
-import {DTest} from "../../DTestFramework.js";
+import {DTest, DTestSuite} from "../../DTestFramework.js";
 import {AttackStructConstraint} from "../../../js/modules/constraints/AttackStructConstraint.js";
 import {GameState} from "../../../js/modules/state/GameState.js";
 import {StructBuilder} from "../../../js/modules/StructBuilder.js";
@@ -79,6 +79,6 @@ const couldSatisfyTest = new DTest('couldSatisfyTest', function(params) {
 });
 
 // Test execution
-console.log('AttackStructConstraintTest');
+DTestSuite.printSuiteHeader('AttackStructConstraintTest');
 isSatisfiedTest.run();
 couldSatisfyTest.run();
