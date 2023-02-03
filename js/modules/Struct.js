@@ -396,4 +396,11 @@ export class Struct {
   isPlanetaryStruct() {
     return false;
   }
+
+  /**
+   * @return {number}
+   */
+  countBlockingDefenders() {
+    return this.defenders.reduce((count, defender) => count + (defender.canTakeDamageFor(this) ? 1 : 0), 0);
+  }
 }

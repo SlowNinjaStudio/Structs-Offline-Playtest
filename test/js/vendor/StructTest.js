@@ -673,6 +673,27 @@ const isBlockingCommandStructTest = new DTest('isBlockingCommandStructTest', fun
   this.assertArrayEquals(fighterJet.isBlockingCommandStruct(), false);
 });
 
+const countBlockingDefendersTest = new DTest('countBlockingDefendersTest', function() {
+  const builder = new StructBuilder();
+  const commandBuilder = new CommandStructBuilder();
+
+  const commandShip = commandBuilder.make(UNIT_TYPES.COMMAND_SHIP);
+  const tank = builder.make(UNIT_TYPES.TANK);
+  const sam = builder.make(UNIT_TYPES.SAM_LAUNCHER);
+  const fighterJet = builder.make(UNIT_TYPES.FIGHTER_JET);
+  const sub = builder.make(UNIT_TYPES.SUB);
+
+  this.assertEquals(commandShip.countBlockingDefenders(), 0);
+
+  commandShip.operatingAmbit = AMBITS.LAND;
+  tank.defend(commandShip);
+  fighterJet.defend(commandShip);
+  sam.defend(commandShip);
+  sub.defend(commandShip)
+
+  this.assertArrayEquals(commandShip.isBlockingCommandStruct(), 2);
+});
+
 // Test execution
 console.log('StructTest');
 addDefenderTest.run();
@@ -695,3 +716,4 @@ changeAmbitTest.run();
 getTargetableAmbitsTest.run();
 isBlockingTest.run();
 isBlockingCommandStructTest.run();
+countBlockingDefendersTest.run();

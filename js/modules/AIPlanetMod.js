@@ -1,6 +1,8 @@
 import {AI} from "./AI.js";
-import {AMBITS, ORDER_OF_AMBITS, UNIT_TYPES} from "./Constants.js";
+import {AMBITS, EVENTS, ORDER_OF_AMBITS, UNIT_TYPES} from "./Constants.js";
 import {StructBuilder} from "./StructBuilder.js";
+import {AIBuyingStrategyManager} from "./AIBuyingStrategyManager.js";
+import {AIAttackParamsDTO} from "./dtos/AIAttackParamsDTO.js";
 
 export class AIPlanetMod extends AI {
 
@@ -10,6 +12,7 @@ export class AIPlanetMod extends AI {
   constructor(state) {
     super(state);
     this.structBuilder = new StructBuilder();
+    this.buyingStrategyManager = new AIBuyingStrategyManager(state);
   }
 
   /**
@@ -101,6 +104,9 @@ export class AIPlanetMod extends AI {
         secondMostStructs = mostStructs;
         mostStructs = ambitPositions[ambits[i].toLowerCase()];
         mostOccupiedAmbit = ambits[i];
+      } else if (ambitPositions[ambits[i].toLowerCase()] > secondMostStructs) {
+        secondMostOccupiedAmbit = ambits[i];
+        secondMostStructs = ambitPositions[ambits[i].toLowerCase()];
       }
     }
     return (
@@ -131,16 +137,6 @@ export class AIPlanetMod extends AI {
   }
 
   /**
-   * @param {Struct} struct
-   * @return {number}
-   */
-  countBlockingDefenders(struct) {
-    return struct.defenders.reduce((count, defender) =>
-      count + ((defender.operatingAmbit === struct.operatingAmbit) ? 1 : 0)
-    , 0)
-  }
-
-  /**
    * @param {string} ambit
    * @return {Struct|undefined}
    */
@@ -149,8 +145,8 @@ export class AIPlanetMod extends AI {
       struct
       && !struct.isDestroyed
       && struct.defending
-      && !struct.defending.isCommandStruct
-      && !struct.defending.isPlanetaryStruct
+      && !struct.defending.isCommandStruct()
+      && !struct.defending.isPlanetaryStruct()
     );
   }
 
@@ -164,7 +160,7 @@ export class AIPlanetMod extends AI {
       struct
       && !struct.isDestroyed
       && struct.defending
-      && (forCommandStruct || this.countBlockingDefenders(struct) >= 2)
+      && (forCommandStruct || struct.defending.countBlockingDefenders() >= 2)
     );
   }
 
@@ -187,7 +183,7 @@ export class AIPlanetMod extends AI {
    * @param {Struct} struct
    */
   reviewBlockingDefenders(struct) {
-    if (this.countBlockingDefenders(struct) > 0) {
+    if (struct.countBlockingDefenders() > 0) {
       return;
     }
     const potentialDefender = this.findStealableDefender(struct.operatingAmbit.toLowerCase(), struct.isCommandStruct());
@@ -213,5 +209,26 @@ export class AIPlanetMod extends AI {
     this.defendVIPStructsWithUnused();
     this.reviewCommandShipBlockingDefenders();
     this.reviewGeneratorBlockingDefenders();
+  }
+
+  executeTurn() {
+    if (this.state.numTurns === 2) {
+      this.openingDefense();
+      window.dispatchEvent(new CustomEvent(EVENTS.TURNS.END_TURN));
+    } else {
+      this.turnBasedDefense();
+
+      const target = this.chooseTarget();
+      const attackParams = new AIAttackParamsDTO(
+        target,
+        this.chooseAttackStruct(target)
+      );
+      console.log(`---AI Initial Target ${attackParams.target.unitType}`);
+      console.log(`---AI Initial Attack AI Struct ${attackParams.attackingAIStruct.unitType}`);
+
+      this.buyingStrategyManager.execute(attackParams);
+
+      this.attack(attackParams);
+    }
   }
 }

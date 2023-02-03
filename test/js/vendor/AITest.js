@@ -11,6 +11,7 @@ import {CommandStructBuilder} from "../../../js/modules/CommandStructBuilder.js"
 import {CombatEventLogItem} from "../../../js/modules/CombatEventLogItem.js";
 import {CombatEvent} from "../../../js/modules/CombatEvent.js";
 import {AIThreatDTO} from "../../../js/modules/dtos/AIThreatDTO.js";
+import {AIAttackParamsDTO} from "../../../js/modules/dtos/AIAttackParamsDTO.js";
 
 /**
  * @return {Player}
@@ -496,7 +497,9 @@ const attackTest = new DTest('attackTest', function() {
   this.assertEquals(playerSpaceFrigate.currentHealth, 2);
   this.assertEquals(playerSpaceFrigate.isDestroyed, false);
 
-  let choice = ai.attack();
+  let target = ai.chooseTarget();
+  let attackParams = new AIAttackParamsDTO(target, ai.chooseAttackStruct(target));
+  let choice = ai.attack(attackParams);
   const enemySamLauncher = enemy.fleet.land[2];
 
   this.assertEquals(choice.targetStruct.unitType, playerSpaceFrigate.unitType);
@@ -508,7 +511,9 @@ const attackTest = new DTest('attackTest', function() {
   this.assertEquals(playerGalacticBattleship.currentHealth, 3);
 
   const enemyHighAltitudeInterceptor = enemy.fleet.sky[1];
-  choice = ai.attack();
+  attackParams.target = ai.chooseTarget();
+  attackParams.attackingAIStruct = ai.chooseAttackStruct(attackParams.target);
+  choice = ai.attack(attackParams);
 
   this.assertEquals(choice.targetStruct.unitType, playerGalacticBattleship.unitType);
   this.assertEquals(choice.attackStruct.unitType, enemyHighAltitudeInterceptor.unitType);
@@ -516,21 +521,27 @@ const attackTest = new DTest('attackTest', function() {
 
   playerGalacticBattleship.destroyStruct();
   enemyHighAltitudeInterceptor.destroyStruct();
-  choice = ai.attack();
+  attackParams.target = ai.chooseTarget();
+  attackParams.attackingAIStruct = ai.chooseAttackStruct(attackParams.target);
+  choice = ai.attack(attackParams);
 
   this.assertEquals(choice.targetStruct.id, player.commandStruct.id);
   this.assertEquals(choice.attackStruct.unitType, enemySamLauncher.unitType);
   this.assertEquals(choice.weaponSlot, MANUAL_WEAPON_SLOTS.PRIMARY);
   this.assertEquals(player.commandStruct.currentHealth, 4);
 
-  choice = ai.attack();
+  attackParams.target = ai.chooseTarget();
+  attackParams.attackingAIStruct = ai.chooseAttackStruct(attackParams.target);
+  choice = ai.attack(attackParams);
 
   this.assertEquals(choice.targetStruct.id, player.commandStruct.id);
   this.assertEquals(choice.attackStruct.unitType, enemySamLauncher.unitType);
   this.assertEquals(choice.weaponSlot, MANUAL_WEAPON_SLOTS.PRIMARY);
   this.assertEquals(player.commandStruct.currentHealth, 2);
 
-  choice = ai.attack();
+  attackParams.target = ai.chooseTarget();
+  attackParams.attackingAIStruct = ai.chooseAttackStruct(attackParams.target);
+  choice = ai.attack(attackParams);
 
   this.assertEquals(choice.targetStruct.id, player.commandStruct.id);
   this.assertEquals(choice.attackStruct.unitType, enemySamLauncher.unitType);

@@ -2,6 +2,7 @@ import {DefenseStrategyTree} from "./DefenseStrategyTree.js";
 import {AMBITS, EVENTS, MANUAL_WEAPON_SLOTS, ORDER_OF_AMBITS} from "./Constants.js";
 import {AIAttackChoiceDTO} from "./dtos/AIAttackChoiceDTO.js";
 import {AmbitDistribution} from "./AmbitDistribution.js";
+import {AIAttackParamsDTO} from "./dtos/AIAttackParamsDTO.js";
 
 export class AI {
   /**
@@ -226,29 +227,27 @@ export class AI {
   }
 
   /**
+   * @param {AIAttackParamsDTO} params
    * @return {AIAttackChoiceDTO}
    */
-  attack() {
-    // Determine the best target
-    const target = this.chooseTarget();
-
-    // Determine the best struct to attack the target with
-    const aiStruct = this.chooseAttackStruct(target);
+  attack(params) {
+    const target = params.target;
+    const attackingAIStruct = params.attackingAIStruct;
 
     // Choose a weapon
-    const weaponSlot = this.chooseWeapon(aiStruct, target.operatingAmbit);
+    const weaponSlot = this.chooseWeapon(attackingAIStruct, target.operatingAmbit);
 
     // If it's a Command Struct, it needs to be in the same ambit as the target to attack
-    if (aiStruct.isCommandStruct() && aiStruct.operatingAmbit !== target.operatingAmbit
-        && aiStruct.defenseComponent.canChangeAmbit(aiStruct.operatingAmbit, target.operatingAmbit)) {
-      aiStruct.operatingAmbit = target.operatingAmbit;
+    if (attackingAIStruct.isCommandStruct() && attackingAIStruct.operatingAmbit !== target.operatingAmbit
+        && attackingAIStruct.defenseComponent.canChangeAmbit(attackingAIStruct.operatingAmbit, target.operatingAmbit)) {
+      attackingAIStruct.operatingAmbit = target.operatingAmbit;
     }
 
     // Execute attack and end turn
-    aiStruct.attack(weaponSlot, target);
+    attackingAIStruct.attack(weaponSlot, target);
 
     return new AIAttackChoiceDTO(
-      aiStruct,
+      attackingAIStruct,
       weaponSlot,
       target
     );
@@ -449,7 +448,14 @@ export class AI {
       window.dispatchEvent(new CustomEvent(EVENTS.TURNS.END_TURN));
     } else {
       this.turnBasedDefense();
-      this.attack();
+
+      const target = this.chooseTarget();
+      const attackParams = new AIAttackParamsDTO(
+        target,
+        this.chooseAttackStruct(target)
+      );
+
+      this.attack(attackParams);
     }
   }
 }
