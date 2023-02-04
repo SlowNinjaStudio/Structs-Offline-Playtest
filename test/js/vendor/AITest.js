@@ -515,26 +515,6 @@ const openingDefenseTest = new DTest('openingDefenseTest', function() {
   });
 });
 
-const analyzeFleetAmbitAttackCapabilitiesTest = new DTest('analyzeFleetAmbitAttackCapabilitiesTest',
-  function() {
-    const player = getDummyPlayer();
-    const enemy = getDummyPlayer();
-    const state = new GameState();
-    state.player = player;
-    state.enemy = enemy;
-    const ai = new AI(state);
-
-    destroySelectStructs(state.player.fleet);
-
-    const ambitAttackCapabilities = ai.analyzeFleetAmbitAttackCapabilities(state.player.fleet);
-
-    this.assertEquals(ambitAttackCapabilities.space, 5);
-    this.assertEquals(ambitAttackCapabilities.sky, 3);
-    this.assertEquals(ambitAttackCapabilities.land, 0);
-    this.assertEquals(ambitAttackCapabilities.water, 1);
-  }
-);
-
 const findFleetTargetingWeaknessTest = new DTest('findFleetTargetingWeaknessTest', function() {
   const player = getDummyPlayer();
   const enemy = getDummyPlayer();
@@ -951,7 +931,6 @@ getStructAttackScoreTest.run();
 chooseAttackStructTest.run();
 attackTest.run();
 openingDefenseTest.run();
-analyzeFleetAmbitAttackCapabilitiesTest.run();
 findFleetTargetingWeaknessTest.run();
 findAmbitForBestDefenseTest.run();
 canAttackIfHiddenTest.run();

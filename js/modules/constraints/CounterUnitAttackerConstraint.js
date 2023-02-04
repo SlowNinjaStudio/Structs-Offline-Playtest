@@ -6,7 +6,7 @@ export class CounterUnitAttackerConstraint extends AIConstraint {
    * @param {GameState} state
    */
   constructor(state) {
-    super(CONSTRAINTS.ATTACK_STRUCT, state);
+    super(CONSTRAINTS.COUNTER_UNIT_ATTACKER, state);
   }
 
   /**

@@ -244,23 +244,6 @@ export class AI {
    * @param {Fleet} fleet
    * @return {AmbitDistribution}
    */
-  analyzeFleetAmbitAttackCapabilities(fleet) {
-    const ambitAttackCapabilities = new AmbitDistribution();
-    fleet.forEachStruct(struct => {
-      if (!struct.isDestroyed) {
-        const targetableAmbits = struct.getTargetableAmbits();
-        targetableAmbits.forEach(ambit => {
-          ambitAttackCapabilities.increment(ambit, 1);
-        });
-      }
-    });
-    return ambitAttackCapabilities;
-  }
-
-  /**
-   * @param {Fleet} fleet
-   * @return {AmbitDistribution}
-   */
   analyzeFleetAmbitPositions(fleet) {
     const ambitPositions = new AmbitDistribution();
     fleet.forEachStruct(struct => {
@@ -278,7 +261,7 @@ export class AI {
    * @return {string|null}
    */
   findFleetTargetingWeakness(fleet) {
-    const ambitAttackCapabilities = this.analyzeFleetAmbitAttackCapabilities(fleet);
+    const ambitAttackCapabilities = fleet.analyzeFleetAmbitAttackCapabilities();
     const ambits = Object.values(AMBITS);
     for (let i = 0; i < ambits.length; i++) {
       if (ambitAttackCapabilities[ambits[i].toLowerCase()] === 0) {

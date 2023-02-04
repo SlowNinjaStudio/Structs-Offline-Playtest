@@ -1,4 +1,5 @@
 import {AMBITS, MAX_FLEET_STRUCTS_PER_AMBIT, ORDER_OF_AMBITS, PLAYER_DEFAULTS, UNIT_TYPES} from "./Constants.js";
+import {AmbitDistribution} from "./AmbitDistribution.js";
 
 export class Fleet {
   /**
@@ -260,5 +261,21 @@ export class Fleet {
       }
     });
     return generator;
+  }
+
+  /**
+   * @return {AmbitDistribution}
+   */
+  analyzeFleetAmbitAttackCapabilities() {
+    const ambitAttackCapabilities = new AmbitDistribution();
+    this.forEachStruct(struct => {
+      if (!struct.isDestroyed) {
+        const targetableAmbits = struct.getTargetableAmbits();
+        targetableAmbits.forEach(ambit => {
+          ambitAttackCapabilities.increment(ambit, 1);
+        });
+      }
+    });
+    return ambitAttackCapabilities;
   }
 }

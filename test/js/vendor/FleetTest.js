@@ -5,6 +5,7 @@ import {Fleet} from "../../../js/modules/Fleet.js";
 import {IdGenerator} from "../../../js/modules/util/IdGenerator.js";
 import {PowerGeneratorFactory} from "../../../js/modules/struct_components/PowerGeneratorFactory.js";
 import {Planet} from "../../../js/modules/Planet.js";
+import {FleetGenerator} from "../../../js/modules/FleetGenerator.js";
 
 const findStructByAmbitAndIdTest = new DTest('findStructByAmbitAndIdTest', function() {
   const fleet = new Fleet();
@@ -365,6 +366,33 @@ const findGeneratorTest = new DTest('findGeneratorTest', function(params) {
   ];
 });
 
+const analyzeFleetAmbitAttackCapabilitiesTest = new DTest('analyzeFleetAmbitAttackCapabilitiesTest',
+  function() {
+    const fleet = new Fleet();
+    const fleetGenerator = new FleetGenerator();
+    fleetGenerator.generateCuratedFleet(fleet);
+
+    fleet.space[2].destroyStruct();
+    fleet.space[3].destroyStruct();
+    fleet.sky[0].destroyStruct();
+    fleet.sky[2].destroyStruct();
+    fleet.sky[3].destroyStruct();
+    fleet.land[0].destroyStruct();
+    fleet.land[1].destroyStruct();
+    fleet.land[3].destroyStruct();
+    fleet.water[1].destroyStruct();
+    fleet.water[2].destroyStruct();
+    fleet.water[3].destroyStruct();
+
+    const ambitAttackCapabilities = fleet.analyzeFleetAmbitAttackCapabilities();
+
+    this.assertEquals(ambitAttackCapabilities.space, 5);
+    this.assertEquals(ambitAttackCapabilities.sky, 3);
+    this.assertEquals(ambitAttackCapabilities.land, 0);
+    this.assertEquals(ambitAttackCapabilities.water, 1);
+  }
+);
+
 // Test execution
 DTestSuite.printSuiteHeader('FleetTest');
 findStructByAmbitAndIdTest.run();
@@ -382,3 +410,4 @@ forEachStructTest.run();
 generatePowerTest.run();
 toFlatArrayTest.run();
 findGeneratorTest.run();
+analyzeFleetAmbitAttackCapabilitiesTest.run();

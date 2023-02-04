@@ -6,7 +6,7 @@ export class GeneratorBlockerConstraint extends AIConstraint {
    * @param {GameState} state
    */
   constructor(state) {
-    super(CONSTRAINTS.COMMAND_STRUCT_BLOCKER, state);
+    super(CONSTRAINTS.GENERATOR_BLOCKER, state);
   }
 
   /**

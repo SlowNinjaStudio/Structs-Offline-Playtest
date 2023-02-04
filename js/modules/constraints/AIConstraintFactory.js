@@ -4,6 +4,7 @@ import {CommandStructBlockerConstraint} from "./CommandStructBlockerConstraint.j
 import {AIConstraintFactoryError} from "../errors/AIConstraintFactoryError.js";
 import {GeneratorBlockerConstraint} from "./GeneratorBlockerConstraint.js";
 import {CounterUnitAttackerConstraint} from "./CounterUnitAttackerConstraint.js";
+import {AmbitCoverageConstraint} from "./AmbitCoverageConstraint.js";
 
 export class AIConstraintFactory {
   /**
@@ -20,6 +21,9 @@ export class AIConstraintFactory {
   make(name) {
     let constraint = null;
     switch (name) {
+      case CONSTRAINTS.AMBIT_COVERAGE:
+        constraint = new AmbitCoverageConstraint(this.state);
+        break;
       case CONSTRAINTS.ATTACK_STRUCT:
         constraint = new AttackStructConstraint(this.state);
         break;
