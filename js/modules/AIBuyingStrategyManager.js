@@ -7,7 +7,7 @@ import {AIConstraintSatisfyingStructDTO} from "./dtos/AIConstraintSatisfyingStru
 export class AIBuyingStrategyManager {
   initConstraints() {
     this.constraints = {};
-    this.orderedConstrainstList.forEach(constraintName => {
+    this.orderedConstraintsList.forEach(constraintName => {
       this.constraints[constraintName] = this.constraintFactory.make(constraintName);
     });
   }
@@ -21,7 +21,7 @@ export class AIBuyingStrategyManager {
     this.constraints = {};
     this.structBuilder = new StructBuilder();
     this.appraiser = new Appraiser();
-    this.orderedConstrainstList = CONSTRAINT_ORDER;
+    this.orderedConstraintsList = CONSTRAINT_ORDER;
     this.fleetUnitTypes = FLEET_UNIT_TYPES;
 
     this.initConstraints();
@@ -48,8 +48,8 @@ export class AIBuyingStrategyManager {
 
       // Only need to check from the constraint index onward because
       // all previous constraints should already be fully satisfied.
-      for (let i = constraintIndex; i < this.orderedConstrainstList.length; i++) {
-        const constraintName = this.orderedConstrainstList[i];
+      for (let i = constraintIndex; i < this.orderedConstraintsList.length; i++) {
+        const constraintName = this.orderedConstraintsList[i];
 
         // If the best unit hasn't been evaluated for this constraint yet, do it now.
         if (bestUnit.unit && !bestUnit[constraintName]) {
@@ -65,19 +65,23 @@ export class AIBuyingStrategyManager {
           attackParams
         );
 
+        const isLesserUnit = bestUnit.unit && newUnit[constraintName] < bestUnit[constraintName];
+
+        // Unit must always satisfy the current constraint and be equal to or better than the best unit
+        if (!newUnit[constraintName] || isLesserUnit) {
+          newUnit = null;
+          break;
+        }
+
         // Determine if the AI can afford the new unit and if there's space for it in the fleet.
         // If so and there's current no best unit or the new unit is better, the new unit is the best unit.
         const canAfford = this.state.enemy.creditManager.credits >= newUnit.appraisal.price;
         const canFit = this.state.enemy.fleet.findFreeAmbitSlot(newUnit.unit.operatingAmbit) > -1;
         const isDefaultBestUnit = !bestUnit.unit && newUnit[constraintName] > 0;
         const isBetterUnit = bestUnit.unit && newUnit[constraintName] > bestUnit[constraintName];
-        const isLesserUnit = bestUnit.unit && newUnit[constraintName] < bestUnit[constraintName];
 
         if (canAfford && canFit && (isDefaultBestUnit || isBetterUnit)) {
           bestUnit = newUnit;
-        } else if (isLesserUnit) {
-          newUnit = null;
-          break;
         }
       }
 
@@ -94,7 +98,7 @@ export class AIBuyingStrategyManager {
    * @param {AIAttackParamsDTO} attackParams
    */
   execute(attackParams) {
-    this.orderedConstrainstList.forEach((constraintName, constraintIndex) => {
+    this.orderedConstraintsList.forEach((constraintName, constraintIndex) => {
       while(!this.constraints[constraintName].isSatisfied(attackParams)) {
         const satisfyingStructDTO = this.findConstraintSatisfyingStruct(constraintName, constraintIndex, attackParams);
 
@@ -104,7 +108,10 @@ export class AIBuyingStrategyManager {
 
         this.state.enemy.creditManager.pay(satisfyingStructDTO.appraisal.price);
         this.state.enemy.fleet.addStruct(satisfyingStructDTO.unit);
+        console.log(`AI Purchased: ${satisfyingStructDTO.unit.unitType}`);
+        console.log(`AI Satisfying Constraint: ${constraintName}`);
         this.constraints[constraintName].satisfy(satisfyingStructDTO, attackParams);
+        console.log(`AI Attack Struct After: ${attackParams.attackingAIStruct.unitType}`);
       }
     });
   }

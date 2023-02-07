@@ -209,11 +209,16 @@ export class AIPlanetMod extends AI {
         target,
         this.chooseAttackStruct(target)
       );
+      console.log(`AI Original Target: ${attackParams.target.unitType}`);
+      console.log(`AI Original Attack Struct: ${attackParams.attackingAIStruct.unitType}`);
 
       this.buyingStrategyManager.execute(attackParams);
 
       // Need to assign newly purchased defenders
       this.defendVIPStructsWithUnused();
+
+      console.log(`AI Final Target: ${attackParams.target.unitType}`);
+      console.log(`AI Final Attack Struct: ${attackParams.attackingAIStruct.unitType}`);
 
       this.attack(attackParams);
     }

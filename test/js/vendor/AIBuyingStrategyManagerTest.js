@@ -32,10 +32,11 @@ function getDummyState() {
 }
 
 const findConstraintSatisfyingStructTest = new DTest('findConstraintSatisfyingStructTest', function() {
+  const structBuilder = new StructBuilder();
   const state = getDummyState();
   const ai = new AIBuyingStrategyManager(state);
 
-  ai.orderedConstrainstList = [
+  ai.orderedConstraintsList = [
     CONSTRAINTS.ATTACK_STRUCT,
     CONSTRAINTS.COMMAND_STRUCT_BLOCKER
   ];
@@ -90,6 +91,20 @@ const findConstraintSatisfyingStructTest = new DTest('findConstraintSatisfyingSt
 
   structDTO = ai.findConstraintSatisfyingStruct(CONSTRAINTS.ATTACK_STRUCT, 0, attackParams);
   this.assertEquals(structDTO.unit.unitType, UNIT_TYPES.DESTROYER);
+
+  state.enemy.creditManager.credits = 2;
+
+  ai.orderedConstraintsList = [
+    CONSTRAINTS.COUNTER_UNIT_ATTACKER,
+    CONSTRAINTS.AMBIT_COVERAGE,
+    CONSTRAINTS.ALL_COUNTER_UNITS
+  ];
+
+  attackParams.target = structBuilder.make(UNIT_TYPES.FIGHTER_JET);
+  attackParams.attackingAIStruct = structBuilder.make(UNIT_TYPES.SAM_LAUNCHER);
+
+  structDTO = ai.findConstraintSatisfyingStruct(CONSTRAINTS.COUNTER_UNIT_ATTACKER, 0, attackParams);
+  this.assertEquals(structDTO.unit, null);
 });
 
 // Test execution

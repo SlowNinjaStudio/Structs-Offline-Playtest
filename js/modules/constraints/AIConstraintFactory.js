@@ -5,6 +5,7 @@ import {AIConstraintFactoryError} from "../errors/AIConstraintFactoryError.js";
 import {GeneratorBlockerConstraint} from "./GeneratorBlockerConstraint.js";
 import {CounterUnitAttackerConstraint} from "./CounterUnitAttackerConstraint.js";
 import {AmbitCoverageConstraint} from "./AmbitCoverageConstraint.js";
+import {AllCounterUnitsConstraint} from "./AllCounterUnitsConstraint.js";
 
 export class AIConstraintFactory {
   /**
@@ -21,6 +22,9 @@ export class AIConstraintFactory {
   make(name) {
     let constraint = null;
     switch (name) {
+      case CONSTRAINTS.ALL_COUNTER_UNITS:
+        constraint = new AllCounterUnitsConstraint(this.state);
+        break;
       case CONSTRAINTS.AMBIT_COVERAGE:
         constraint = new AmbitCoverageConstraint(this.state);
         break;

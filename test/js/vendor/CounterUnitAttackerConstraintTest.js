@@ -90,6 +90,14 @@ const couldSatisfyTest = new DTest('couldSatisfyTest', function(params) {
       ),
       expected: 1
     },
+    {
+      potentialStruct: structBuilder.make(UNIT_TYPES.TANK),
+      attackParams: new AIAttackParamsDTO(
+        structBuilder.make(UNIT_TYPES.FIGHTER_JET),
+        commandStructBuilder.make(UNIT_TYPES.COMMAND_SHIP)
+      ),
+      expected: 0
+    },
   ];
 });
 
