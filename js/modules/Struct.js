@@ -412,18 +412,46 @@ export class Struct {
   }
 
   /**
-   * @param {string} targetAmbit
+   * @param {ManualWeapon} weapon
+   * @return {boolean}
+   */
+  canWeaponDefeatCounterMeasure(weapon) {
+    return !this.defenseComponent
+      || this.defenseComponent.type !== DEFENSE_COMPONENT_TYPES.COUNTER_MEASURE
+      || this.defenseComponent.guided !== weapon.isGuided;
+  }
+
+  /**
+   * @param {Struct} target
    * @return {string}
    */
-  chooseWeapon(targetAmbit) {
-    if (this.manualWeaponPrimary && this.manualWeaponPrimary.canTargetAmbit(targetAmbit)) {
-      return MANUAL_WEAPON_SLOTS.PRIMARY;
-    }
-    if (this.manualWeaponSecondary && this.manualWeaponSecondary.canTargetAmbit(targetAmbit)) {
-      return MANUAL_WEAPON_SLOTS.SECONDARY;
+  chooseWeapon(target) {
+    let chosenWeapon = null;
+    let chosenWeaponSlot = '';
+
+    if (this.manualWeaponPrimary && this.manualWeaponPrimary.canTargetAmbit(target.operatingAmbit)) {
+      chosenWeapon = this.manualWeaponPrimary;
+      chosenWeaponSlot = MANUAL_WEAPON_SLOTS.PRIMARY;
     }
 
-    throw new Error(`Struct cannot target given ambit: ${targetAmbit}`);
+    if (this.manualWeaponSecondary && this.manualWeaponSecondary.canTargetAmbit(target.operatingAmbit)) {
+      if (
+        !chosenWeapon
+        || (
+          !target.canWeaponDefeatCounterMeasure(this.manualWeaponPrimary)
+          && target.canWeaponDefeatCounterMeasure(this.manualWeaponSecondary)
+        )
+      ) {
+        chosenWeapon = this.manualWeaponSecondary;
+        chosenWeaponSlot = MANUAL_WEAPON_SLOTS.SECONDARY;
+      }
+    }
+
+    if (!chosenWeapon) {
+      throw new Error(`Struct cannot target given ambit: ${target.operatingAmbit}`);
+    }
+
+    return chosenWeaponSlot;
   }
 
   /**
@@ -439,10 +467,8 @@ export class Struct {
    * @return {boolean}
    */
   canDefeatStructsCounterMeasure(struct) {
-    const weaponName = this.chooseWeapon(struct.operatingAmbit);
+    const weaponName = this.chooseWeapon(struct);
     const weapon = this.getManualWeapon(weaponName);
-    return !struct.defenseComponent
-      || struct.defenseComponent.type !== DEFENSE_COMPONENT_TYPES.COUNTER_MEASURE
-      || struct.defenseComponent.guided !== weapon.isGuided;
+    return struct.canWeaponDefeatCounterMeasure(weapon);
   }
 }

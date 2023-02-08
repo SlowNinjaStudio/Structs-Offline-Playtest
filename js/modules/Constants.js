@@ -225,7 +225,7 @@ export const
   },
 
   THREAT = {
-    DAMAGE_THRESHOLD: 4
+    DAMAGE_THRESHOLD: 6
   },
 
   UNIT_TYPES = {

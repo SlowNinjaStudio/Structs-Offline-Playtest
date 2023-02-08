@@ -694,55 +694,118 @@ const countBlockingDefendersTest = new DTest('countBlockingDefendersTest', funct
   this.assertArrayEquals(commandShip.isBlockingCommandStruct(), 2);
 });
 
+// const chooseWeaponTest = new DTest('chooseWeaponTest', function(params) {
+//   try {
+//     const weaponSlot = params.attackStruct.chooseWeapon(params.targetAmbit);
+//     this.assertEquals(weaponSlot, params.expectedWeaponSlot);
+//   } catch(e) {
+//     this.assertEquals(params.exceptionExpected, true);
+//   }
+// }, function() {
+//   const structBuilder = new StructBuilder();
+//   const tank = structBuilder.make(UNIT_TYPES.TANK);
+//   const sub = structBuilder.make(UNIT_TYPES.SUB);
+//   const cruiser = structBuilder.make(UNIT_TYPES.CRUISER);
+//   return [
+//     {
+//       attackStruct: tank,
+//       targetAmbit: AMBITS.LAND,
+//       expectedWeaponSlot: MANUAL_WEAPON_SLOTS.PRIMARY,
+//       exceptionExpected: false
+//     },
+//     {
+//       attackStruct: sub,
+//       targetAmbit: AMBITS.WATER,
+//       expectedWeaponSlot: MANUAL_WEAPON_SLOTS.PRIMARY,
+//       exceptionExpected: false
+//     },
+//     {
+//       attackStruct: sub,
+//       targetAmbit: AMBITS.SPACE,
+//       expectedWeaponSlot: MANUAL_WEAPON_SLOTS.PRIMARY,
+//       exceptionExpected: false
+//     },
+//     {
+//       attackStruct: cruiser,
+//       targetAmbit: AMBITS.WATER,
+//       expectedWeaponSlot: MANUAL_WEAPON_SLOTS.PRIMARY,
+//       exceptionExpected: false
+//     },
+//     {
+//       attackStruct: cruiser,
+//       targetAmbit: AMBITS.SKY,
+//       expectedWeaponSlot: MANUAL_WEAPON_SLOTS.SECONDARY,
+//       exceptionExpected: false
+//     },
+//     {
+//       attackStruct: tank,
+//       targetAmbit: AMBITS.SKY,
+//       expectedWeaponSlot: null,
+//       exceptionExpected: true
+//     }
+//   ];
+// });
+
 const chooseWeaponTest = new DTest('chooseWeaponTest', function(params) {
+  const structBuilder = new StructBuilder();
+  const attackStruct = structBuilder.make(params.attackStructUnitType);
+  const target = structBuilder.make(params.targetUnitType);
   try {
-    const weaponSlot = params.attackStruct.chooseWeapon(params.targetAmbit);
+    const weaponSlot = attackStruct.chooseWeapon(target);
     this.assertEquals(weaponSlot, params.expectedWeaponSlot);
   } catch(e) {
     this.assertEquals(params.exceptionExpected, true);
   }
 }, function() {
-  const structBuilder = new StructBuilder();
-  const tank = structBuilder.make(UNIT_TYPES.TANK);
-  const sub = structBuilder.make(UNIT_TYPES.SUB);
-  const cruiser = structBuilder.make(UNIT_TYPES.CRUISER);
   return [
     {
-      attackStruct: tank,
-      targetAmbit: AMBITS.LAND,
+      attackStructUnitType: UNIT_TYPES.TANK,
+      targetUnitType: UNIT_TYPES.TANK,
       expectedWeaponSlot: MANUAL_WEAPON_SLOTS.PRIMARY,
       exceptionExpected: false
     },
     {
-      attackStruct: sub,
-      targetAmbit: AMBITS.WATER,
+      attackStructUnitType: UNIT_TYPES.SUB,
+      targetUnitType: UNIT_TYPES.CRUISER,
       expectedWeaponSlot: MANUAL_WEAPON_SLOTS.PRIMARY,
       exceptionExpected: false
     },
     {
-      attackStruct: sub,
-      targetAmbit: AMBITS.SPACE,
+      attackStructUnitType: UNIT_TYPES.SUB,
+      targetUnitType: UNIT_TYPES.STAR_FIGHTER,
       expectedWeaponSlot: MANUAL_WEAPON_SLOTS.PRIMARY,
       exceptionExpected: false
     },
     {
-      attackStruct: cruiser,
-      targetAmbit: AMBITS.WATER,
+      attackStructUnitType: UNIT_TYPES.CRUISER,
+      targetUnitType: UNIT_TYPES.DESTROYER,
       expectedWeaponSlot: MANUAL_WEAPON_SLOTS.PRIMARY,
       exceptionExpected: false
     },
     {
-      attackStruct: cruiser,
-      targetAmbit: AMBITS.SKY,
+      attackStructUnitType: UNIT_TYPES.CRUISER,
+      targetUnitType: UNIT_TYPES.FIGHTER_JET,
       expectedWeaponSlot: MANUAL_WEAPON_SLOTS.SECONDARY,
       exceptionExpected: false
     },
     {
-      attackStruct: tank,
-      targetAmbit: AMBITS.SKY,
+      attackStructUnitType: UNIT_TYPES.TANK,
+      targetUnitType: UNIT_TYPES.FIGHTER_JET,
       expectedWeaponSlot: null,
       exceptionExpected: true
-    }
+    },
+    {
+      attackStructUnitType: UNIT_TYPES.STAR_FIGHTER,
+      targetUnitType: UNIT_TYPES.STAR_FIGHTER,
+      expectedWeaponSlot: MANUAL_WEAPON_SLOTS.PRIMARY,
+      exceptionExpected: false
+    },
+    {
+      attackStructUnitType: UNIT_TYPES.STAR_FIGHTER,
+      targetUnitType: UNIT_TYPES.GALACTIC_BATTLESHIP,
+      expectedWeaponSlot: MANUAL_WEAPON_SLOTS.SECONDARY,
+      exceptionExpected: false
+    },
   ];
 });
 

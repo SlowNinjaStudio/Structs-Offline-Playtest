@@ -83,8 +83,8 @@ export class AI {
    * @param {Struct} targetStruct
    * @return {number}
    */
-  getUncounterableAttackScore(attackStruct, targetStruct) {
-    return !targetStruct.canCounterAttack(attackStruct) ? Infinity : 0;
+  getUncounterableByTargetAttackScore(attackStruct, targetStruct) {
+    return !targetStruct.canCounterAttack(attackStruct) ? 10 : 0;
   }
 
   /**
@@ -126,13 +126,39 @@ export class AI {
    * @param {Struct} targetStruct
    * @return {number}
    */
+  getUncounterableByDefendersAttackScore(attackStruct, targetStruct) {
+    return targetStruct.defenders.reduce((canCounter, defender) =>
+        canCounter || !defender.canCounterAttack(attackStruct)
+    , false) ? 5 : 0;
+  }
+
+  /**
+   * @param {Struct} attackStruct
+   * @param {Struct} targetStruct
+   * @return {number}
+   */
+  getCanBeatCounterMeasuresAttackScore(attackStruct, targetStruct) {
+    return attackStruct.canDefeatStructsCounterMeasure(targetStruct) ? 15 : 0;
+  }
+
+  /**
+   * @param {Struct} attackStruct
+   * @param {Struct} targetStruct
+   * @return {number}
+   */
   getStructAttackScore(attackStruct, targetStruct) {
-    if(attackStruct.isDestroyed || !attackStruct.canAttackAnyWeapon(targetStruct)) {
+    if (attackStruct.isDestroyed || !attackStruct.canAttackAnyWeapon(targetStruct)) {
       return -1;
     }
 
+    if (attackStruct.isCommandStruct()) {
+      return 0;
+    }
+
     let score = 0;
-    score += this.getUncounterableAttackScore(attackStruct, targetStruct);
+    score += this.getCanBeatCounterMeasuresAttackScore(attackStruct, targetStruct);
+    score += this.getUncounterableByTargetAttackScore(attackStruct, targetStruct);
+    score += this.getUncounterableByDefendersAttackScore(attackStruct, targetStruct);
     score += this.getBlockingCommandShipAttackScore(attackStruct);
     score += this.getCurrentHealthAttackScore(attackStruct, targetStruct);
     score += this.getAmbitTargetingCostAttackScore(attackStruct);
@@ -216,7 +242,7 @@ export class AI {
     const attackingAIStruct = params.attackingAIStruct;
 
     // Choose a weapon
-    const weaponSlot = attackingAIStruct.chooseWeapon(target.operatingAmbit);
+    const weaponSlot = attackingAIStruct.chooseWeapon(target);
 
     // If it's a Command Struct, it needs to be in the same ambit as the target to attack
     if (attackingAIStruct.isCommandStruct() && attackingAIStruct.operatingAmbit !== target.operatingAmbit
