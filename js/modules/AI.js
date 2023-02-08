@@ -218,14 +218,23 @@ export class AI {
     return maxThreat;
   }
 
+  determineVIPTargetOpportunity() {
+    let target = null;
+    if (this.state.player.commandStruct.isVulnerableToFleet(this.state.enemy.fleet)) {
+      target = this.state.player.commandStruct;
+    }
+    return target;
+  }
+
   /**
    * @return {Struct}
    */
   chooseTarget() {
-    if (this.state.player.commandStruct.isVulnerableToFleet(this.state.enemy.fleet)) {
-      return this.state.player.commandStruct;
+    let onGoalTarget = this.determineVIPTargetOpportunity();
+    if (onGoalTarget) {
+      return onGoalTarget;
     }
-    const onGoalTarget = this.determineTargetOnGoal();
+    onGoalTarget = this.determineTargetOnGoal();
     const threat = this.identifyThreat();
     if (!onGoalTarget.isCommandStruct() && threat) {
       return threat;

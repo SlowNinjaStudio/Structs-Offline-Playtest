@@ -47,6 +47,20 @@ export class AIPlanetMod extends AI {
     return this.state.player.commandStruct;
   }
 
+  determineVIPTargetOpportunity() {
+    let target = null;
+    const generator = this.state.player.planet.findGenerator();
+
+    if (this.state.player.commandStruct.isVulnerableToFleet(this.state.enemy.fleet)) {
+      target = this.state.player.commandStruct;
+    }
+
+    if (generator && !generator.isDestroyed && generator.isVulnerableToFleet(this.state.enemy.fleet)) {
+      target = generator;
+    }
+    return target;
+  }
+
   openingDefense() {
     const vipStructs = {
       commandStruct: this.state.enemy.commandStruct,
