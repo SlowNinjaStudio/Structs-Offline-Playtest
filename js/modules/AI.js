@@ -1,5 +1,5 @@
 import {DefenseStrategyTree} from "./DefenseStrategyTree.js";
-import {AMBITS, EVENTS, ORDER_OF_AMBITS} from "./Constants.js";
+import {AMBITS, DEFENSE_COMPONENT_TYPES, EVENTS, ORDER_OF_AMBITS} from "./Constants.js";
 import {AIAttackChoiceDTO} from "./dtos/AIAttackChoiceDTO.js";
 import {AmbitDistribution} from "./AmbitDistribution.js";
 import {AIAttackParamsDTO} from "./dtos/AIAttackParamsDTO.js";
@@ -195,15 +195,16 @@ export class AI {
   isAttackingThreatViable(threat) {
     let aiAttackStruct = this.chooseAttackStruct(threat.attackingStruct);
 
-    if (aiAttackStruct.isCommandStruct()) {
-      return false;
-    }
-
     let counterAttacks = threat.attackingStruct.defenders.reduce((counterAttacks, defender) =>
       defender.canCounterAttack(aiAttackStruct) ? counterAttacks + 1 : counterAttacks
     , 0);
 
-    return counterAttacks < aiAttackStruct.currentHealth;
+    return !aiAttackStruct.isCommandStruct()
+      && aiAttackStruct.isCounterUnitTo(threat.attackingStruct)
+      && aiAttackStruct.canDefeatStructsCounterMeasure(threat.attackingStruct)
+      && threat.attackingStruct.defenseComponent.type !== DEFENSE_COMPONENT_TYPES.ARMOUR
+      && counterAttacks === 0
+      && threat.attackingStruct.countBlockingDefenders() === 0;
   }
 
   /**

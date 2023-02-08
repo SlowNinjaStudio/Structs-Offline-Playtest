@@ -869,35 +869,42 @@ const isAttackingThreatViableTest = new DTest('isAttackingThreatViableTest', fun
   const ai = new AI(gameState);
 
   const playerGalacticBattleship = gameState.player.fleet.space[2];
-  const playerFighterJet = gameState.player.fleet.sky[0];
   const playerStealthBomber = gameState.player.fleet.sky[2];
   const playerTank1 = gameState.player.fleet.land[0];
   const playerArtillery = gameState.player.fleet.land[1];
   const playerTank2 = gameState.player.fleet.land[3];
+  const playerDestroyer = gameState.player.fleet.water[1];
   const playerCruiser = gameState.player.fleet.water[2];
 
-  this.assertEquals(ai.isAttackingThreatViable(new AIThreatDTO(playerArtillery, 8)), true);
-
-  playerTank1.defend(playerArtillery);
-
+  // Undefended and doesn't counter, should be viable
   this.assertEquals(ai.isAttackingThreatViable(new AIThreatDTO(playerArtillery, 8)), true);
 
   playerGalacticBattleship.defend(playerArtillery);
   playerStealthBomber.defend(playerArtillery);
   playerCruiser.defend(playerArtillery);
 
+  // Although heavily defended, Artillery can attack without being countered
   this.assertEquals(ai.isAttackingThreatViable(new AIThreatDTO(playerArtillery, 8)), true);
 
-  playerGalacticBattleship.defend(playerFighterJet);
-  playerStealthBomber.defend(playerFighterJet);
-  playerCruiser.defend(playerFighterJet);
+  playerTank1.defend(playerArtillery);
 
-  this.assertEquals(ai.isAttackingThreatViable(new AIThreatDTO(playerFighterJet, 6)), false);
+  // Tank is blocking artillery now, so it's a waste of turns to attack it now
+  this.assertEquals(ai.isAttackingThreatViable(new AIThreatDTO(playerArtillery, 8)), false);
 
-  this.assertEquals(ai.isAttackingThreatViable(new AIThreatDTO(playerTank2, 6)), true);
+  // Don't waste turns attacking the tank since it's armoured
+  this.assertEquals(ai.isAttackingThreatViable(new AIThreatDTO(playerTank2, 6)), false);
+
+  const enemyGalacticBattleship = gameState.enemy.fleet.space[2];
+  const enemyStealthBomber = gameState.enemy.fleet.sky[2];
+  enemyGalacticBattleship.destroyStruct();
+  enemyStealthBomber.destroyStruct();
+
+  // Can use artillery to attack destroyer
+  this.assertEquals(ai.isAttackingThreatViable(new AIThreatDTO(playerDestroyer, 6)), true);
 
   gameState.enemy.fleet.forEachStruct(struct => { struct.destroyStruct(); });
 
+  // Don't use command ship to attack an off-goal unimportant struct
   this.assertEquals(gameState.enemy.commandStruct.isDestroyed, false);
   this.assertEquals(ai.isAttackingThreatViable(new AIThreatDTO(playerTank2, 6)), false);
 });
