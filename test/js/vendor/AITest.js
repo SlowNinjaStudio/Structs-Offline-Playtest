@@ -962,6 +962,12 @@ const chooseTargetTest = new DTest('chooseTargetTest', function() {
 
   this.assertEquals(target.isCommandStruct(), true);
 
+  gameState.player.fleet.land[0].defend(gameState.player.commandStruct);
+
+  target = ai.chooseTarget();
+
+  this.assertEquals(target.isCommandStruct(), true);
+
   gameState.player.fleet.space[0].defend(gameState.player.commandStruct);
 
   target = ai.chooseTarget();

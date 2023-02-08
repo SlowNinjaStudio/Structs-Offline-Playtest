@@ -242,12 +242,14 @@ export class Fleet {
   }
 
   /**
+   * @param {boolean} removedDestroyed
    * @return {Struct[]}
    */
-  toFlatArray() {
+  toFlatArray(removedDestroyed = true) {
     return Object.values(ORDER_OF_AMBITS).reduce((structs, ambit) =>
-        [...structs, ...this[ambit.toLowerCase()].filter(ambitStruct => !!ambitStruct)]
-      , []);
+        [...structs, ...this[ambit.toLowerCase()].filter(ambitStruct =>
+          !!ambitStruct && (!removedDestroyed || !ambitStruct.isDestroyed)
+        )], []);
   }
 
   /**

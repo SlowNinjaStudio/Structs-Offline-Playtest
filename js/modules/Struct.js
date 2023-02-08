@@ -471,4 +471,33 @@ export class Struct {
     const weapon = this.getManualWeapon(weaponName);
     return struct.canWeaponDefeatCounterMeasure(weapon);
   }
+
+  /**
+   * @param {Struct} attacker
+   * @return {number}
+   */
+  countDefenderCounterAttacks(attacker) {
+    return this.defenders.reduce((counterAttacks, defender) =>
+      defender.canCounterAttack(attacker) ? counterAttacks + 1 : counterAttacks
+    , 0);
+  }
+
+  /**
+   * @param {Fleet} fleet
+   * @return {boolean}
+   */
+  isVulnerableToFleet(fleet) {
+    if (this.countBlockingDefenders() > 0) {
+      return false;
+    }
+
+    const structs = fleet.toFlatArray();
+    for (let i = 0; i < structs.length; i++) {
+      if (this.countDefenderCounterAttacks(structs[i]) === 0) {
+        return true
+      }
+    }
+
+    return false;
+  }
 }

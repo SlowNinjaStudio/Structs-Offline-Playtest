@@ -11,6 +11,7 @@ import {AftermarketEngine} from "../../../js/modules/struct_components/Aftermark
 import {Fraction} from "../../../js/modules/util/Fraction.js";
 import {StructBuilder} from "../../../js/modules/StructBuilder.js";
 import {CommandStructBuilder} from "../../../js/modules/CommandStructBuilder.js";
+import {Fleet} from "../../../js/modules/Fleet.js";
 
 /**
  * @return {Struct}
@@ -894,6 +895,94 @@ const canDefeatStructsCounterMeasureTest = new DTest('canDefeatStructsCounterMea
   ];
 });
 
+const countDefenderCounterAttacksTest = new DTest('countDefenderCounterAttacksTest', function(params) {
+  const structBuilder = new StructBuilder();
+  const attacker = structBuilder.make(params.attackerUnitType);
+  const target = structBuilder.make(params.targetUnitType);
+
+  params.defenderUnitTypes.forEach(unitType => {
+    (structBuilder.make(unitType)).defend(target)
+  });
+
+  this.assertEquals(target.countDefenderCounterAttacks(attacker), params.expected);
+}, function () {
+  return [
+    {
+      attackerUnitType: UNIT_TYPES.TANK,
+      targetUnitType: UNIT_TYPES.TANK,
+      defenderUnitTypes: [],
+      expected: 0
+    },
+    {
+      attackerUnitType: UNIT_TYPES.TANK,
+      targetUnitType: UNIT_TYPES.TANK,
+      defenderUnitTypes: [UNIT_TYPES.STAR_FIGHTER, UNIT_TYPES.FIGHTER_JET, UNIT_TYPES.SUB],
+      expected: 0
+    },
+    {
+      attackerUnitType: UNIT_TYPES.TANK,
+      targetUnitType: UNIT_TYPES.TANK,
+      defenderUnitTypes: [UNIT_TYPES.STEALTH_BOMBER, UNIT_TYPES.GALACTIC_BATTLESHIP],
+      expected: 2
+    },
+    {
+      attackerUnitType: UNIT_TYPES.CRUISER,
+      targetUnitType: UNIT_TYPES.FIGHTER_JET,
+      defenderUnitTypes: [UNIT_TYPES.SUB],
+      expected: 1
+    },
+  ];
+});
+
+const isVulnerableToFleetTest = new DTest('isVulnerableToFleetTest', function(params) {
+  const structBuilder = new StructBuilder();
+  const struct = structBuilder.make(params.structUnitType);
+  const fleet = new Fleet();
+
+  params.defenderUnitTypes.forEach(unitType => {
+    (structBuilder.make(unitType)).defend(struct)
+  });
+
+  params.fleetUnitTypes.forEach(unitType => {
+    fleet.addStruct(structBuilder.make(unitType));
+  });
+
+  this.assertEquals(struct.isVulnerableToFleet(fleet), params.expected);
+}, function() {
+  return [
+    {
+      structUnitType: UNIT_TYPES.TANK,
+      defenderUnitTypes: [],
+      fleetUnitTypes: [UNIT_TYPES.TANK],
+      expected: true
+    },
+    {
+      structUnitType: UNIT_TYPES.SAM_LAUNCHER,
+      defenderUnitTypes: [UNIT_TYPES.TANK],
+      fleetUnitTypes: [UNIT_TYPES.TANK],
+      expected: false
+    },
+    {
+      structUnitType: UNIT_TYPES.SAM_LAUNCHER,
+      defenderUnitTypes: [UNIT_TYPES.SUB],
+      fleetUnitTypes: [UNIT_TYPES.TANK],
+      expected: true
+    },
+    {
+      structUnitType: UNIT_TYPES.SAM_LAUNCHER,
+      defenderUnitTypes: [UNIT_TYPES.SUB],
+      fleetUnitTypes: [UNIT_TYPES.CRUISER],
+      expected: false
+    },
+    {
+      structUnitType: UNIT_TYPES.SAM_LAUNCHER,
+      defenderUnitTypes: [UNIT_TYPES.SUB],
+      fleetUnitTypes: [UNIT_TYPES.CRUISER, UNIT_TYPES.TANK],
+      expected: true
+    },
+  ];
+})
+
 // Test execution
 DTestSuite.printSuiteHeader('StructTest');
 addDefenderTest.run();
@@ -920,3 +1009,5 @@ countBlockingDefendersTest.run();
 chooseWeaponTest.run();
 isCounterUnitToTest.run();
 canDefeatStructsCounterMeasureTest.run();
+countDefenderCounterAttacksTest.run();
+isVulnerableToFleetTest.run();

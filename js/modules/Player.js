@@ -47,8 +47,8 @@ export class Player {
   getAllStructs() {
     return [
       this.commandStruct,
-      ...(this.planet ? this.planet.toFlatArray(): []),
-      ...this.fleet.toFlatArray()
+      ...(this.planet ? this.planet.toFlatArray(false): []),
+      ...this.fleet.toFlatArray(false)
     ].filter(struct => !!struct);
   }
 

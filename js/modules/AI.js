@@ -195,15 +195,11 @@ export class AI {
   isAttackingThreatViable(threat) {
     let aiAttackStruct = this.chooseAttackStruct(threat.attackingStruct);
 
-    let counterAttacks = threat.attackingStruct.defenders.reduce((counterAttacks, defender) =>
-      defender.canCounterAttack(aiAttackStruct) ? counterAttacks + 1 : counterAttacks
-    , 0);
-
     return !aiAttackStruct.isCommandStruct()
       && aiAttackStruct.isCounterUnitTo(threat.attackingStruct)
       && aiAttackStruct.canDefeatStructsCounterMeasure(threat.attackingStruct)
       && threat.attackingStruct.defenseComponent.type !== DEFENSE_COMPONENT_TYPES.ARMOUR
-      && counterAttacks === 0
+      && threat.attackingStruct.countDefenderCounterAttacks(aiAttackStruct) === 0
       && threat.attackingStruct.countBlockingDefenders() === 0;
   }
 
@@ -226,6 +222,9 @@ export class AI {
    * @return {Struct}
    */
   chooseTarget() {
+    if (this.state.player.commandStruct.isVulnerableToFleet(this.state.enemy.fleet)) {
+      return this.state.player.commandStruct;
+    }
     const onGoalTarget = this.determineTargetOnGoal();
     const threat = this.identifyThreat();
     if (!onGoalTarget.isCommandStruct() && threat) {
