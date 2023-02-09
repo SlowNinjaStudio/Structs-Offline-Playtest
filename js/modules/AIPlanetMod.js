@@ -47,6 +47,9 @@ export class AIPlanetMod extends AI {
     return this.state.player.commandStruct;
   }
 
+  /**
+   * @return {Struct|null}
+   */
   determineVIPTargetOpportunity() {
     let target = null;
     const generator = this.state.player.planet.findGenerator();

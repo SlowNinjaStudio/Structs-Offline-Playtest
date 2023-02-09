@@ -12,6 +12,7 @@ import {CombatEventLogItem} from "../../../js/modules/CombatEventLogItem.js";
 import {CombatEvent} from "../../../js/modules/CombatEvent.js";
 import {AIThreatDTO} from "../../../js/modules/dtos/AIThreatDTO.js";
 import {AIAttackParamsDTO} from "../../../js/modules/dtos/AIAttackParamsDTO.js";
+import {Fleet} from "../../../js/modules/Fleet.js";
 
 /**
  * @return {Player}
@@ -986,6 +987,72 @@ const chooseTargetTest = new DTest('chooseTargetTest', function() {
   this.assertEquals(target.isCommandStruct(), true);
 });
 
+const shouldTargetDefendingInsteadTest = new DTest('shouldTargetDefendingInsteadTest', function(params) {
+  const structBuilder = new StructBuilder();
+  const ai = new AI(new GameState());
+  const attackingAIStruct = structBuilder.make(params.attackingAIStructUnitType);
+  const target = structBuilder.make(params.targetUnitType);
+  let targetDefending = null;
+
+  if (params.targetDefendingUnitType) {
+    targetDefending = structBuilder.make(params.targetDefendingUnitType);
+    target.defend(targetDefending);
+  }
+
+  params.targetDefendingDefenderUnitTypes.forEach(unitType => {
+    (structBuilder.make(unitType)).defend(targetDefending);
+  });
+
+  const resultingTarget = ai.shouldTargetDefendingInstead(attackingAIStruct, target)
+
+  this.assertEquals(resultingTarget.unitType, params.expectedTargetUnitType);
+}, function () {
+  return [
+    {
+      attackingAIStructUnitType: UNIT_TYPES.TANK,
+      targetUnitType: UNIT_TYPES.SAM_LAUNCHER,
+      targetDefendingUnitType: null,
+      targetDefendingDefenderUnitTypes: [],
+      expectedTargetUnitType: UNIT_TYPES.SAM_LAUNCHER,
+    },
+    {
+      attackingAIStructUnitType: UNIT_TYPES.SAM_LAUNCHER,
+      targetUnitType: UNIT_TYPES.FIGHTER_JET,
+      targetDefendingUnitType: UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
+      targetDefendingDefenderUnitTypes: [],
+      expectedTargetUnitType: UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
+    },
+    {
+      attackingAIStructUnitType: UNIT_TYPES.CRUISER,
+      targetUnitType: UNIT_TYPES.FIGHTER_JET,
+      targetDefendingUnitType: UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
+      targetDefendingDefenderUnitTypes: [],
+      expectedTargetUnitType: UNIT_TYPES.FIGHTER_JET,
+    },
+    {
+      attackingAIStructUnitType: UNIT_TYPES.SAM_LAUNCHER,
+      targetUnitType: UNIT_TYPES.FIGHTER_JET,
+      targetDefendingUnitType: UNIT_TYPES.STAR_FIGHTER,
+      targetDefendingDefenderUnitTypes: [],
+      expectedTargetUnitType: UNIT_TYPES.FIGHTER_JET,
+    },
+    {
+      attackingAIStructUnitType: UNIT_TYPES.SAM_LAUNCHER,
+      targetUnitType: UNIT_TYPES.FIGHTER_JET,
+      targetDefendingUnitType: UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
+      targetDefendingDefenderUnitTypes: [UNIT_TYPES.TANK],
+      expectedTargetUnitType: UNIT_TYPES.FIGHTER_JET,
+    },
+    {
+      attackingAIStructUnitType: UNIT_TYPES.SAM_LAUNCHER,
+      targetUnitType: UNIT_TYPES.FIGHTER_JET,
+      targetDefendingUnitType: UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
+      targetDefendingDefenderUnitTypes: [UNIT_TYPES.SUB],
+      expectedTargetUnitType: UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
+    },
+  ];
+})
+
 // Test execution
 DTestSuite.printSuiteHeader('AITest');
 rankTargetTest.run();
@@ -1013,3 +1080,4 @@ defendCommandStructWithUnusedTest.run();
 isAttackingThreatViableTest.run();
 identifyThreatTest.run();
 chooseTargetTest.run();
+shouldTargetDefendingInsteadTest.run();

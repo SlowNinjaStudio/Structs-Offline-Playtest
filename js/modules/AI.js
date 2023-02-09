@@ -218,10 +218,30 @@ export class AI {
     return maxThreat;
   }
 
+  /**
+   * @return {Struct|null}
+   */
   determineVIPTargetOpportunity() {
     let target = null;
     if (this.state.player.commandStruct.isVulnerableToFleet(this.state.enemy.fleet)) {
       target = this.state.player.commandStruct;
+    }
+    return target;
+  }
+
+  /**
+   * @param {Struct} attackingAIStruct
+   * @param {Struct} target
+   * @return {Struct}
+   */
+  shouldTargetDefendingInstead(attackingAIStruct, target) {
+    if (
+      !attackingAIStruct.canDefeatStructsCounterMeasure(target)
+      && target.defending.canTakeDamageFor(target)
+      && target.defending.countDefenderCounterAttacks(attackingAIStruct) === 0
+      && attackingAIStruct.canDefeatStructsCounterMeasure(target.defending)
+    ) {
+      return target.defending;
     }
     return target;
   }
@@ -247,7 +267,7 @@ export class AI {
    * @return {AIAttackChoiceDTO}
    */
   attack(params) {
-    const target = params.target;
+    let target = params.target;
     const attackingAIStruct = params.attackingAIStruct;
 
     // Choose a weapon
@@ -258,6 +278,8 @@ export class AI {
         && attackingAIStruct.defenseComponent.canChangeAmbit(attackingAIStruct.operatingAmbit, target.operatingAmbit)) {
       attackingAIStruct.operatingAmbit = target.operatingAmbit;
     }
+
+    target = this.shouldTargetDefendingInstead(attackingAIStruct, target);
 
     // Execute attack and end turn
     attackingAIStruct.attack(weaponSlot, target);
