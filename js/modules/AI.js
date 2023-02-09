@@ -238,6 +238,7 @@ export class AI {
   shouldTargetDefendingInstead(attackingAIStruct, target) {
     if (
       !attackingAIStruct.canDefeatStructsCounterMeasure(target)
+      && target.defending
       && target.defending.canTakeDamageFor(target)
       && target.defending.countDefenderCounterAttacks(attackingAIStruct) === 0
       && attackingAIStruct.canDefeatStructsCounterMeasure(target.defending)
@@ -433,8 +434,12 @@ export class AI {
     }
   }
 
-  moveCommandStructToMostDefensibleAmbit() {
-    let changeAmbit = this.findFleetTargetingWeakness(this.state.player.fleet);
+  moveCommandStructToMostDefensibleAmbit(useTargetingWeakness = true) {
+    let changeAmbit = null;
+
+    if (useTargetingWeakness) {
+      changeAmbit = this.findFleetTargetingWeakness(this.state.player.fleet);
+    }
 
     if (!changeAmbit) {
       changeAmbit = this.findAmbitForBestDefense(this.state.enemy);
@@ -464,10 +469,9 @@ export class AI {
   determineStallTacticsNeeded(attackParams) {
     if (
       !attackParams.attackingAIStruct.isCommandStruct()
-      || (
-        attackParams.target.isCommandStruct()
-        && (attackParams.target.currentHealth <= 2 || attackParams.attackingAIStruct.currentHealth > 4)
-      ) || !attackParams.target.canCounterAttack(attackParams.attackingAIStruct)
+      || (attackParams.target.isCommandStruct() && attackParams.target.currentHealth <= 2)
+      || !attackParams.target.canTargetAmbit(attackParams.target.operatingAmbit) // Command Struct may not be in ambit yet
+      || !attackParams.target.hasPassiveWeapon()
     ) {
       return;
     }
@@ -485,6 +489,10 @@ export class AI {
         bestTargetAttackerScore = attackerScore;
       }
     });
+
+    if (!attackParams.attackingAIStruct.isCommandStruct()) {
+      this.moveCommandStructToMostDefensibleAmbit(false);
+    }
   }
 
   turnBasedDefense() {

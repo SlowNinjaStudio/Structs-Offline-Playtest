@@ -158,7 +158,7 @@ export class UIGame {
       document.querySelectorAll('.map-slot-btn').forEach(slotButton => {
         slotButton.addEventListener('click', this.fleetSelectionListener(slotButton).bind(this));
       });
-    } else if (this.state.gamePhase === GAME_PHASES.COMBAT) {
+    } else if (this.state.arePlanetsEnabled && this.state.gamePhase === GAME_PHASES.COMBAT) {
       const fleetElmId = this.state.turn.id === this.state.player.id ? '#playerFleet' : '#enemyFleet';
       document.querySelectorAll(`${fleetElmId} .map-slot-btn.empty-slot.fleet`).forEach(slotButton => {
         slotButton.addEventListener('click', this.fleetSelectionListener(slotButton).bind(this));

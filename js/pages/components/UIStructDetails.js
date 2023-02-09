@@ -625,7 +625,7 @@ export class UIStructDetails {
       const commandSlot = this.renderMiniMapSlot(ambit, commandStruct, true);
       slots = leftToRight ? `${commandSlot} ${slots}` : `${slots} ${commandSlot}`;
 
-      if (planetaryStructs) {
+      if (planetaryStructs.length) {
         const planetarySlots = this.renderMiniMapFleetSlots(ambit, planetaryStructs, PLAYER_FLEET_TYPES.PLANET);
         slots = leftToRight ? `${planetarySlots} ${slots}` : `${slots} ${planetarySlots}`;
       }

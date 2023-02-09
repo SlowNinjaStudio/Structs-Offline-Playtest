@@ -1201,6 +1201,45 @@ const determineStallTacticsNeededTest = new DTest('determineStallTacticsNeededTe
       ],
       expectedTargetUnitType: UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
       expectedAttackingAIStructUnitType: UNIT_TYPES.DESTROYER
+    },
+    {
+      targetUnitType: UNIT_TYPES.CRUISER,
+      attackingAIStructUnitType: UNIT_TYPES.COMMAND_SHIP,
+      playerCommandStructAmbit: AMBITS.WATER,
+      enemyCommandStructAmbit: AMBITS.WATER,
+      playerCommandStructHealth: 6,
+      enemyCommandStructHealth: 6,
+      playerFleetUnitTypes: [
+        UNIT_TYPES.FIGHTER_JET,
+        UNIT_TYPES.STEALTH_BOMBER,
+        UNIT_TYPES.TANK,
+        UNIT_TYPES.CRUISER
+      ],
+      enemyFleetUnitTypes: [
+        UNIT_TYPES.STAR_FIGHTER,
+        UNIT_TYPES.SPACE_FRIGATE,
+        UNIT_TYPES.FIGHTER_JET,
+        UNIT_TYPES.FIGHTER_JET,
+        UNIT_TYPES.TANK
+      ],
+      expectedTargetUnitType: UNIT_TYPES.STEALTH_BOMBER,
+      expectedAttackingAIStructUnitType: UNIT_TYPES.FIGHTER_JET
+    },
+    {
+      targetUnitType: UNIT_TYPES.COMMAND_SHIP,
+      attackingAIStructUnitType: UNIT_TYPES.COMMAND_SHIP,
+      playerCommandStructAmbit: AMBITS.SPACE,
+      enemyCommandStructAmbit: AMBITS.SPACE,
+      playerCommandStructHealth: 2,
+      enemyCommandStructHealth: 4,
+      playerFleetUnitTypes: [
+        UNIT_TYPES.FIGHTER_JET,
+        UNIT_TYPES.TANK,
+        UNIT_TYPES.CRUISER
+      ],
+      enemyFleetUnitTypes: [],
+      expectedTargetUnitType: UNIT_TYPES.COMMAND_SHIP,
+      expectedAttackingAIStructUnitType: UNIT_TYPES.COMMAND_SHIP
     }
   ];
 });
