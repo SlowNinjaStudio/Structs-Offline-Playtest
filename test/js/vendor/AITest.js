@@ -1,7 +1,13 @@
 import {DTest, DTestSuite} from "../../DTestFramework.js";
 import {DefenseStrategyTreeNode} from "../../../js/modules/data_structures/DefenseStrategyTreeNode.js";
 import {StructBuilder} from "../../../js/modules/StructBuilder.js";
-import {AMBITS, EVENTS, MANUAL_WEAPON_SLOTS, UNIT_TYPES} from "../../../js/modules/Constants.js";
+import {
+  AMBITS,
+  COMMAND_STRUCT_DEFAULTS,
+  EVENTS,
+  MANUAL_WEAPON_SLOTS,
+  UNIT_TYPES
+} from "../../../js/modules/Constants.js";
 import {AmbitDistribution} from "../../../js/modules/AmbitDistribution.js";
 import {AI} from "../../../js/modules/AI.js";
 import {GameState} from "../../../js/modules/state/GameState.js";
@@ -356,7 +362,7 @@ const chooseAttackStructTest = new DTest('chooseAttackStructTest', function(para
   const target = gameState.player.fleet[params.targetAmbit].find(struct => struct.unitType === params.targetUnitType);
   const ai = new AI(gameState);
 
-  this.assertEquals(params.expectedUnitTypes.includes(ai.chooseAttackStruct(target).unitType), true);
+  this.assertEquals(params.expectedUnitTypes.includes((ai.chooseAttackStruct(target)).struct.unitType), true);
 }, function() {
   return [
     {
@@ -492,7 +498,7 @@ const attackTest = new DTest('attackTest', function() {
   this.assertEquals(playerSpaceFrigate.isDestroyed, false);
 
   let target = ai.chooseTarget();
-  let attackParams = new AIAttackParamsDTO(target, ai.chooseAttackStruct(target));
+  let attackParams = new AIAttackParamsDTO(target, (ai.chooseAttackStruct(target)).struct);
   let choice = ai.attack(attackParams);
   const enemySamLauncher = enemy.fleet.land[2];
 
@@ -506,7 +512,7 @@ const attackTest = new DTest('attackTest', function() {
 
   const starFighter = enemy.fleet.space[0];
   attackParams.target = ai.chooseTarget();
-  attackParams.attackingAIStruct = ai.chooseAttackStruct(attackParams.target);
+  attackParams.attackingAIStruct = (ai.chooseAttackStruct(attackParams.target)).struct;
   choice = ai.attack(attackParams);
 
   this.assertEquals(choice.targetStruct.unitType, playerGalacticBattleship.unitType);
@@ -516,7 +522,7 @@ const attackTest = new DTest('attackTest', function() {
   playerGalacticBattleship.destroyStruct();
   starFighter.destroyStruct();
   attackParams.target = ai.chooseTarget();
-  attackParams.attackingAIStruct = ai.chooseAttackStruct(attackParams.target);
+  attackParams.attackingAIStruct = (ai.chooseAttackStruct(attackParams.target)).struct;
   choice = ai.attack(attackParams);
 
   this.assertEquals(choice.targetStruct.id, player.commandStruct.id);
@@ -525,7 +531,7 @@ const attackTest = new DTest('attackTest', function() {
   this.assertEquals(player.commandStruct.currentHealth, 4);
 
   attackParams.target = ai.chooseTarget();
-  attackParams.attackingAIStruct = ai.chooseAttackStruct(attackParams.target);
+  attackParams.attackingAIStruct = (ai.chooseAttackStruct(attackParams.target)).struct;
   choice = ai.attack(attackParams);
 
   this.assertEquals(choice.targetStruct.id, player.commandStruct.id);
@@ -534,7 +540,7 @@ const attackTest = new DTest('attackTest', function() {
   this.assertEquals(player.commandStruct.currentHealth, 2);
 
   attackParams.target = ai.chooseTarget();
-  attackParams.attackingAIStruct = ai.chooseAttackStruct(attackParams.target);
+  attackParams.attackingAIStruct = (ai.chooseAttackStruct(attackParams.target)).struct;
   choice = ai.attack(attackParams);
 
   this.assertEquals(choice.targetStruct.id, player.commandStruct.id);
@@ -1051,7 +1057,153 @@ const shouldTargetDefendingInsteadTest = new DTest('shouldTargetDefendingInstead
       expectedTargetUnitType: UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
     },
   ];
-})
+});
+
+const determineStallTacticsNeededTest = new DTest('determineStallTacticsNeededTest', function(params) {
+  const structBuilder = new StructBuilder();
+  const state = new GameState();
+  state.player = new Player('Player');
+  state.enemy = new Player('Enemy');
+  state.player.commandStruct.operatingAmbit = params.playerCommandStructAmbit;
+  state.enemy.commandStruct.operatingAmbit = params.enemyCommandStructAmbit;
+  state.player.commandStruct.currentHealth = params.playerCommandStructHealth;
+  state.enemy.commandStruct.currentHealth = params.enemyCommandStructHealth;
+  let target = state.player.commandStruct;
+  let attackingAIStruct = state.enemy.commandStruct;
+
+  if (params.targetUnitType !== UNIT_TYPES.COMMAND_SHIP) {
+    target = structBuilder.make(params.targetUnitType)
+    state.player.fleet.addStruct(target);
+  }
+
+  if (params.attackingAIStructUnitType !== UNIT_TYPES.COMMAND_SHIP) {
+    attackingAIStruct = structBuilder.make(params.attackingAIStructUnitType)
+    state.enemy.fleet.addStruct(attackingAIStruct);
+  }
+
+  params.playerFleetUnitTypes.forEach(unitType => {
+    state.player.fleet.addStruct(structBuilder.make(unitType));
+  });
+
+  params.enemyFleetUnitTypes.forEach(unitType => {
+    state.enemy.fleet.addStruct(structBuilder.make(unitType));
+  });
+
+  const ai = new AI(state);
+  const attackParams = new AIAttackParamsDTO(
+    target,
+    attackingAIStruct
+  );
+  ai.determineStallTacticsNeeded(attackParams);
+
+  this.assertEquals(attackParams.target.unitType, params.expectedTargetUnitType);
+  this.assertEquals(attackParams.attackingAIStruct.unitType, params.expectedAttackingAIStructUnitType);
+}, function() {
+  return [
+    {
+      targetUnitType: UNIT_TYPES.COMMAND_SHIP,
+      attackingAIStructUnitType: UNIT_TYPES.COMMAND_SHIP,
+      playerCommandStructAmbit: AMBITS.SPACE,
+      enemyCommandStructAmbit: AMBITS.SPACE,
+      playerCommandStructHealth: COMMAND_STRUCT_DEFAULTS.MAX_HEALTH,
+      enemyCommandStructHealth: COMMAND_STRUCT_DEFAULTS.MAX_HEALTH,
+      playerFleetUnitTypes: [],
+      enemyFleetUnitTypes: [],
+      expectedTargetUnitType: UNIT_TYPES.COMMAND_SHIP,
+      expectedAttackingAIStructUnitType: UNIT_TYPES.COMMAND_SHIP
+    },
+    {
+      targetUnitType: UNIT_TYPES.COMMAND_SHIP,
+      attackingAIStructUnitType: UNIT_TYPES.STAR_FIGHTER,
+      playerCommandStructAmbit: AMBITS.SPACE,
+      enemyCommandStructAmbit: AMBITS.SPACE,
+      playerCommandStructHealth: COMMAND_STRUCT_DEFAULTS.MAX_HEALTH,
+      enemyCommandStructHealth: COMMAND_STRUCT_DEFAULTS.MAX_HEALTH,
+      playerFleetUnitTypes: [],
+      enemyFleetUnitTypes: [],
+      expectedTargetUnitType: UNIT_TYPES.COMMAND_SHIP,
+      expectedAttackingAIStructUnitType: UNIT_TYPES.STAR_FIGHTER
+    },
+    {
+      targetUnitType: UNIT_TYPES.SAM_LAUNCHER,
+      attackingAIStructUnitType: UNIT_TYPES.COMMAND_SHIP,
+      playerCommandStructAmbit: AMBITS.SPACE,
+      enemyCommandStructAmbit: AMBITS.LAND,
+      playerCommandStructHealth: COMMAND_STRUCT_DEFAULTS.MAX_HEALTH,
+      enemyCommandStructHealth: COMMAND_STRUCT_DEFAULTS.MAX_HEALTH,
+      playerFleetUnitTypes: [],
+      enemyFleetUnitTypes: [],
+      expectedTargetUnitType: UNIT_TYPES.SAM_LAUNCHER,
+      expectedAttackingAIStructUnitType: UNIT_TYPES.COMMAND_SHIP
+    },
+    {
+      targetUnitType: UNIT_TYPES.TANK,
+      attackingAIStructUnitType: UNIT_TYPES.COMMAND_SHIP,
+      playerCommandStructAmbit: AMBITS.SPACE,
+      enemyCommandStructAmbit: AMBITS.LAND,
+      playerCommandStructHealth: COMMAND_STRUCT_DEFAULTS.MAX_HEALTH,
+      enemyCommandStructHealth: COMMAND_STRUCT_DEFAULTS.MAX_HEALTH,
+      playerFleetUnitTypes: [
+        UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
+        UNIT_TYPES.STAR_FIGHTER
+      ],
+      enemyFleetUnitTypes: [
+        UNIT_TYPES.SPACE_FRIGATE,
+        UNIT_TYPES.DESTROYER
+      ],
+      expectedTargetUnitType: UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
+      expectedAttackingAIStructUnitType: UNIT_TYPES.DESTROYER
+    },
+    {
+      targetUnitType: UNIT_TYPES.COMMAND_SHIP,
+      attackingAIStructUnitType: UNIT_TYPES.COMMAND_SHIP,
+      playerCommandStructAmbit: AMBITS.SPACE,
+      enemyCommandStructAmbit: AMBITS.SPACE,
+      playerCommandStructHealth: 2,
+      enemyCommandStructHealth: COMMAND_STRUCT_DEFAULTS.MAX_HEALTH,
+      playerFleetUnitTypes: [
+        UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
+        UNIT_TYPES.STAR_FIGHTER
+      ],
+      enemyFleetUnitTypes: [
+        UNIT_TYPES.SPACE_FRIGATE,
+        UNIT_TYPES.DESTROYER
+      ],
+      expectedTargetUnitType: UNIT_TYPES.COMMAND_SHIP,
+      expectedAttackingAIStructUnitType: UNIT_TYPES.COMMAND_SHIP
+    },
+    {
+      targetUnitType: UNIT_TYPES.COMMAND_SHIP,
+      attackingAIStructUnitType: UNIT_TYPES.COMMAND_SHIP,
+      playerCommandStructAmbit: AMBITS.SPACE,
+      enemyCommandStructAmbit: AMBITS.SPACE,
+      playerCommandStructHealth: 4,
+      enemyCommandStructHealth: 2,
+      playerFleetUnitTypes: [],
+      enemyFleetUnitTypes: [],
+      expectedTargetUnitType: UNIT_TYPES.COMMAND_SHIP,
+      expectedAttackingAIStructUnitType: UNIT_TYPES.COMMAND_SHIP
+    },
+    {
+      targetUnitType: UNIT_TYPES.COMMAND_SHIP,
+      attackingAIStructUnitType: UNIT_TYPES.COMMAND_SHIP,
+      playerCommandStructAmbit: AMBITS.SPACE,
+      enemyCommandStructAmbit: AMBITS.SPACE,
+      playerCommandStructHealth: 4,
+      enemyCommandStructHealth: 4,
+      playerFleetUnitTypes: [
+        UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
+        UNIT_TYPES.STAR_FIGHTER
+      ],
+      enemyFleetUnitTypes: [
+        UNIT_TYPES.SPACE_FRIGATE,
+        UNIT_TYPES.DESTROYER
+      ],
+      expectedTargetUnitType: UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
+      expectedAttackingAIStructUnitType: UNIT_TYPES.DESTROYER
+    }
+  ];
+});
 
 // Test execution
 DTestSuite.printSuiteHeader('AITest');
@@ -1081,3 +1233,4 @@ isAttackingThreatViableTest.run();
 identifyThreatTest.run();
 chooseTargetTest.run();
 shouldTargetDefendingInsteadTest.run();
+determineStallTacticsNeededTest.run();

@@ -3,6 +3,7 @@ import {AMBITS, DEFENSE_COMPONENT_TYPES, EVENTS, ORDER_OF_AMBITS} from "./Consta
 import {AIAttackChoiceDTO} from "./dtos/AIAttackChoiceDTO.js";
 import {AmbitDistribution} from "./AmbitDistribution.js";
 import {AIAttackParamsDTO} from "./dtos/AIAttackParamsDTO.js";
+import {AIStructAttackScoreDTO} from "./dtos/AIStructAttackScoreDTO.js";
 
 export class AI {
   /**
@@ -168,13 +169,13 @@ export class AI {
 
   /**
    * @param {Struct} targetStruct
-   * @return {Struct}
+   * @return {AIStructAttackScoreDTO}
    */
   chooseAttackStruct(targetStruct) {
-    const bestAttackStruct = {
-      score: -1,
-      struct: this.state.enemy.commandStruct
-    };
+    const bestAttackStruct = new AIStructAttackScoreDTO(
+      this.state.enemy.commandStruct,
+      -1
+    );
 
     this.state.enemy.fleet.forEachStruct(aiStruct => {
       let score = this.getStructAttackScore(aiStruct, targetStruct);
@@ -185,7 +186,7 @@ export class AI {
       }
     });
 
-    return bestAttackStruct.struct;
+    return bestAttackStruct;
   }
 
   /**
@@ -193,7 +194,7 @@ export class AI {
    * @return {boolean}
    */
   isAttackingThreatViable(threat) {
-    let aiAttackStruct = this.chooseAttackStruct(threat.attackingStruct);
+    let aiAttackStruct = (this.chooseAttackStruct(threat.attackingStruct)).struct
 
     return !aiAttackStruct.isCommandStruct()
       && aiAttackStruct.isCounterUnitTo(threat.attackingStruct)
@@ -457,6 +458,35 @@ export class AI {
     });
   }
 
+  /**
+   * @param {AIAttackParamsDTO} attackParams
+   */
+  determineStallTacticsNeeded(attackParams) {
+    if (
+      !attackParams.attackingAIStruct.isCommandStruct()
+      || (
+        attackParams.target.isCommandStruct()
+        && (attackParams.target.currentHealth <= 2 || attackParams.attackingAIStruct.currentHealth > 4)
+      ) || !attackParams.target.canCounterAttack(attackParams.attackingAIStruct)
+    ) {
+      return;
+    }
+
+    let bestTargetAttackerScore = new AIStructAttackScoreDTO(
+      attackParams.attackingAIStruct,
+      0
+    );
+
+    this.state.player.fleet.toFlatArray(true).forEach(playerStruct => {
+      const attackerScore = this.chooseAttackStruct(playerStruct);
+      if (attackerScore.score > bestTargetAttackerScore.score) {
+        attackParams.target = playerStruct;
+        attackParams.attackingAIStruct = attackerScore.struct;
+        bestTargetAttackerScore = attackerScore;
+      }
+    });
+  }
+
   turnBasedDefense() {
     this.moveCommandStructToMostDefensibleAmbit();
     this.defendLastAttackedStruct();
@@ -471,10 +501,13 @@ export class AI {
       this.turnBasedDefense();
 
       const target = this.chooseTarget();
-      const attackParams = new AIAttackParamsDTO(
+      const structAttackScore = this.chooseAttackStruct(target);
+      let attackParams = new AIAttackParamsDTO(
         target,
-        this.chooseAttackStruct(target)
+        structAttackScore.struct
       );
+
+      this.determineStallTacticsNeeded(attackParams);
 
       this.attack(attackParams);
     }

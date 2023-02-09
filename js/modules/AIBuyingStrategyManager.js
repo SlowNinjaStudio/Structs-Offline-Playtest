@@ -108,10 +108,7 @@ export class AIBuyingStrategyManager {
 
         this.state.enemy.creditManager.pay(satisfyingStructDTO.appraisal.price);
         this.state.enemy.fleet.addStruct(satisfyingStructDTO.unit);
-        console.log(`AI Purchased: ${satisfyingStructDTO.unit.unitType}`);
-        console.log(`AI Satisfying Constraint: ${constraintName}`);
         this.constraints[constraintName].satisfy(satisfyingStructDTO, attackParams);
-        console.log(`AI Attack Struct After: ${attackParams.attackingAIStruct.unitType}`);
       }
     });
   }
