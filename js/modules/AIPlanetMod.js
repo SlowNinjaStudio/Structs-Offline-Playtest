@@ -235,6 +235,8 @@ export class AIPlanetMod extends AI {
 
       this.determineStallTacticsNeeded(attackParams);
 
+      window.dispatchEvent(new CustomEvent(EVENTS.RENDER.RENDER_GAME));
+
       this.attack(attackParams);
     }
   }
