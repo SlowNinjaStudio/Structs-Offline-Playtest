@@ -1,4 +1,4 @@
-import {DTest} from "../../DTestFramework.js";
+import {DTest, DTestSuite} from "../../DTestFramework.js";
 import {CombatEventLog} from "../../../js/modules/CombatEventLog.js";
 import {CombatEventLogItem} from "../../../js/modules/CombatEventLogItem.js";
 import {CombatEvent} from "../../../js/modules/CombatEvent.js";
@@ -170,5 +170,5 @@ const findLastAttackByPlayerTest = new DTest('findLastAttackByPlayerTest', funct
 });
 
 // Test execution
-console.log('CombatEventLogTest');
+DTestSuite.printSuiteHeader('CombatEventLogTest');
 findLastAttackByPlayerTest.run();

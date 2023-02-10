@@ -1,7 +1,9 @@
 import {DefenseStrategyTree} from "./DefenseStrategyTree.js";
-import {AMBITS, EVENTS, MANUAL_WEAPON_SLOTS, ORDER_OF_AMBITS} from "./Constants.js";
+import {AMBITS, DEFENSE_COMPONENT_TYPES, EVENTS, ORDER_OF_AMBITS} from "./Constants.js";
 import {AIAttackChoiceDTO} from "./dtos/AIAttackChoiceDTO.js";
 import {AmbitDistribution} from "./AmbitDistribution.js";
+import {AIAttackParamsDTO} from "./dtos/AIAttackParamsDTO.js";
+import {AIStructAttackScoreDTO} from "./dtos/AIStructAttackScoreDTO.js";
 
 export class AI {
   /**
@@ -10,6 +12,10 @@ export class AI {
   constructor(state) {
     this.state = state;
     this.defenseStrategyTree = new DefenseStrategyTree();
+  }
+
+  placeGenerator() {
+    // Override
   }
 
   /**
@@ -46,8 +52,15 @@ export class AI {
   /**
    * @return {Struct}
    */
+  getAttackGoal() {
+    return this.state.player.commandStruct;
+  }
+
+  /**
+   * @return {Struct}
+   */
   determineTargetOnGoal() {
-    const treeRoot = this.defenseStrategyTree.generate(this.state.player.commandStruct);
+    const treeRoot = this.defenseStrategyTree.generate(this.getAttackGoal());
     const leafNodes = this.defenseStrategyTree.getLeafNodes(treeRoot);
     let bestChoice = {
       struct: treeRoot.struct,
@@ -71,8 +84,8 @@ export class AI {
    * @param {Struct} targetStruct
    * @return {number}
    */
-  getUncounterableAttackScore(attackStruct, targetStruct) {
-    return !targetStruct.canCounterAttack(attackStruct) ? Infinity : 0;
+  getUncounterableByTargetAttackScore(attackStruct, targetStruct) {
+    return !targetStruct.canCounterAttack(attackStruct) ? 10 : 0;
   }
 
   /**
@@ -114,13 +127,39 @@ export class AI {
    * @param {Struct} targetStruct
    * @return {number}
    */
+  getUncounterableByDefendersAttackScore(attackStruct, targetStruct) {
+    return targetStruct.defenders.reduce((canCounter, defender) =>
+        canCounter || !defender.canCounterAttack(attackStruct)
+    , false) ? 5 : 0;
+  }
+
+  /**
+   * @param {Struct} attackStruct
+   * @param {Struct} targetStruct
+   * @return {number}
+   */
+  getCanBeatCounterMeasuresAttackScore(attackStruct, targetStruct) {
+    return attackStruct.canDefeatStructsCounterMeasure(targetStruct) ? 15 : 0;
+  }
+
+  /**
+   * @param {Struct} attackStruct
+   * @param {Struct} targetStruct
+   * @return {number}
+   */
   getStructAttackScore(attackStruct, targetStruct) {
-    if(attackStruct.isDestroyed || !attackStruct.canAttackAnyWeapon(targetStruct)) {
+    if (attackStruct.isDestroyed || !attackStruct.canAttackAnyWeapon(targetStruct)) {
       return -1;
     }
 
+    if (attackStruct.isCommandStruct()) {
+      return 0;
+    }
+
     let score = 0;
-    score += this.getUncounterableAttackScore(attackStruct, targetStruct);
+    score += this.getCanBeatCounterMeasuresAttackScore(attackStruct, targetStruct);
+    score += this.getUncounterableByTargetAttackScore(attackStruct, targetStruct);
+    score += this.getUncounterableByDefendersAttackScore(attackStruct, targetStruct);
     score += this.getBlockingCommandShipAttackScore(attackStruct);
     score += this.getCurrentHealthAttackScore(attackStruct, targetStruct);
     score += this.getAmbitTargetingCostAttackScore(attackStruct);
@@ -130,13 +169,13 @@ export class AI {
 
   /**
    * @param {Struct} targetStruct
-   * @return {Struct}
+   * @return {AIStructAttackScoreDTO}
    */
   chooseAttackStruct(targetStruct) {
-    const bestAttackStruct = {
-      score: -1,
-      struct: this.state.enemy.commandStruct
-    };
+    const bestAttackStruct = new AIStructAttackScoreDTO(
+      this.state.enemy.commandStruct,
+      -1
+    );
 
     this.state.enemy.fleet.forEachStruct(aiStruct => {
       let score = this.getStructAttackScore(aiStruct, targetStruct);
@@ -147,7 +186,7 @@ export class AI {
       }
     });
 
-    return bestAttackStruct.struct;
+    return bestAttackStruct;
   }
 
   /**
@@ -155,17 +194,14 @@ export class AI {
    * @return {boolean}
    */
   isAttackingThreatViable(threat) {
-    let aiAttackStruct = this.chooseAttackStruct(threat.attackingStruct);
+    let aiAttackStruct = (this.chooseAttackStruct(threat.attackingStruct)).struct
 
-    if (aiAttackStruct.isCommandStruct()) {
-      return false;
-    }
-
-    let counterAttacks = threat.attackingStruct.defenders.reduce((counterAttacks, defender) =>
-      defender.canCounterAttack(aiAttackStruct) ? counterAttacks + 1 : counterAttacks
-    , 0);
-
-    return counterAttacks < aiAttackStruct.currentHealth;
+    return !aiAttackStruct.isCommandStruct()
+      && aiAttackStruct.isCounterUnitTo(threat.attackingStruct)
+      && aiAttackStruct.canDefeatStructsCounterMeasure(threat.attackingStruct)
+      && threat.attackingStruct.defenseComponent.type !== DEFENSE_COMPONENT_TYPES.ARMOUR
+      && threat.attackingStruct.countDefenderCounterAttacks(aiAttackStruct) === 0
+      && threat.attackingStruct.countBlockingDefenders() === 0;
   }
 
   /**
@@ -184,10 +220,43 @@ export class AI {
   }
 
   /**
+   * @return {Struct|null}
+   */
+  determineVIPTargetOpportunity() {
+    let target = null;
+    if (this.state.player.commandStruct.isVulnerableToFleet(this.state.enemy.fleet)) {
+      target = this.state.player.commandStruct;
+    }
+    return target;
+  }
+
+  /**
+   * @param {Struct} attackingAIStruct
+   * @param {Struct} target
+   * @return {Struct}
+   */
+  shouldTargetDefendingInstead(attackingAIStruct, target) {
+    if (
+      !attackingAIStruct.canDefeatStructsCounterMeasure(target)
+      && target.defending
+      && target.defending.canTakeDamageFor(target)
+      && target.defending.countDefenderCounterAttacks(attackingAIStruct) === 0
+      && attackingAIStruct.canDefeatStructsCounterMeasure(target.defending)
+    ) {
+      return target.defending;
+    }
+    return target;
+  }
+
+  /**
    * @return {Struct}
    */
   chooseTarget() {
-    const onGoalTarget = this.determineTargetOnGoal();
+    let onGoalTarget = this.determineVIPTargetOpportunity();
+    if (onGoalTarget) {
+      return onGoalTarget;
+    }
+    onGoalTarget = this.determineTargetOnGoal();
     const threat = this.identifyThreat();
     if (!onGoalTarget.isCommandStruct() && threat) {
       return threat;
@@ -196,48 +265,29 @@ export class AI {
   }
 
   /**
-   * @param {Struct} attackStruct
-   * @param {string} targetAmbit
-   * @return {string}
-   */
-  chooseWeapon(attackStruct, targetAmbit) {
-    const primary = attackStruct.manualWeaponPrimary;
-    const secondary = attackStruct.manualWeaponSecondary;
-
-    if (primary && primary.canTargetAmbit(targetAmbit)) {
-      return MANUAL_WEAPON_SLOTS.PRIMARY;
-    }
-    if (secondary && secondary.canTargetAmbit(targetAmbit)) {
-      return MANUAL_WEAPON_SLOTS.SECONDARY;
-    }
-
-    throw new Error(`Struct cannot target given ambit: ${targetAmbit}`);
-  }
-
-  /**
+   * @param {AIAttackParamsDTO} params
    * @return {AIAttackChoiceDTO}
    */
-  attack() {
-    // Determine the best target
-    const target = this.chooseTarget();
-
-    // Determine the best struct to attack the target with
-    const aiStruct = this.chooseAttackStruct(target);
+  attack(params) {
+    let target = params.target;
+    const attackingAIStruct = params.attackingAIStruct;
 
     // Choose a weapon
-    const weaponSlot = this.chooseWeapon(aiStruct, target.operatingAmbit);
+    const weaponSlot = attackingAIStruct.chooseWeapon(target);
 
     // If it's a Command Struct, it needs to be in the same ambit as the target to attack
-    if (aiStruct.isCommandStruct() && aiStruct.operatingAmbit !== target.operatingAmbit
-        && aiStruct.defenseComponent.canChangeAmbit(aiStruct.operatingAmbit, target.operatingAmbit)) {
-      aiStruct.operatingAmbit = target.operatingAmbit;
+    if (attackingAIStruct.isCommandStruct() && attackingAIStruct.operatingAmbit !== target.operatingAmbit
+        && attackingAIStruct.defenseComponent.canChangeAmbit(attackingAIStruct.operatingAmbit, target.operatingAmbit)) {
+      attackingAIStruct.operatingAmbit = target.operatingAmbit;
     }
 
+    target = this.shouldTargetDefendingInstead(attackingAIStruct, target);
+
     // Execute attack and end turn
-    aiStruct.attack(weaponSlot, target);
+    attackingAIStruct.attack(weaponSlot, target);
 
     return new AIAttackChoiceDTO(
-      aiStruct,
+      attackingAIStruct,
       weaponSlot,
       target
     );
@@ -247,23 +297,6 @@ export class AI {
     this.state.enemy.fleet.forEachStruct(aiStruct => {
       aiStruct.defend(this.state.enemy.commandStruct);
     });
-  }
-
-  /**
-   * @param {Fleet} fleet
-   * @return {AmbitDistribution}
-   */
-  analyzeFleetAmbitAttackCapabilities(fleet) {
-    const ambitAttackCapabilities = new AmbitDistribution();
-    fleet.forEachStruct(struct => {
-      if (!struct.isDestroyed) {
-        const targetableAmbits = struct.getTargetableAmbits();
-        targetableAmbits.forEach(ambit => {
-          ambitAttackCapabilities.increment(ambit, 1);
-        });
-      }
-    });
-    return ambitAttackCapabilities;
   }
 
   /**
@@ -287,7 +320,7 @@ export class AI {
    * @return {string|null}
    */
   findFleetTargetingWeakness(fleet) {
-    const ambitAttackCapabilities = this.analyzeFleetAmbitAttackCapabilities(fleet);
+    const ambitAttackCapabilities = fleet.analyzeFleetAmbitAttackCapabilities();
     const ambits = Object.values(AMBITS);
     for (let i = 0; i < ambits.length; i++) {
       if (ambitAttackCapabilities[ambits[i].toLowerCase()] === 0) {
@@ -300,13 +333,13 @@ export class AI {
   /**
    * Find the ambit where the fleet has the most structs.
    *
-   * @param fleet
+   * @param {Player} player
    * @return {string|null}
    */
-  findMostOccupiedAmbit(fleet) {
+  findAmbitForBestDefense(player) {
     let mostOccupiedAmbit = null;
     let mostStructs = 0;
-    const ambitPositions = this.analyzeFleetAmbitPositions(fleet);
+    const ambitPositions = this.analyzeFleetAmbitPositions(player.fleet);
     const ambits = ORDER_OF_AMBITS;
     for (let i = 0; i < ambits.length; i++) {
       if (ambitPositions[ambits[i].toLowerCase()] > mostStructs) {
@@ -401,11 +434,15 @@ export class AI {
     }
   }
 
-  moveCommandStructToMostDefensibleAmbit() {
-    let changeAmbit = this.findFleetTargetingWeakness(this.state.player.fleet);
+  moveCommandStructToMostDefensibleAmbit(useTargetingWeakness = true) {
+    let changeAmbit = null;
+
+    if (useTargetingWeakness) {
+      changeAmbit = this.findFleetTargetingWeakness(this.state.player.fleet);
+    }
 
     if (!changeAmbit) {
-      changeAmbit = this.findMostOccupiedAmbit(this.state.enemy.fleet);
+      changeAmbit = this.findAmbitForBestDefense(this.state.enemy);
     }
 
     if (changeAmbit) {
@@ -426,6 +463,38 @@ export class AI {
     });
   }
 
+  /**
+   * @param {AIAttackParamsDTO} attackParams
+   */
+  determineStallTacticsNeeded(attackParams) {
+    if (
+      !attackParams.attackingAIStruct.isCommandStruct()
+      || (attackParams.target.isCommandStruct() && attackParams.target.currentHealth <= 2)
+      || !attackParams.target.canTargetAmbit(attackParams.target.operatingAmbit) // Command Struct may not be in ambit yet
+      || !attackParams.target.hasPassiveWeapon()
+    ) {
+      return;
+    }
+
+    let bestTargetAttackerScore = new AIStructAttackScoreDTO(
+      attackParams.attackingAIStruct,
+      0
+    );
+
+    this.state.player.fleet.toFlatArray(true).forEach(playerStruct => {
+      const attackerScore = this.chooseAttackStruct(playerStruct);
+      if (attackerScore.score > bestTargetAttackerScore.score) {
+        attackParams.target = playerStruct;
+        attackParams.attackingAIStruct = attackerScore.struct;
+        bestTargetAttackerScore = attackerScore;
+      }
+    });
+
+    if (!attackParams.attackingAIStruct.isCommandStruct()) {
+      this.moveCommandStructToMostDefensibleAmbit(false);
+    }
+  }
+
   turnBasedDefense() {
     this.moveCommandStructToMostDefensibleAmbit();
     this.defendLastAttackedStruct();
@@ -438,7 +507,17 @@ export class AI {
       window.dispatchEvent(new CustomEvent(EVENTS.TURNS.END_TURN));
     } else {
       this.turnBasedDefense();
-      this.attack();
+
+      const target = this.chooseTarget();
+      const structAttackScore = this.chooseAttackStruct(target);
+      let attackParams = new AIAttackParamsDTO(
+        target,
+        structAttackScore.struct
+      );
+
+      this.determineStallTacticsNeeded(attackParams);
+
+      this.attack(attackParams);
     }
   }
 }

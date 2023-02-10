@@ -1,4 +1,4 @@
-import {DTest} from "../../DTestFramework.js";
+import {DTest, DTestSuite} from "../../DTestFramework.js";
 import {IdGenerator} from "../../../js/modules/util/IdGenerator.js";
 
 const makeTest = new DTest('makeTest', function(params) {
@@ -23,5 +23,5 @@ const makeTest = new DTest('makeTest', function(params) {
 });
 
 // Test execution
-console.log('IdGeneratorTest');
+DTestSuite.printSuiteHeader('IdGeneratorTest');
 makeTest.run();

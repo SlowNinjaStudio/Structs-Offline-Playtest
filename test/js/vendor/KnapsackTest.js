@@ -1,4 +1,4 @@
-import {DTest} from "../../DTestFramework.js";
+import {DTest, DTestSuite} from "../../DTestFramework.js";
 import {Knapsack} from "../../../js/modules/Knapsack.js";
 import {KnapsackLookupDTO} from "../../../js/modules/dtos/KnapsackLookupDTO.js";
 
@@ -175,7 +175,7 @@ const bruteForceTest = new DTest('bruteForceTest', function(params) {
 });
 
 // Test execution
-console.log('KnapsackTest');
+DTestSuite.printSuiteHeader('KnapsackTest');
 createLookupTableTest.run();
 unboundedTest.run();
 bruteForceTest.run();

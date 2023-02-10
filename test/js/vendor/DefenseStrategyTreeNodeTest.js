@@ -1,4 +1,4 @@
-import {DTest} from "../../DTestFramework.js";
+import {DTest, DTestSuite} from "../../DTestFramework.js";
 import {DefenseStrategyTreeNode} from "../../../js/modules/data_structures/DefenseStrategyTreeNode.js";
 import {StructBuilder} from "../../../js/modules/StructBuilder.js";
 import {CommandStructBuilder} from "../../../js/modules/CommandStructBuilder.js";
@@ -41,6 +41,6 @@ const removeChildByKeyTest = new DTest('removeChildByKeyTest', function() {
 });
 
 // Test execution
-console.log('DefenseStrategyTreeNodeTest');
+DTestSuite.printSuiteHeader('DefenseStrategyTreeNodeTest');
 addChildTest.run();
 removeChildByKeyTest.run();

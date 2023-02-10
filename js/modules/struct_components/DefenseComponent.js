@@ -22,6 +22,7 @@ export class DefenseComponent {
     this.actionLabel = this.name;
     this.isActive = isActive;
     this.probability = probability;
+    this.guided = null;
 
     this.util = new Util();
   }

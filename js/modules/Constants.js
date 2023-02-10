@@ -20,6 +20,24 @@ export const
     MAX_HEALTH: 6
   },
 
+  CONSTRAINTS = {
+    ALL_COUNTER_UNITS: 'ALL_COUNTER_UNITS',
+    AMBIT_COVERAGE: 'TARGET_ALL_AMBITS',
+    ATTACK_STRUCT: 'ATTACK_STRUCT',
+    COMMAND_STRUCT_BLOCKER: 'COMMAND_STRUCT_BLOCKER',
+    COUNTER_UNIT_ATTACKER: 'COUNTER_UNIT_ATTACKER',
+    GENERATOR_BLOCKER: 'GENERATOR_BLOCKER',
+  },
+
+  CONSTRAINT_ORDER = [
+    CONSTRAINTS.ATTACK_STRUCT,
+    CONSTRAINTS.COMMAND_STRUCT_BLOCKER,
+    CONSTRAINTS.GENERATOR_BLOCKER,
+    CONSTRAINTS.COUNTER_UNIT_ATTACKER,
+    CONSTRAINTS.AMBIT_COVERAGE,
+    CONSTRAINTS.ALL_COUNTER_UNITS
+  ],
+
   DEFENSE_COMPONENT_CUSTOM_ACTION_LABELS = {
     OMNI_ENGINE: 'Move',
   },
@@ -105,6 +123,8 @@ export const
     DAMAGE: `<img src="${IMG.ICONS}icon-fire.png" alt="Damage Icon" class="icon-pixel-art icon-damage">`,
     COUNTER_ATTACK: `<img src="${IMG.ICONS}icon-counter-attack.png" alt="Counter Attack Icon" class="icon-pixel-art icon-counter-attack">`,
     DEFENSE: `<img src="${IMG.ICONS}icon-def-melee.png" alt="Defense Icon" class="icon-pixel-art icon-defense">`,
+    POWER_OUTPUT: `<img src="${IMG.ICONS}icon-power-charge.png" alt="Power Output Icon" class="icon-pixel-art icon-power-output">`,
+    POWER_GENERATOR: `<img src="${IMG.ICONS}icon-power-bolt.png" alt="Power Generator Icon" class="icon-pixel-art icon-power-generator">`,
   },
 
   MANUAL_WEAPON_CUSTOM_ACTION_LABELS = {
@@ -157,13 +177,19 @@ export const
   PLAYER_DEFAULTS = {
     ID_PREFIX: 'player-',
     MAX_ACTIVE_FLEET_STRUCTS: 16,
-    MAX_ACTIVE_PLANETARY_STRUCTS: 4,
+    MAX_ACTIVE_PLANETARY_STRUCTS: 1,
+    WATT_CAP: null
+  },
+
+  PLAYER_FLEET_TYPES = {
+    FLEET: 'fleet',
+    PLANET: 'planet'
   },
 
   POWER_GENERATORS = {
     GENERIC: {
       NAME: 'GENERIC',
-      POWER_OUTPUT: 1
+      POWER_OUTPUT: 0.5
     }
   },
 
@@ -194,8 +220,12 @@ export const
     ID_PREFIX: 'struct-'
   },
 
+  STRUCT_GARBAGE_COLLECTION = {
+    MAX_TURNS: 4
+  },
+
   THREAT = {
-    DAMAGE_THRESHOLD: 4
+    DAMAGE_THRESHOLD: 6
   },
 
   UNIT_TYPES = {
@@ -216,27 +246,58 @@ export const
   },
 
   UNITS_BY_AMBIT = {
-    SPACE: [
-      UNIT_TYPES.STAR_FIGHTER,
-      UNIT_TYPES.SPACE_FRIGATE,
-      UNIT_TYPES.GALACTIC_BATTLESHIP
-    ],
-    SKY: [
-      UNIT_TYPES.FIGHTER_JET,
-      UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
-      UNIT_TYPES.STEALTH_BOMBER
-    ],
-    LAND: [
-      UNIT_TYPES.TANK,
-      UNIT_TYPES.SAM_LAUNCHER,
-      UNIT_TYPES.ARTILLERY
-    ],
-    WATER: [
-      UNIT_TYPES.SUB,
-      UNIT_TYPES.DESTROYER,
-      UNIT_TYPES.CRUISER
-    ]
+    FLEET: {
+      SPACE: [
+        UNIT_TYPES.STAR_FIGHTER,
+        UNIT_TYPES.SPACE_FRIGATE,
+        UNIT_TYPES.GALACTIC_BATTLESHIP
+      ],
+      SKY: [
+        UNIT_TYPES.FIGHTER_JET,
+        UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
+        UNIT_TYPES.STEALTH_BOMBER
+      ],
+      LAND: [
+        UNIT_TYPES.TANK,
+        UNIT_TYPES.SAM_LAUNCHER,
+        UNIT_TYPES.ARTILLERY
+      ],
+      WATER: [
+        UNIT_TYPES.SUB,
+        UNIT_TYPES.DESTROYER,
+        UNIT_TYPES.CRUISER
+      ]
+    },
+    PLANET: {
+      SPACE: [
+        UNIT_TYPES.GENERATOR,
+      ],
+      SKY: [
+        UNIT_TYPES.GENERATOR,
+      ],
+      LAND: [
+        UNIT_TYPES.GENERATOR,
+      ],
+      WATER: [
+        UNIT_TYPES.GENERATOR,
+      ]
+    }
   },
+
+  FLEET_UNIT_TYPES = [
+    UNIT_TYPES.ARTILLERY,
+    UNIT_TYPES.CRUISER,
+    UNIT_TYPES.DESTROYER,
+    UNIT_TYPES.FIGHTER_JET,
+    UNIT_TYPES.GALACTIC_BATTLESHIP,
+    UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
+    UNIT_TYPES.SAM_LAUNCHER,
+    UNIT_TYPES.SPACE_FRIGATE,
+    UNIT_TYPES.STAR_FIGHTER,
+    UNIT_TYPES.STEALTH_BOMBER,
+    UNIT_TYPES.SUB,
+    UNIT_TYPES.TANK,
+  ],
 
   ANALYTICS_DEFAULTS = {
     IDENTITY_PREFIX: 'cmd-',

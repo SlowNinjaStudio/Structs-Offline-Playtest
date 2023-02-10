@@ -1,4 +1,4 @@
-import {DTest} from "../../DTestFramework.js";
+import {DTest, DTestSuite} from "../../DTestFramework.js";
 import {Fraction} from "../../../js/modules/util/Fraction.js";
 
 const toDecimalTest = new DTest('toDecimalTest', function(params) {
@@ -43,6 +43,6 @@ const toStringTest = new DTest('toStringTest', function(params) {
 });
 
 // Test execution
-console.log('FractionTest');
+DTestSuite.printSuiteHeader('FractionTest');
 toDecimalTest.run();
 toStringTest.run();

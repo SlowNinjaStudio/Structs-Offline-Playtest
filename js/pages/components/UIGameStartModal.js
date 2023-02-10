@@ -56,8 +56,10 @@ export class UIGameStartModal {
         this.state.gamePhase = GAME_PHASES.FLEET_SELECT_P1;
         this.state.player.creditManager.setQualitativeBudget(document.getElementById(this.selectBudgetPlayer1Id).value);
         this.state.player.creditManager.initFromQualitativeBudget();
+        this.state.metrics.player.initialWatt = this.state.player.creditManager.credits;
         this.state.enemy.creditManager.setQualitativeBudget(document.getElementById(this.selectBudgetPlayer2Id).value);
         this.state.enemy.creditManager.initFromQualitativeBudget();
+        this.state.metrics.enemy.initialWatt = this.state.enemy.creditManager.credits;
 
         this.hide();
 

@@ -1,4 +1,4 @@
-import {DTest} from "../../DTestFramework.js";
+import {DTest, DTestSuite} from "../../DTestFramework.js";
 import {ArrayUtil} from "../../../js/modules/util/ArrayUtil.js";
 
 const sumTest = new DTest('sumTest', function(params) {
@@ -62,7 +62,7 @@ const minTest = new DTest('minTest', function(params) {
 });
 
 // Test execution
-console.log('ArrayUtilTest');
+DTestSuite.printSuiteHeader('ArrayUtilTest');
 sumTest.run();
 maxTest.run();
 minTest.run();
