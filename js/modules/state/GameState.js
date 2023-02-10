@@ -1,11 +1,13 @@
 import {PlayerMetrics} from "../PlayerMetrics.js";
 import {CombatEventLog} from "../CombatEventLog.js";
 import {AIThreatTracker} from "../AIThreatTracker.js";
+import {UnitsBuiltLog} from "../UnitsBuiltLog.js";
 
 export class GameState {
   constructor() {
     this.gameMode = '';
     this.gamePhase = '';
+    this.arePlanetsEnabled = false;
 
     this.player = null;
     this.enemy = null;
@@ -24,7 +26,8 @@ export class GameState {
 
     this.metrics = {
       player: new PlayerMetrics(),
-      enemy: new PlayerMetrics()
+      enemy: new PlayerMetrics(),
+      unitsBuilt: new UnitsBuiltLog()
     };
 
     this.combatEventLog = new CombatEventLog();

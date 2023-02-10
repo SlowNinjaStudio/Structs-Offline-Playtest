@@ -1,4 +1,4 @@
-import {DTest} from "../../DTestFramework.js";
+import {DTest, DTestSuite} from "../../DTestFramework.js";
 import {StructBuilder} from "../../../js/modules/StructBuilder.js";
 import {UNIT_TYPES} from "../../../js/modules/Constants.js";
 import {AIThreatTracker} from "../../../js/modules/AIThreatTracker.js";
@@ -68,6 +68,6 @@ const trackAttackTest = new DTest('trackAttackTest', function() {
 });
 
 // Test execution
-console.log('AIThreatTrackerTest');
+DTestSuite.printSuiteHeader('AIThreatTrackerTest');
 removeDestroyedTest.run();
 trackAttackTest.run();

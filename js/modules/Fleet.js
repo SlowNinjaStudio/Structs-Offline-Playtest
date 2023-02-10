@@ -1,4 +1,5 @@
-import {AMBITS, MAX_FLEET_STRUCTS_PER_AMBIT, PLAYER_DEFAULTS} from "./Constants.js";
+import {AMBITS, MAX_FLEET_STRUCTS_PER_AMBIT, ORDER_OF_AMBITS, PLAYER_DEFAULTS, UNIT_TYPES} from "./Constants.js";
+import {AmbitDistribution} from "./AmbitDistribution.js";
 
 export class Fleet {
   /**
@@ -225,5 +226,58 @@ export class Fleet {
     this.water = [];
 
     this.initAmbits();
+  }
+
+  /**
+   * @return {number}
+   */
+  generatePower() {
+    let powerGenerated = 0;
+    this.forEachStruct(function(struct) {
+      if (!struct.isDestroyed && struct.powerGenerator) {
+        powerGenerated += struct.powerGenerator.powerOutput;
+      }
+    });
+    return powerGenerated;
+  }
+
+  /**
+   * @param {boolean} removedDestroyed
+   * @return {Struct[]}
+   */
+  toFlatArray(removedDestroyed = true) {
+    return Object.values(ORDER_OF_AMBITS).reduce((structs, ambit) =>
+        [...structs, ...this[ambit.toLowerCase()].filter(ambitStruct =>
+          !!ambitStruct && (!removedDestroyed || !ambitStruct.isDestroyed)
+        )], []);
+  }
+
+  /**
+   * @return {Struct|null}
+   */
+  findGenerator() {
+    let generator = null;
+    this.forEachStruct(struct => {
+      if (struct.unitType === UNIT_TYPES.GENERATOR) {
+        generator = struct;
+      }
+    });
+    return generator;
+  }
+
+  /**
+   * @return {AmbitDistribution}
+   */
+  analyzeFleetAmbitAttackCapabilities() {
+    const ambitAttackCapabilities = new AmbitDistribution();
+    this.forEachStruct(struct => {
+      if (!struct.isDestroyed) {
+        const targetableAmbits = struct.getTargetableAmbits();
+        targetableAmbits.forEach(ambit => {
+          ambitAttackCapabilities.increment(ambit, 1);
+        });
+      }
+    });
+    return ambitAttackCapabilities;
   }
 }

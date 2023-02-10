@@ -10,6 +10,16 @@ export class PlayerMetrics {
     this.damageGiven = 0;
     this.kills = 0;
     this.structsLost = 0;
+    this.structsBuilt = 0;
+    this.initialWatt = 0;
+  }
+
+  /**
+   * @param {number} count
+   */
+  setInitialStructCount(count) {
+    this.initialStructCount = count;
+    this.structsBuilt = count;
   }
 
   incrementPrimaryAttacks() {
@@ -52,5 +62,9 @@ export class PlayerMetrics {
 
   incrementStructsLost() {
     this.structsLost++;
+  }
+
+  incrementStructsBuilt() {
+    this.structsBuilt++;
   }
 }

@@ -1,4 +1,4 @@
-import {DTest} from "../../DTestFramework.js";
+import {DTest, DTestSuite} from "../../DTestFramework.js";
 import {AmbitDistribution} from "../../../js/modules/AmbitDistribution.js";
 import {AMBITS} from "../../../js/modules/Constants.js";
 
@@ -191,7 +191,7 @@ const getTotalTest = new DTest('getTotalTest', function(params) {
 });
 
 // Test execution
-console.log('AmbitDistributionTest');
+DTestSuite.printSuiteHeader('AmbitDistributionTest');
 setGetTest.run();
 incrementTest.run();
 getAverageTest.run();

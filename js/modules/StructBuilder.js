@@ -1,15 +1,26 @@
-import {AMBITS, DEFENSE_COMPONENTS, IMG, MANUAL_WEAPONS, PASSIVE_WEAPONS, UNIT_TYPES} from "./Constants.js";
+import {
+  AMBITS,
+  DEFENSE_COMPONENTS,
+  IMG,
+  MANUAL_WEAPONS,
+  PASSIVE_WEAPONS,
+  POWER_GENERATORS,
+  UNIT_TYPES
+} from "./Constants.js";
 import {Struct} from "./Struct.js";
 import {ManualWeaponFactory} from "./struct_components/ManualWeaponFactory.js";
 import {PassiveWeaponFactory} from "./struct_components/PassiveWeaponFactory.js";
 import {DefenseComponentFactory} from "./struct_components/DefenseComponentFactory.js";
 import {StructBuilderError} from "./errors/StructBuilderError.js";
+import {PlanetaryStruct} from "./PlanetaryStruct.js";
+import {PowerGeneratorFactory} from "./struct_components/PowerGeneratorFactory.js";
 
 export class StructBuilder {
   constructor() {
     this.defenseComponentFactory = new DefenseComponentFactory();
     this.manualWeaponFactory = new ManualWeaponFactory();
     this.passiveWeaponFactory = new PassiveWeaponFactory();
+    this.powerGeneratorFactory = new PowerGeneratorFactory();
   }
 
   /**
@@ -33,6 +44,9 @@ export class StructBuilder {
         break;
       case UNIT_TYPES.GALACTIC_BATTLESHIP:
         struct = this.makeGalacticBattleship();
+        break;
+      case UNIT_TYPES.GENERATOR:
+        struct = this.makeGenerator();
         break;
       case UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR:
         struct = this.makeHighAltitudeInterceptor();
@@ -75,6 +89,7 @@ export class StructBuilder {
       null,
       null,
       this.defenseComponentFactory.make(DEFENSE_COMPONENTS.INDIRECT_COMBAT_MODULE),
+      null,
       IMG.STRUCTS + 'land-artillery.jpg'
     );
   }
@@ -96,6 +111,7 @@ export class StructBuilder {
       ),
       this.passiveWeaponFactory.make(PASSIVE_WEAPONS.COUNTER_ATTACK),
       this.defenseComponentFactory.make(DEFENSE_COMPONENTS.SIGNAL_JAMMING),
+      null,
       IMG.STRUCTS + 'water-cruiser.jpg'
     );
   }
@@ -113,6 +129,7 @@ export class StructBuilder {
       ),
       null,
       this.passiveWeaponFactory.make(PASSIVE_WEAPONS.ADVANCED_COUNTER_ATTACK),
+      null,
       null,
       IMG.STRUCTS + 'water-destroyer.jpg'
     );
@@ -132,6 +149,7 @@ export class StructBuilder {
       null,
       this.passiveWeaponFactory.make(PASSIVE_WEAPONS.COUNTER_ATTACK),
       this.defenseComponentFactory.make(DEFENSE_COMPONENTS.SIGNAL_JAMMING),
+      null,
       IMG.STRUCTS + 'sky-fighter-jet.jpg'
     );
   }
@@ -150,7 +168,24 @@ export class StructBuilder {
       null,
       this.passiveWeaponFactory.make(PASSIVE_WEAPONS.COUNTER_ATTACK),
       this.defenseComponentFactory.make(DEFENSE_COMPONENTS.SIGNAL_JAMMING),
+      null,
       IMG.STRUCTS + 'space-galatic-battleship.jpg'
+    );
+  }
+
+  /**
+   * @return {Struct}
+   */
+  makeGenerator() {
+    return new PlanetaryStruct(
+      UNIT_TYPES.GENERATOR,
+      AMBITS.LAND,
+      null,
+      null,
+      null,
+      null,
+      this.powerGeneratorFactory.make(POWER_GENERATORS.GENERIC.NAME),
+      IMG.STRUCTS + 'generator.jpg'
     );
   }
 
@@ -168,6 +203,7 @@ export class StructBuilder {
       null,
       this.passiveWeaponFactory.make(PASSIVE_WEAPONS.COUNTER_ATTACK),
       this.defenseComponentFactory.make(DEFENSE_COMPONENTS.DEFENSIVE_MANEUVER),
+      null,
       IMG.STRUCTS + 'sky-high-altitude-interceptor.jpg'
     );
   }
@@ -186,6 +222,7 @@ export class StructBuilder {
       null,
       this.passiveWeaponFactory.make(PASSIVE_WEAPONS.COUNTER_ATTACK),
       null,
+      null,
       IMG.STRUCTS + 'land-sam-launcher.jpg'
     );
   }
@@ -203,6 +240,7 @@ export class StructBuilder {
       ),
       null,
       this.passiveWeaponFactory.make(PASSIVE_WEAPONS.COUNTER_ATTACK),
+      null,
       null,
       IMG.STRUCTS + 'space-space-frigate.jpg'
     );
@@ -225,6 +263,7 @@ export class StructBuilder {
       ),
       this.passiveWeaponFactory.make(PASSIVE_WEAPONS.COUNTER_ATTACK),
       null,
+      null,
       IMG.STRUCTS + 'space-star-fighter.jpg'
     );
   }
@@ -246,6 +285,7 @@ export class StructBuilder {
         DEFENSE_COMPONENTS.STEALTH_MODE,
         [AMBITS.WATER, AMBITS.LAND, AMBITS.SPACE]
       ),
+      null,
       IMG.STRUCTS + 'sky-stealth-bomber.jpg'
     );
   }
@@ -267,6 +307,7 @@ export class StructBuilder {
         DEFENSE_COMPONENTS.STEALTH_MODE,
         [AMBITS.LAND, AMBITS.SKY, AMBITS.SPACE]
       ),
+      null,
       IMG.STRUCTS + 'water-sub.jpg'
     );
   }
@@ -285,6 +326,7 @@ export class StructBuilder {
       null,
       this.passiveWeaponFactory.make(PASSIVE_WEAPONS.COUNTER_ATTACK),
       this.defenseComponentFactory.make(DEFENSE_COMPONENTS.ARMOUR),
+      null,
       IMG.STRUCTS + 'land-tank.jpg'
     );
   }

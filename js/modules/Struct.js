@@ -1,4 +1,11 @@
-import {DEFENSE_COMPONENTS, EVENTS, FLEET_STRUCT_DEFAULTS, MANUAL_WEAPON_SLOTS, STRUCT_DEFAULTS} from "./Constants.js";
+import {
+  DEFENSE_COMPONENT_TYPES,
+  DEFENSE_COMPONENTS,
+  EVENTS,
+  FLEET_STRUCT_DEFAULTS,
+  MANUAL_WEAPON_SLOTS,
+  STRUCT_DEFAULTS
+} from "./Constants.js";
 import {DefenseComponent} from "./struct_components/DefenseComponent.js";
 import {PassiveWeapon} from "./struct_components/PassiveWeapon.js";
 import {DefendActionDisabledError} from "./errors/DefendActionDisabledError.js";
@@ -15,6 +22,7 @@ export class Struct {
    * @param {ManualWeapon} manualWeaponSecondary
    * @param {PassiveWeapon} passiveWeapon
    * @param {DefenseComponent} defenseComponent
+   * @param {PowerGenerator} powerGenerator
    * @param {string} image
    */
   constructor(
@@ -24,8 +32,8 @@ export class Struct {
     manualWeaponSecondary,
     passiveWeapon = null,
     defenseComponent = null,
-    image = ''
-  ) {
+    powerGenerator = null,
+    image = '') {
     this.id = (new IdGenerator()).generate(STRUCT_DEFAULTS.ID_PREFIX);
     this.unitType = unitType;
     this.operatingAmbit = operatingAmbit;
@@ -43,6 +51,7 @@ export class Struct {
     this.manualWeaponSecondary = manualWeaponSecondary;
     this.passiveWeapon = passiveWeapon;
     this.defenseComponent = defenseComponent ? defenseComponent : new DefenseComponent();
+    this.powerGenerator = powerGenerator;
     this.util = new Util();
     this.combatEventDispatcher = new CombatEventDispatcher();
   }
@@ -386,5 +395,109 @@ export class Struct {
    */
   isBlockingCommandStruct() {
     return !!(this.isBlocking() && this.defending.isCommandStruct());
+  }
+
+  /**
+   * @return {boolean}
+   */
+  isPlanetaryStruct() {
+    return false;
+  }
+
+  /**
+   * @return {number}
+   */
+  countBlockingDefenders() {
+    return this.defenders.reduce((count, defender) => count + (defender.canTakeDamageFor(this) ? 1 : 0), 0);
+  }
+
+  /**
+   * @param {ManualWeapon} weapon
+   * @return {boolean}
+   */
+  canWeaponDefeatCounterMeasure(weapon) {
+    return !this.defenseComponent
+      || this.defenseComponent.type !== DEFENSE_COMPONENT_TYPES.COUNTER_MEASURE
+      || this.defenseComponent.guided !== weapon.isGuided;
+  }
+
+  /**
+   * @param {Struct} target
+   * @return {string}
+   */
+  chooseWeapon(target) {
+    let chosenWeapon = null;
+    let chosenWeaponSlot = '';
+
+    if (this.manualWeaponPrimary && this.manualWeaponPrimary.canTargetAmbit(target.operatingAmbit)) {
+      chosenWeapon = this.manualWeaponPrimary;
+      chosenWeaponSlot = MANUAL_WEAPON_SLOTS.PRIMARY;
+    }
+
+    if (this.manualWeaponSecondary && this.manualWeaponSecondary.canTargetAmbit(target.operatingAmbit)) {
+      if (
+        !chosenWeapon
+        || (
+          !target.canWeaponDefeatCounterMeasure(this.manualWeaponPrimary)
+          && target.canWeaponDefeatCounterMeasure(this.manualWeaponSecondary)
+        )
+      ) {
+        chosenWeapon = this.manualWeaponSecondary;
+        chosenWeaponSlot = MANUAL_WEAPON_SLOTS.SECONDARY;
+      }
+    }
+
+    if (!chosenWeapon) {
+      throw new Error(`Struct cannot target given ambit: ${target.operatingAmbit}`);
+    }
+
+    return chosenWeaponSlot;
+  }
+
+  /**
+   * @param {Struct} unit
+   * @return {boolean}
+   */
+  isCounterUnitTo(unit) {
+    return this.canAttackAnyWeapon(unit) && !unit.canCounterAttack(this);
+  }
+
+  /**
+   * @param {Struct} struct
+   * @return {boolean}
+   */
+  canDefeatStructsCounterMeasure(struct) {
+    const weaponName = this.chooseWeapon(struct);
+    const weapon = this.getManualWeapon(weaponName);
+    return struct.canWeaponDefeatCounterMeasure(weapon);
+  }
+
+  /**
+   * @param {Struct} attacker
+   * @return {number}
+   */
+  countDefenderCounterAttacks(attacker) {
+    return this.defenders.reduce((counterAttacks, defender) =>
+      defender.canCounterAttack(attacker) ? counterAttacks + 1 : counterAttacks
+    , 0);
+  }
+
+  /**
+   * @param {Fleet} fleet
+   * @return {boolean}
+   */
+  isVulnerableToFleet(fleet) {
+    if (this.countBlockingDefenders() > 0) {
+      return false;
+    }
+
+    const structs = fleet.toFlatArray();
+    for (let i = 0; i < structs.length; i++) {
+      if (this.countDefenderCounterAttacks(structs[i]) === 0) {
+        return true
+      }
+    }
+
+    return false;
   }
 }

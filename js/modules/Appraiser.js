@@ -47,15 +47,23 @@ export class Appraiser {
   }
 
   /**
+   * @param {string} unitType
+   * @return {AppraisalDTO}
+   */
+  appraise(unitType) {
+    return new AppraisalDTO(
+      unitType,
+      this.calcUnitTypePrice(unitType),
+      this.calcUnitTypeTacticalValue(unitType)
+    );
+  }
+
+  /**
    * @param {string} ambit
    * @return {AppraisalDTO[]}
    */
   getUnitAppraisalsByAmbit(ambit) {
-    return UNITS_BY_AMBIT[ambit].map(unitType => new AppraisalDTO(
-      unitType,
-      this.calcUnitTypePrice(unitType),
-      this.calcUnitTypeTacticalValue(unitType)
-    ));
+    return UNITS_BY_AMBIT.FLEET[ambit].map(unitType => this.appraise(unitType));
   }
 
   /**

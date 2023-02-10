@@ -1,4 +1,4 @@
-import {DTest} from "../../DTestFramework.js";
+import {DTest, DTestSuite} from "../../DTestFramework.js";
 import {PriorityQueue} from "../../../js/modules/data_structures/PriorityQueue.js";
 import {PriorityQueueNode} from "../../../js/modules/data_structures/PriorityQueueNode.js";
 
@@ -61,6 +61,6 @@ const dequeueTest = new DTest('dequeueTest', function() {
 });
 
 // Test execution
-console.log('PriorityQueueTest');
+DTestSuite.printSuiteHeader('PriorityQueueTest');
 insertTest.run();
 dequeueTest.run();

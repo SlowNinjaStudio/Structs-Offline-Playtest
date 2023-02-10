@@ -43,6 +43,7 @@ export class CommandStructBuilder {
       null,
       this.passiveWeaponFactory.make(PASSIVE_WEAPONS.STRONG_COUNTER_ATTACK),
       this.defenseComponentFactory.make(DEFENSE_COMPONENTS.OMNI_ENGINE),
+      null,
       IMG.STRUCTS + 'command-ship.jpg'
     );
   }

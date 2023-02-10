@@ -1,8 +1,11 @@
-import {DTest} from "../../DTestFramework.js";
-import {AMBITS, UNIT_TYPES} from "../../../js/modules/Constants.js";
+import {DTest, DTestSuite} from "../../DTestFramework.js";
+import {AMBITS, POWER_GENERATORS, UNIT_TYPES} from "../../../js/modules/Constants.js";
 import {StructBuilder} from "../../../js/modules/StructBuilder.js";
 import {Fleet} from "../../../js/modules/Fleet.js";
 import {IdGenerator} from "../../../js/modules/util/IdGenerator.js";
+import {PowerGeneratorFactory} from "../../../js/modules/struct_components/PowerGeneratorFactory.js";
+import {Planet} from "../../../js/modules/Planet.js";
+import {FleetGenerator} from "../../../js/modules/FleetGenerator.js";
 
 const findStructByAmbitAndIdTest = new DTest('findStructByAmbitAndIdTest', function() {
   const fleet = new Fleet();
@@ -283,8 +286,115 @@ const forEachStructTest = new DTest('forEachStructTest', function() {
   this.assertEquals(structCount.WATER, 1);
 });
 
+const generatePowerTest = new DTest('generatePowerTest', function() {
+  const structBuilder = new StructBuilder();
+  const generatorFactory = new PowerGeneratorFactory();
+
+  const fleet = new Fleet();
+  fleet.initAmbits();
+
+  const galacticBattleship = structBuilder.make(UNIT_TYPES.GALACTIC_BATTLESHIP);
+  galacticBattleship.powerGenerator = generatorFactory.make(POWER_GENERATORS.GENERIC.NAME);
+  const starFighter = structBuilder.make(UNIT_TYPES.STAR_FIGHTER);
+
+  const artillery = structBuilder.make(UNIT_TYPES.ARTILLERY);
+  artillery.powerGenerator = generatorFactory.make(POWER_GENERATORS.GENERIC.NAME);
+  const samLauncher = structBuilder.make(UNIT_TYPES.SAM_LAUNCHER);
+  samLauncher.powerGenerator = generatorFactory.make(POWER_GENERATORS.GENERIC.NAME);
+
+  const cruiser = structBuilder.make(UNIT_TYPES.CRUISER);
+
+  fleet.space[1] = starFighter;
+  fleet.space[3] = galacticBattleship;
+  fleet.land[0] = artillery;
+  fleet.land[2] = samLauncher;
+  fleet.water[3] = cruiser;
+
+  fleet.generatePower();
+
+  this.assertEquals(fleet.generatePower(), POWER_GENERATORS.GENERIC.POWER_OUTPUT * 3);
+});
+
+const toFlatArrayTest = new DTest('toFlatArrayTest', function() {
+  const structBuilder = new StructBuilder();
+  const fleet = new Fleet();
+
+  const starFighter = structBuilder.make(UNIT_TYPES.STAR_FIGHTER);
+  const highAltitudeInterceptor = structBuilder.make(UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR);
+  const samLauncher = structBuilder.make(UNIT_TYPES.SAM_LAUNCHER);
+  const sub = structBuilder.make(UNIT_TYPES.SUB);
+
+  fleet.initAmbits();
+  fleet.space[0] = starFighter;
+  fleet.sky[1] = highAltitudeInterceptor;
+  fleet.land[2] = samLauncher;
+  fleet.water[3] = sub;
+
+  const unitTypes = (fleet.toFlatArray()).map(struct => struct.unitType);
+
+  this.assertSetEquality(
+    unitTypes,
+    [UNIT_TYPES.STAR_FIGHTER, UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR, UNIT_TYPES.SAM_LAUNCHER, UNIT_TYPES.SUB]
+  );
+});
+
+const findGeneratorTest = new DTest('findGeneratorTest', function(params) {
+  const structBuilder = new StructBuilder();
+  const generator = structBuilder.make(UNIT_TYPES.GENERATOR);
+  const planet = new Planet();
+
+  this.assertEquals(planet.findGenerator(), null);
+
+  generator.operatingAmbit = params.generatorAmbit;
+  planet.addStruct(generator);
+
+  this.assertEquals((planet.findGenerator()).operatingAmbit, params.generatorAmbit);
+}, function() {
+  return [
+    {
+      generatorAmbit: AMBITS.SPACE
+    },
+    {
+      generatorAmbit: AMBITS.SKY
+    },
+    {
+      generatorAmbit: AMBITS.LAND
+    },
+    {
+      generatorAmbit: AMBITS.WATER
+    }
+  ];
+});
+
+const analyzeFleetAmbitAttackCapabilitiesTest = new DTest('analyzeFleetAmbitAttackCapabilitiesTest',
+  function() {
+    const fleet = new Fleet();
+    const fleetGenerator = new FleetGenerator();
+    fleetGenerator.generateCuratedFleet(fleet);
+
+    fleet.space[2].destroyStruct();
+    fleet.space[3].destroyStruct();
+    fleet.sky[0].destroyStruct();
+    fleet.sky[2].destroyStruct();
+    fleet.sky[3].destroyStruct();
+    fleet.land[0].destroyStruct();
+    fleet.land[1].destroyStruct();
+    fleet.land[3].destroyStruct();
+    fleet.water[1].destroyStruct();
+    fleet.water[2].destroyStruct();
+    fleet.water[3].destroyStruct();
+
+    const ambitAttackCapabilities = fleet.analyzeFleetAmbitAttackCapabilities();
+
+    this.assertEquals(ambitAttackCapabilities.space, 5);
+    this.assertEquals(ambitAttackCapabilities.sky, 3);
+    this.assertEquals(ambitAttackCapabilities.land, 0);
+    this.assertEquals(ambitAttackCapabilities.water, 1);
+  }
+);
+
 // Test execution
-console.log('FleetTest');
+DTestSuite.printSuiteHeader('FleetTest');
 findStructByAmbitAndIdTest.run();
 findStructByIdTest.run();
 includesTest.run();
@@ -297,3 +407,7 @@ addStructTest.run();
 removeStructByAmbitAndIdTest.run();
 isDestroyedTest.run();
 forEachStructTest.run();
+generatePowerTest.run();
+toFlatArrayTest.run();
+findGeneratorTest.run();
+analyzeFleetAmbitAttackCapabilitiesTest.run();

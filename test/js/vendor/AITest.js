@@ -1,7 +1,13 @@
-import {DTest} from "../../DTestFramework.js";
+import {DTest, DTestSuite} from "../../DTestFramework.js";
 import {DefenseStrategyTreeNode} from "../../../js/modules/data_structures/DefenseStrategyTreeNode.js";
 import {StructBuilder} from "../../../js/modules/StructBuilder.js";
-import {AMBITS, EVENTS, MANUAL_WEAPON_SLOTS, UNIT_TYPES} from "../../../js/modules/Constants.js";
+import {
+  AMBITS,
+  COMMAND_STRUCT_DEFAULTS,
+  EVENTS,
+  MANUAL_WEAPON_SLOTS,
+  UNIT_TYPES
+} from "../../../js/modules/Constants.js";
 import {AmbitDistribution} from "../../../js/modules/AmbitDistribution.js";
 import {AI} from "../../../js/modules/AI.js";
 import {GameState} from "../../../js/modules/state/GameState.js";
@@ -11,6 +17,8 @@ import {CommandStructBuilder} from "../../../js/modules/CommandStructBuilder.js"
 import {CombatEventLogItem} from "../../../js/modules/CombatEventLogItem.js";
 import {CombatEvent} from "../../../js/modules/CombatEvent.js";
 import {AIThreatDTO} from "../../../js/modules/dtos/AIThreatDTO.js";
+import {AIAttackParamsDTO} from "../../../js/modules/dtos/AIAttackParamsDTO.js";
+import {Fleet} from "../../../js/modules/Fleet.js";
 
 /**
  * @return {Player}
@@ -195,7 +203,7 @@ const determineTargetOnGoalTest = new DTest('determineTargetOnGoalTest', functio
   this.assertEquals(target.isCommandStruct(), true);
 });
 
-const getUncounterableAttackScoreTest = new DTest('getUncounterableAttackScoreTest', function() {
+const getUncounterableByTargetAttackScoreTest = new DTest('getUncounterableAttackScoreTest', function() {
   const structBuilder = new StructBuilder();
   const stealthBomber = structBuilder.make(UNIT_TYPES.STEALTH_BOMBER);
   const tank = structBuilder.make(UNIT_TYPES.TANK);
@@ -204,10 +212,10 @@ const getUncounterableAttackScoreTest = new DTest('getUncounterableAttackScoreTe
   const starFighter2 = structBuilder.make(UNIT_TYPES.STAR_FIGHTER);
   const ai = new AI(new GameState());
 
-  this.assertEquals(ai.getUncounterableAttackScore(stealthBomber, tank), Infinity);
-  this.assertEquals(ai.getUncounterableAttackScore(artillery, tank), Infinity);
-  this.assertEquals(ai.getUncounterableAttackScore(tank, artillery), Infinity);
-  this.assertEquals(ai.getUncounterableAttackScore(starFighter1, starFighter2), 0);
+  this.assertEquals(ai.getUncounterableByTargetAttackScore(stealthBomber, tank), 10);
+  this.assertEquals(ai.getUncounterableByTargetAttackScore(artillery, tank), 10);
+  this.assertEquals(ai.getUncounterableByTargetAttackScore(tank, artillery), 10);
+  this.assertEquals(ai.getUncounterableByTargetAttackScore(starFighter1, starFighter2), 0);
 });
 
 const getBlockingCommandShipAttackScoreTest = new DTest('getBlockingCommandShipAttackScoreTest', function() {
@@ -263,6 +271,46 @@ const getAmbitTargetingCostAttackScoreTest = new DTest('getAmbitTargetingCostAtt
   this.assertEquals(ai.getAmbitTargetingCostAttackScore(galacticBattleship), 1);
 });
 
+const getUncounterableByDefendersAttackScoreTest = new DTest('getUncounterableByDefendersAttackScoreTest', function() {
+  const structBuilder = new StructBuilder();
+  const stealthBomber = structBuilder.make(UNIT_TYPES.STEALTH_BOMBER);
+  const tank = structBuilder.make(UNIT_TYPES.TANK);
+  const samLauncher = structBuilder.make(UNIT_TYPES.SAM_LAUNCHER);
+  const artillery = structBuilder.make(UNIT_TYPES.ARTILLERY);
+  const sub = structBuilder.make(UNIT_TYPES.SUB);
+  const galacticBattleship = structBuilder.make(UNIT_TYPES.GALACTIC_BATTLESHIP);
+  const ai = new AI(new GameState());
+
+  this.assertEquals(ai.getUncounterableByDefendersAttackScore(stealthBomber, tank), 0);
+
+  tank.defend(samLauncher);
+
+  this.assertEquals(ai.getUncounterableByDefendersAttackScore(artillery, samLauncher), 5);
+
+  sub.defend(tank);
+
+  this.assertEquals(ai.getUncounterableByDefendersAttackScore(galacticBattleship, tank), 0);
+});
+
+const getCanBeatCounterMeasuresAttackScoreTest = new DTest('getCanBeatCounterMeasuresAttackScoreTest', function() {
+  const structBuilder = new StructBuilder();
+  const stealthBomber = structBuilder.make(UNIT_TYPES.STEALTH_BOMBER);
+  const tank = structBuilder.make(UNIT_TYPES.TANK);
+  const samLauncher = structBuilder.make(UNIT_TYPES.SAM_LAUNCHER);
+  const spaceFrigate = structBuilder.make(UNIT_TYPES.SPACE_FRIGATE);
+  const galacticBattleship = structBuilder.make(UNIT_TYPES.GALACTIC_BATTLESHIP);
+  const fighterJet = structBuilder.make(UNIT_TYPES.FIGHTER_JET);
+  const cruiser = structBuilder.make(UNIT_TYPES.CRUISER);
+  const starFighter = structBuilder.make(UNIT_TYPES.STAR_FIGHTER);
+  const ai = new AI(new GameState());
+
+  this.assertEquals(ai.getCanBeatCounterMeasuresAttackScore(cruiser, fighterJet), 15);
+  this.assertEquals(ai.getCanBeatCounterMeasuresAttackScore(samLauncher, fighterJet), 0);
+  this.assertEquals(ai.getCanBeatCounterMeasuresAttackScore(stealthBomber, tank), 15);
+  this.assertEquals(ai.getCanBeatCounterMeasuresAttackScore(starFighter, galacticBattleship), 15);
+  this.assertEquals(ai.getUncounterableByDefendersAttackScore(spaceFrigate, galacticBattleship), 0);
+});
+
 const getStructAttackScoreTest = new DTest('getStructAttackScoreTest', function() {
   const structBuilder = new StructBuilder();
   const commandStructBuilder = new CommandStructBuilder();
@@ -280,25 +328,31 @@ const getStructAttackScoreTest = new DTest('getStructAttackScoreTest', function(
   const spaceFrigate = structBuilder.make(UNIT_TYPES.SPACE_FRIGATE);
   const samLauncher = structBuilder.make(UNIT_TYPES.SAM_LAUNCHER);
   const fighterJet = structBuilder.make(UNIT_TYPES.FIGHTER_JET);
+  const galacticBattleship = structBuilder.make(UNIT_TYPES.GALACTIC_BATTLESHIP);
+  const tank = structBuilder.make(UNIT_TYPES.TANK);
+  tank.defend(sub);
+
 
   this.assertEquals(ai.getStructAttackScore(starFighter, commandShip1), -1);
-  this.assertEquals(ai.getStructAttackScore(commandShip1, commandShip2), 1);
-  this.assertEquals(ai.getStructAttackScore(sub, commandShip1), 4);
-  this.assertEquals(ai.getStructAttackScore(artillery, commandShip1), Infinity);
-  this.assertEquals(ai.getStructAttackScore(stealthBomber, commandShip1), Infinity);
-  this.assertEquals(ai.getStructAttackScore(artillery, sub), Infinity);
-  this.assertEquals(ai.getStructAttackScore(starFighter, spaceFrigate), 6);
+  this.assertEquals(ai.getStructAttackScore(commandShip1, commandShip2), 0);
+  this.assertEquals(ai.getStructAttackScore(sub, commandShip1), 19);
+  this.assertEquals(ai.getStructAttackScore(artillery, commandShip1), 30);
+  this.assertEquals(ai.getStructAttackScore(stealthBomber, commandShip1), 30);
+  this.assertEquals(ai.getStructAttackScore(artillery, sub), 35);
+  this.assertEquals(ai.getStructAttackScore(starFighter, spaceFrigate), 21);
+  this.assertEquals(ai.getStructAttackScore(starFighter, galacticBattleship), 21);
+  this.assertEquals(ai.getStructAttackScore(spaceFrigate, galacticBattleship), 5);
 
   starFighter.destroyStruct();
 
   this.assertEquals(ai.getStructAttackScore(starFighter, spaceFrigate), -1);
 
-  this.assertEquals(ai.getStructAttackScore(samLauncher, stealthBomber), 5);
+  this.assertEquals(ai.getStructAttackScore(samLauncher, stealthBomber), 20);
 
   stealthBomber.defenseComponent.isActive = true;
 
   this.assertEquals(ai.getStructAttackScore(samLauncher, stealthBomber), -1);
-  this.assertEquals(ai.getStructAttackScore(fighterJet, stealthBomber), Infinity);
+  this.assertEquals(ai.getStructAttackScore(fighterJet, stealthBomber), 31);
 });
 
 const chooseAttackStructTest = new DTest('chooseAttackStructTest', function(params) {
@@ -308,7 +362,7 @@ const chooseAttackStructTest = new DTest('chooseAttackStructTest', function(para
   const target = gameState.player.fleet[params.targetAmbit].find(struct => struct.unitType === params.targetUnitType);
   const ai = new AI(gameState);
 
-  this.assertEquals(params.expectedUnitTypes.includes(ai.chooseAttackStruct(target).unitType), true);
+  this.assertEquals(params.expectedUnitTypes.includes((ai.chooseAttackStruct(target)).struct.unitType), true);
 }, function() {
   return [
     {
@@ -332,6 +386,7 @@ const chooseAttackStructTest = new DTest('chooseAttackStructTest', function(para
       targetAmbit: 'space',
       targetUnitType: UNIT_TYPES.GALACTIC_BATTLESHIP,
       expectedUnitTypes: [
+        UNIT_TYPES.STAR_FIGHTER,
         UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR
       ]
     },
@@ -420,60 +475,6 @@ const chooseAttackStructTest = new DTest('chooseAttackStructTest', function(para
   ];
 });
 
-const chooseWeaponTest = new DTest('chooseWeaponTest', function(params) {
-  const ai = new AI(new GameState());
-
-  try {
-    const weaponSlot = ai.chooseWeapon(params.attackStruct, params.targetAmbit);
-    this.assertEquals(weaponSlot, params.expectedWeaponSlot);
-  } catch(e) {
-    this.assertEquals(params.exceptionExpected, true);
-  }
-}, function() {
-  const structBuilder = new StructBuilder();
-  const tank = structBuilder.make(UNIT_TYPES.TANK);
-  const sub = structBuilder.make(UNIT_TYPES.SUB);
-  const cruiser = structBuilder.make(UNIT_TYPES.CRUISER);
-  return [
-    {
-      attackStruct: tank,
-      targetAmbit: AMBITS.LAND,
-      expectedWeaponSlot: MANUAL_WEAPON_SLOTS.PRIMARY,
-      exceptionExpected: false
-    },
-    {
-      attackStruct: sub,
-      targetAmbit: AMBITS.WATER,
-      expectedWeaponSlot: MANUAL_WEAPON_SLOTS.PRIMARY,
-      exceptionExpected: false
-    },
-    {
-      attackStruct: sub,
-      targetAmbit: AMBITS.SPACE,
-      expectedWeaponSlot: MANUAL_WEAPON_SLOTS.PRIMARY,
-      exceptionExpected: false
-    },
-    {
-      attackStruct: cruiser,
-      targetAmbit: AMBITS.WATER,
-      expectedWeaponSlot: MANUAL_WEAPON_SLOTS.PRIMARY,
-      exceptionExpected: false
-    },
-    {
-      attackStruct: cruiser,
-      targetAmbit: AMBITS.SKY,
-      expectedWeaponSlot: MANUAL_WEAPON_SLOTS.SECONDARY,
-      exceptionExpected: false
-    },
-    {
-      attackStruct: tank,
-      targetAmbit: AMBITS.SKY,
-      expectedWeaponSlot: null,
-      exceptionExpected: true
-    }
-  ];
-});
-
 const attackTest = new DTest('attackTest', function() {
   const player = getDummyPlayer();
   const playerSpaceFrigate = player.fleet.space[1];
@@ -496,7 +497,9 @@ const attackTest = new DTest('attackTest', function() {
   this.assertEquals(playerSpaceFrigate.currentHealth, 2);
   this.assertEquals(playerSpaceFrigate.isDestroyed, false);
 
-  let choice = ai.attack();
+  let target = ai.chooseTarget();
+  let attackParams = new AIAttackParamsDTO(target, (ai.chooseAttackStruct(target)).struct);
+  let choice = ai.attack(attackParams);
   const enemySamLauncher = enemy.fleet.land[2];
 
   this.assertEquals(choice.targetStruct.unitType, playerSpaceFrigate.unitType);
@@ -507,30 +510,38 @@ const attackTest = new DTest('attackTest', function() {
   this.assertEquals(playerSpaceFrigate.isDestroyed, true);
   this.assertEquals(playerGalacticBattleship.currentHealth, 3);
 
-  const enemyHighAltitudeInterceptor = enemy.fleet.sky[1];
-  choice = ai.attack();
+  const starFighter = enemy.fleet.space[0];
+  attackParams.target = ai.chooseTarget();
+  attackParams.attackingAIStruct = (ai.chooseAttackStruct(attackParams.target)).struct;
+  choice = ai.attack(attackParams);
 
   this.assertEquals(choice.targetStruct.unitType, playerGalacticBattleship.unitType);
-  this.assertEquals(choice.attackStruct.unitType, enemyHighAltitudeInterceptor.unitType);
-  this.assertEquals(choice.weaponSlot, MANUAL_WEAPON_SLOTS.PRIMARY);
+  this.assertEquals(choice.attackStruct.unitType, starFighter.unitType);
+  this.assertEquals(choice.weaponSlot, MANUAL_WEAPON_SLOTS.SECONDARY);
 
   playerGalacticBattleship.destroyStruct();
-  enemyHighAltitudeInterceptor.destroyStruct();
-  choice = ai.attack();
+  starFighter.destroyStruct();
+  attackParams.target = ai.chooseTarget();
+  attackParams.attackingAIStruct = (ai.chooseAttackStruct(attackParams.target)).struct;
+  choice = ai.attack(attackParams);
 
   this.assertEquals(choice.targetStruct.id, player.commandStruct.id);
   this.assertEquals(choice.attackStruct.unitType, enemySamLauncher.unitType);
   this.assertEquals(choice.weaponSlot, MANUAL_WEAPON_SLOTS.PRIMARY);
   this.assertEquals(player.commandStruct.currentHealth, 4);
 
-  choice = ai.attack();
+  attackParams.target = ai.chooseTarget();
+  attackParams.attackingAIStruct = (ai.chooseAttackStruct(attackParams.target)).struct;
+  choice = ai.attack(attackParams);
 
   this.assertEquals(choice.targetStruct.id, player.commandStruct.id);
   this.assertEquals(choice.attackStruct.unitType, enemySamLauncher.unitType);
   this.assertEquals(choice.weaponSlot, MANUAL_WEAPON_SLOTS.PRIMARY);
   this.assertEquals(player.commandStruct.currentHealth, 2);
 
-  choice = ai.attack();
+  attackParams.target = ai.chooseTarget();
+  attackParams.attackingAIStruct = (ai.chooseAttackStruct(attackParams.target)).struct;
+  choice = ai.attack(attackParams);
 
   this.assertEquals(choice.targetStruct.id, player.commandStruct.id);
   this.assertEquals(choice.attackStruct.unitType, enemySamLauncher.unitType);
@@ -558,26 +569,6 @@ const openingDefenseTest = new DTest('openingDefenseTest', function() {
   });
 });
 
-const analyzeFleetAmbitAttackCapabilitiesTest = new DTest('analyzeFleetAmbitAttackCapabilitiesTest',
-  function() {
-    const player = getDummyPlayer();
-    const enemy = getDummyPlayer();
-    const state = new GameState();
-    state.player = player;
-    state.enemy = enemy;
-    const ai = new AI(state);
-
-    destroySelectStructs(state.player.fleet);
-
-    const ambitAttackCapabilities = ai.analyzeFleetAmbitAttackCapabilities(state.player.fleet);
-
-    this.assertEquals(ambitAttackCapabilities.space, 5);
-    this.assertEquals(ambitAttackCapabilities.sky, 3);
-    this.assertEquals(ambitAttackCapabilities.land, 0);
-    this.assertEquals(ambitAttackCapabilities.water, 1);
-  }
-);
-
 const findFleetTargetingWeaknessTest = new DTest('findFleetTargetingWeaknessTest', function() {
   const player = getDummyPlayer();
   const enemy = getDummyPlayer();
@@ -597,7 +588,7 @@ const findFleetTargetingWeaknessTest = new DTest('findFleetTargetingWeaknessTest
   this.assertEquals(ambitWeakness, AMBITS.LAND);
 });
 
-const findMostOccupiedAmbitTest = new DTest('findMostOccupiedAmbitTest', function() {
+const findAmbitForBestDefenseTest = new DTest('findAmbitForBestDefenseTest', function() {
   const player = getDummyPlayer();
   const enemy = getDummyPlayer();
   const state = new GameState();
@@ -605,13 +596,13 @@ const findMostOccupiedAmbitTest = new DTest('findMostOccupiedAmbitTest', functio
   state.enemy = enemy;
   const ai = new AI(state);
 
-  let mostOccupiedAmbit = ai.findMostOccupiedAmbit(state.enemy.fleet);
+  let mostOccupiedAmbit = ai.findAmbitForBestDefense(state.enemy);
 
   this.assertEquals(mostOccupiedAmbit, AMBITS.WATER);
 
   destroySelectStructs(state.enemy.fleet);
 
-  mostOccupiedAmbit = ai.findMostOccupiedAmbit(state.enemy.fleet);
+  mostOccupiedAmbit = ai.findAmbitForBestDefense(state.enemy);
 
   this.assertEquals(mostOccupiedAmbit, AMBITS.SPACE);
 });
@@ -889,24 +880,38 @@ const isAttackingThreatViableTest = new DTest('isAttackingThreatViableTest', fun
   const playerTank1 = gameState.player.fleet.land[0];
   const playerArtillery = gameState.player.fleet.land[1];
   const playerTank2 = gameState.player.fleet.land[3];
+  const playerDestroyer = gameState.player.fleet.water[1];
   const playerCruiser = gameState.player.fleet.water[2];
 
-  this.assertEquals(ai.isAttackingThreatViable(new AIThreatDTO(playerArtillery, 8)), true);
-
-  playerTank1.defend(playerArtillery);
-
+  // Undefended and doesn't counter, should be viable
   this.assertEquals(ai.isAttackingThreatViable(new AIThreatDTO(playerArtillery, 8)), true);
 
   playerGalacticBattleship.defend(playerArtillery);
   playerStealthBomber.defend(playerArtillery);
   playerCruiser.defend(playerArtillery);
 
+  // Although heavily defended, Artillery can attack without being countered
+  this.assertEquals(ai.isAttackingThreatViable(new AIThreatDTO(playerArtillery, 8)), true);
+
+  playerTank1.defend(playerArtillery);
+
+  // Tank is blocking artillery now, so it's a waste of turns to attack it now
   this.assertEquals(ai.isAttackingThreatViable(new AIThreatDTO(playerArtillery, 8)), false);
 
-  this.assertEquals(ai.isAttackingThreatViable(new AIThreatDTO(playerTank2, 6)), true);
+  // Don't waste turns attacking the tank since it's armoured
+  this.assertEquals(ai.isAttackingThreatViable(new AIThreatDTO(playerTank2, 6)), false);
+
+  const enemyGalacticBattleship = gameState.enemy.fleet.space[2];
+  const enemyStealthBomber = gameState.enemy.fleet.sky[2];
+  enemyGalacticBattleship.destroyStruct();
+  enemyStealthBomber.destroyStruct();
+
+  // Can use artillery to attack destroyer
+  this.assertEquals(ai.isAttackingThreatViable(new AIThreatDTO(playerDestroyer, 6)), true);
 
   gameState.enemy.fleet.forEachStruct(struct => { struct.destroyStruct(); });
 
+  // Don't use command ship to attack an off-goal unimportant struct
   this.assertEquals(gameState.enemy.commandStruct.isDestroyed, false);
   this.assertEquals(ai.isAttackingThreatViable(new AIThreatDTO(playerTank2, 6)), false);
 });
@@ -964,6 +969,12 @@ const chooseTargetTest = new DTest('chooseTargetTest', function() {
 
   this.assertEquals(target.isCommandStruct(), true);
 
+  gameState.player.fleet.land[0].defend(gameState.player.commandStruct);
+
+  target = ai.chooseTarget();
+
+  this.assertEquals(target.isCommandStruct(), true);
+
   gameState.player.fleet.space[0].defend(gameState.player.commandStruct);
 
   target = ai.chooseTarget();
@@ -982,22 +993,273 @@ const chooseTargetTest = new DTest('chooseTargetTest', function() {
   this.assertEquals(target.isCommandStruct(), true);
 });
 
+const shouldTargetDefendingInsteadTest = new DTest('shouldTargetDefendingInsteadTest', function(params) {
+  const structBuilder = new StructBuilder();
+  const ai = new AI(new GameState());
+  const attackingAIStruct = structBuilder.make(params.attackingAIStructUnitType);
+  const target = structBuilder.make(params.targetUnitType);
+  let targetDefending = null;
+
+  if (params.targetDefendingUnitType) {
+    targetDefending = structBuilder.make(params.targetDefendingUnitType);
+    target.defend(targetDefending);
+  }
+
+  params.targetDefendingDefenderUnitTypes.forEach(unitType => {
+    (structBuilder.make(unitType)).defend(targetDefending);
+  });
+
+  const resultingTarget = ai.shouldTargetDefendingInstead(attackingAIStruct, target)
+
+  this.assertEquals(resultingTarget.unitType, params.expectedTargetUnitType);
+}, function () {
+  return [
+    {
+      attackingAIStructUnitType: UNIT_TYPES.TANK,
+      targetUnitType: UNIT_TYPES.SAM_LAUNCHER,
+      targetDefendingUnitType: null,
+      targetDefendingDefenderUnitTypes: [],
+      expectedTargetUnitType: UNIT_TYPES.SAM_LAUNCHER,
+    },
+    {
+      attackingAIStructUnitType: UNIT_TYPES.SAM_LAUNCHER,
+      targetUnitType: UNIT_TYPES.FIGHTER_JET,
+      targetDefendingUnitType: UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
+      targetDefendingDefenderUnitTypes: [],
+      expectedTargetUnitType: UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
+    },
+    {
+      attackingAIStructUnitType: UNIT_TYPES.CRUISER,
+      targetUnitType: UNIT_TYPES.FIGHTER_JET,
+      targetDefendingUnitType: UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
+      targetDefendingDefenderUnitTypes: [],
+      expectedTargetUnitType: UNIT_TYPES.FIGHTER_JET,
+    },
+    {
+      attackingAIStructUnitType: UNIT_TYPES.SAM_LAUNCHER,
+      targetUnitType: UNIT_TYPES.FIGHTER_JET,
+      targetDefendingUnitType: UNIT_TYPES.STAR_FIGHTER,
+      targetDefendingDefenderUnitTypes: [],
+      expectedTargetUnitType: UNIT_TYPES.FIGHTER_JET,
+    },
+    {
+      attackingAIStructUnitType: UNIT_TYPES.SAM_LAUNCHER,
+      targetUnitType: UNIT_TYPES.FIGHTER_JET,
+      targetDefendingUnitType: UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
+      targetDefendingDefenderUnitTypes: [UNIT_TYPES.TANK],
+      expectedTargetUnitType: UNIT_TYPES.FIGHTER_JET,
+    },
+    {
+      attackingAIStructUnitType: UNIT_TYPES.SAM_LAUNCHER,
+      targetUnitType: UNIT_TYPES.FIGHTER_JET,
+      targetDefendingUnitType: UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
+      targetDefendingDefenderUnitTypes: [UNIT_TYPES.SUB],
+      expectedTargetUnitType: UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
+    },
+  ];
+});
+
+const determineStallTacticsNeededTest = new DTest('determineStallTacticsNeededTest', function(params) {
+  const structBuilder = new StructBuilder();
+  const state = new GameState();
+  state.player = new Player('Player');
+  state.enemy = new Player('Enemy');
+  state.player.commandStruct.operatingAmbit = params.playerCommandStructAmbit;
+  state.enemy.commandStruct.operatingAmbit = params.enemyCommandStructAmbit;
+  state.player.commandStruct.currentHealth = params.playerCommandStructHealth;
+  state.enemy.commandStruct.currentHealth = params.enemyCommandStructHealth;
+  let target = state.player.commandStruct;
+  let attackingAIStruct = state.enemy.commandStruct;
+
+  if (params.targetUnitType !== UNIT_TYPES.COMMAND_SHIP) {
+    target = structBuilder.make(params.targetUnitType)
+    state.player.fleet.addStruct(target);
+  }
+
+  if (params.attackingAIStructUnitType !== UNIT_TYPES.COMMAND_SHIP) {
+    attackingAIStruct = structBuilder.make(params.attackingAIStructUnitType)
+    state.enemy.fleet.addStruct(attackingAIStruct);
+  }
+
+  params.playerFleetUnitTypes.forEach(unitType => {
+    state.player.fleet.addStruct(structBuilder.make(unitType));
+  });
+
+  params.enemyFleetUnitTypes.forEach(unitType => {
+    state.enemy.fleet.addStruct(structBuilder.make(unitType));
+  });
+
+  const ai = new AI(state);
+  const attackParams = new AIAttackParamsDTO(
+    target,
+    attackingAIStruct
+  );
+  ai.determineStallTacticsNeeded(attackParams);
+
+  this.assertEquals(attackParams.target.unitType, params.expectedTargetUnitType);
+  this.assertEquals(attackParams.attackingAIStruct.unitType, params.expectedAttackingAIStructUnitType);
+}, function() {
+  return [
+    {
+      targetUnitType: UNIT_TYPES.COMMAND_SHIP,
+      attackingAIStructUnitType: UNIT_TYPES.COMMAND_SHIP,
+      playerCommandStructAmbit: AMBITS.SPACE,
+      enemyCommandStructAmbit: AMBITS.SPACE,
+      playerCommandStructHealth: COMMAND_STRUCT_DEFAULTS.MAX_HEALTH,
+      enemyCommandStructHealth: COMMAND_STRUCT_DEFAULTS.MAX_HEALTH,
+      playerFleetUnitTypes: [],
+      enemyFleetUnitTypes: [],
+      expectedTargetUnitType: UNIT_TYPES.COMMAND_SHIP,
+      expectedAttackingAIStructUnitType: UNIT_TYPES.COMMAND_SHIP
+    },
+    {
+      targetUnitType: UNIT_TYPES.COMMAND_SHIP,
+      attackingAIStructUnitType: UNIT_TYPES.STAR_FIGHTER,
+      playerCommandStructAmbit: AMBITS.SPACE,
+      enemyCommandStructAmbit: AMBITS.SPACE,
+      playerCommandStructHealth: COMMAND_STRUCT_DEFAULTS.MAX_HEALTH,
+      enemyCommandStructHealth: COMMAND_STRUCT_DEFAULTS.MAX_HEALTH,
+      playerFleetUnitTypes: [],
+      enemyFleetUnitTypes: [],
+      expectedTargetUnitType: UNIT_TYPES.COMMAND_SHIP,
+      expectedAttackingAIStructUnitType: UNIT_TYPES.STAR_FIGHTER
+    },
+    {
+      targetUnitType: UNIT_TYPES.SAM_LAUNCHER,
+      attackingAIStructUnitType: UNIT_TYPES.COMMAND_SHIP,
+      playerCommandStructAmbit: AMBITS.SPACE,
+      enemyCommandStructAmbit: AMBITS.LAND,
+      playerCommandStructHealth: COMMAND_STRUCT_DEFAULTS.MAX_HEALTH,
+      enemyCommandStructHealth: COMMAND_STRUCT_DEFAULTS.MAX_HEALTH,
+      playerFleetUnitTypes: [],
+      enemyFleetUnitTypes: [],
+      expectedTargetUnitType: UNIT_TYPES.SAM_LAUNCHER,
+      expectedAttackingAIStructUnitType: UNIT_TYPES.COMMAND_SHIP
+    },
+    {
+      targetUnitType: UNIT_TYPES.TANK,
+      attackingAIStructUnitType: UNIT_TYPES.COMMAND_SHIP,
+      playerCommandStructAmbit: AMBITS.SPACE,
+      enemyCommandStructAmbit: AMBITS.LAND,
+      playerCommandStructHealth: COMMAND_STRUCT_DEFAULTS.MAX_HEALTH,
+      enemyCommandStructHealth: COMMAND_STRUCT_DEFAULTS.MAX_HEALTH,
+      playerFleetUnitTypes: [
+        UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
+        UNIT_TYPES.STAR_FIGHTER
+      ],
+      enemyFleetUnitTypes: [
+        UNIT_TYPES.SPACE_FRIGATE,
+        UNIT_TYPES.DESTROYER
+      ],
+      expectedTargetUnitType: UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
+      expectedAttackingAIStructUnitType: UNIT_TYPES.DESTROYER
+    },
+    {
+      targetUnitType: UNIT_TYPES.COMMAND_SHIP,
+      attackingAIStructUnitType: UNIT_TYPES.COMMAND_SHIP,
+      playerCommandStructAmbit: AMBITS.SPACE,
+      enemyCommandStructAmbit: AMBITS.SPACE,
+      playerCommandStructHealth: 2,
+      enemyCommandStructHealth: COMMAND_STRUCT_DEFAULTS.MAX_HEALTH,
+      playerFleetUnitTypes: [
+        UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
+        UNIT_TYPES.STAR_FIGHTER
+      ],
+      enemyFleetUnitTypes: [
+        UNIT_TYPES.SPACE_FRIGATE,
+        UNIT_TYPES.DESTROYER
+      ],
+      expectedTargetUnitType: UNIT_TYPES.COMMAND_SHIP,
+      expectedAttackingAIStructUnitType: UNIT_TYPES.COMMAND_SHIP
+    },
+    {
+      targetUnitType: UNIT_TYPES.COMMAND_SHIP,
+      attackingAIStructUnitType: UNIT_TYPES.COMMAND_SHIP,
+      playerCommandStructAmbit: AMBITS.SPACE,
+      enemyCommandStructAmbit: AMBITS.SPACE,
+      playerCommandStructHealth: 4,
+      enemyCommandStructHealth: 2,
+      playerFleetUnitTypes: [],
+      enemyFleetUnitTypes: [],
+      expectedTargetUnitType: UNIT_TYPES.COMMAND_SHIP,
+      expectedAttackingAIStructUnitType: UNIT_TYPES.COMMAND_SHIP
+    },
+    {
+      targetUnitType: UNIT_TYPES.COMMAND_SHIP,
+      attackingAIStructUnitType: UNIT_TYPES.COMMAND_SHIP,
+      playerCommandStructAmbit: AMBITS.SPACE,
+      enemyCommandStructAmbit: AMBITS.SPACE,
+      playerCommandStructHealth: 4,
+      enemyCommandStructHealth: 4,
+      playerFleetUnitTypes: [
+        UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
+        UNIT_TYPES.STAR_FIGHTER
+      ],
+      enemyFleetUnitTypes: [
+        UNIT_TYPES.SPACE_FRIGATE,
+        UNIT_TYPES.DESTROYER
+      ],
+      expectedTargetUnitType: UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
+      expectedAttackingAIStructUnitType: UNIT_TYPES.DESTROYER
+    },
+    {
+      targetUnitType: UNIT_TYPES.CRUISER,
+      attackingAIStructUnitType: UNIT_TYPES.COMMAND_SHIP,
+      playerCommandStructAmbit: AMBITS.WATER,
+      enemyCommandStructAmbit: AMBITS.WATER,
+      playerCommandStructHealth: 6,
+      enemyCommandStructHealth: 6,
+      playerFleetUnitTypes: [
+        UNIT_TYPES.FIGHTER_JET,
+        UNIT_TYPES.STEALTH_BOMBER,
+        UNIT_TYPES.TANK,
+        UNIT_TYPES.CRUISER
+      ],
+      enemyFleetUnitTypes: [
+        UNIT_TYPES.STAR_FIGHTER,
+        UNIT_TYPES.SPACE_FRIGATE,
+        UNIT_TYPES.FIGHTER_JET,
+        UNIT_TYPES.FIGHTER_JET,
+        UNIT_TYPES.TANK
+      ],
+      expectedTargetUnitType: UNIT_TYPES.STEALTH_BOMBER,
+      expectedAttackingAIStructUnitType: UNIT_TYPES.FIGHTER_JET
+    },
+    {
+      targetUnitType: UNIT_TYPES.COMMAND_SHIP,
+      attackingAIStructUnitType: UNIT_TYPES.COMMAND_SHIP,
+      playerCommandStructAmbit: AMBITS.SPACE,
+      enemyCommandStructAmbit: AMBITS.SPACE,
+      playerCommandStructHealth: 2,
+      enemyCommandStructHealth: 4,
+      playerFleetUnitTypes: [
+        UNIT_TYPES.FIGHTER_JET,
+        UNIT_TYPES.TANK,
+        UNIT_TYPES.CRUISER
+      ],
+      enemyFleetUnitTypes: [],
+      expectedTargetUnitType: UNIT_TYPES.COMMAND_SHIP,
+      expectedAttackingAIStructUnitType: UNIT_TYPES.COMMAND_SHIP
+    }
+  ];
+});
+
 // Test execution
-console.log('AITest');
+DTestSuite.printSuiteHeader('AITest');
 rankTargetTest.run();
 determineTargetOnGoalTest.run();
-getUncounterableAttackScoreTest.run();
+getUncounterableByTargetAttackScoreTest.run();
 getBlockingCommandShipAttackScoreTest.run();
 getCurrentHealthAttackScoreTest.run();
 getAmbitTargetingCostAttackScoreTest.run();
+getUncounterableByDefendersAttackScoreTest.run();
+getCanBeatCounterMeasuresAttackScoreTest.run();
 getStructAttackScoreTest.run();
 chooseAttackStructTest.run();
-chooseWeaponTest.run();
 attackTest.run();
 openingDefenseTest.run();
-analyzeFleetAmbitAttackCapabilitiesTest.run();
 findFleetTargetingWeaknessTest.run();
-findMostOccupiedAmbitTest.run();
+findAmbitForBestDefenseTest.run();
 canAttackIfHiddenTest.run();
 getCannotAttackDefenseScoreTest.run();
 getAlreadyDefendingDefenseScoreTest.run();
@@ -1009,3 +1271,5 @@ defendCommandStructWithUnusedTest.run();
 isAttackingThreatViableTest.run();
 identifyThreatTest.run();
 chooseTargetTest.run();
+shouldTargetDefendingInsteadTest.run();
+determineStallTacticsNeededTest.run();

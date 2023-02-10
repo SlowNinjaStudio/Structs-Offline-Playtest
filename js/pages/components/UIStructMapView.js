@@ -128,6 +128,7 @@ export class UIStructMapView {
         data-struct-id="${this.struct.id}"
         data-is-command-struct="${this.struct.isCommandStruct() ? 1 : 0}"
         data-is-command-slot="${this.struct.isCommandStruct() ? 1 : 0}"
+        data-is-planetary-slot="${this.struct.isPlanetaryStruct() ? 1 : 0}"
         href="javascript: void(0)"
         role="button"
       >

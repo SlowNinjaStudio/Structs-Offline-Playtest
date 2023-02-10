@@ -79,3 +79,16 @@ export class DTest {
     }
   }
 }
+
+export class DTestSuite {
+  /**
+   * @param suiteName
+   */
+  static printSuiteHeader(suiteName) {
+    const horizontalBorder = '-'.repeat(suiteName.length + 4);
+    console.log('');
+    console.log(horizontalBorder);
+    console.log(`| ${suiteName} |`);
+    console.log(horizontalBorder);
+  }
+}

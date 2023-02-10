@@ -1,4 +1,4 @@
-import {DTest} from "../../DTestFramework.js";
+import {DTest, DTestSuite} from "../../DTestFramework.js";
 import {FleetGenerator} from "../../../js/modules/FleetGenerator.js";
 import {AMBITS} from "../../../js/modules/Constants.js";
 import {Fleet} from "../../../js/modules/Fleet.js";
@@ -107,6 +107,6 @@ const generateFleetTest = new DTest('generateFleetTest', function(params) {
 });
 
 // Test execution
-console.log('FleetGeneratorTest');
+DTestSuite.printSuiteHeader('FleetGeneratorTest');
 divideBudgetTest.run();
 generateFleetTest.run();

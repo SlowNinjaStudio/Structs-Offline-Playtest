@@ -1,4 +1,4 @@
-import {DTest} from "../../DTestFramework.js";
+import {DTest, DTestSuite} from "../../DTestFramework.js";
 import {COMMAND_STRUCT_DEFAULTS, FLEET_STRUCT_DEFAULTS, PASSIVE_WEAPONS} from "../../../js/modules/Constants.js";
 import {PassiveWeaponFactory} from "../../../js/modules/struct_components/PassiveWeaponFactory.js";
 
@@ -44,5 +44,5 @@ const makeTest = new DTest('makeTest', function(params) {
 });
 
 // Test execution
-console.log('PassiveWeaponFactoryTest');
+DTestSuite.printSuiteHeader('PassiveWeaponFactoryTest');
 makeTest.run();

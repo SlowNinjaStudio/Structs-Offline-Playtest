@@ -2,6 +2,7 @@ import {UINavbar} from "./components/UINavbar.js";
 import {Player} from "../modules/Player.js";
 import {UIGame} from "./components/UIGame.js";
 import {GameState} from "../modules/state/GameState.js";
+import {Planet} from "../modules/Planet.js";
 
 (new UINavbar()).init('nav-wrapper');
 
@@ -18,6 +19,12 @@ state.modalContainerId = 'modalContainer';
 state.offcanvasId = 'offcanvasBottom';
 state.offcanvasTopId = 'offcanvasTop';
 state.turn = state.player;
+state.arePlanetsEnabled = (new URLSearchParams(window.location.search)).get('planets') === 'true';
+
+if (state.arePlanetsEnabled) {
+  state.player.planet = new Planet(state.player.id);
+  state.enemy.planet = new Planet(state.enemy.id);
+}
 
 const game = new UIGame(state);
 game.render();

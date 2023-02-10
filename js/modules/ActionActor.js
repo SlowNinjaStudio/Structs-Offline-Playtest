@@ -5,8 +5,6 @@ export class ActionActor {
    */
   constructor(structRef, players) {
     this.player = players.find(player => player.id === structRef.playerId);
-    this.struct = structRef.isCommandStruct
-      ? this.player.commandStruct
-      : this.player.fleet.findStructById(structRef.structId);
+    this.struct = this.player.getStruct(structRef.structId, structRef.isCommandStruct, structRef.isPlanetaryStruct);
   }
 }

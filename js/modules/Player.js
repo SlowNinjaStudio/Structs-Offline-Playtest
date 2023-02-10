@@ -15,6 +15,7 @@ export class Player {
     commandShip.playerId = this.id;
     this.commandStruct = commandShip;
     this.fleet = new Fleet(this.id);
+    this.planet = null;
     this.creditManager = new CreditManager();
   }
 
@@ -23,5 +24,42 @@ export class Player {
    */
   isDefeated() {
     return this.commandStruct.isDestroyed;
+  }
+
+  /**
+   * @param {string} structId
+   * @param {boolean} isCommandStruct
+   * @param {boolean} isPlanetaryStruct
+   * @return {Struct}
+   */
+  getStruct(structId, isCommandStruct = false, isPlanetaryStruct = false) {
+    if (isCommandStruct){
+      return this.commandStruct;
+    } else if (isPlanetaryStruct) {
+      return this.planet.findStructById(structId);
+    }
+    return this.fleet.findStructById(structId);
+  }
+
+  /**
+   * @return {Struct[]}
+   */
+  getAllStructs() {
+    return [
+      this.commandStruct,
+      ...(this.planet ? this.planet.toFlatArray(false): []),
+      ...this.fleet.toFlatArray(false)
+    ].filter(struct => !!struct);
+  }
+
+  /**
+   * @param {function} callback
+   */
+  forEachStruct(callback) {
+    (this.getAllStructs()).forEach(callback);
+  }
+
+  getStructCount() {
+    return (this.getAllStructs()).length;
   }
 }

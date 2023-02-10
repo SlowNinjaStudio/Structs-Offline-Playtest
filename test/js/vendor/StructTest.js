@@ -1,4 +1,4 @@
-import {DTest} from "../../DTestFramework.js";
+import {DTest, DTestSuite} from "../../DTestFramework.js";
 import {Struct} from "../../../js/modules/Struct.js";
 import {ManualWeapon} from "../../../js/modules/struct_components/ManualWeapon.js";
 import {AMBITS, FLEET_STRUCT_DEFAULTS, MANUAL_WEAPON_SLOTS, UNIT_TYPES} from "../../../js/modules/Constants.js";
@@ -11,6 +11,7 @@ import {AftermarketEngine} from "../../../js/modules/struct_components/Aftermark
 import {Fraction} from "../../../js/modules/util/Fraction.js";
 import {StructBuilder} from "../../../js/modules/StructBuilder.js";
 import {CommandStructBuilder} from "../../../js/modules/CommandStructBuilder.js";
+import {Fleet} from "../../../js/modules/Fleet.js";
 
 /**
  * @return {Struct}
@@ -673,8 +674,317 @@ const isBlockingCommandStructTest = new DTest('isBlockingCommandStructTest', fun
   this.assertArrayEquals(fighterJet.isBlockingCommandStruct(), false);
 });
 
+const countBlockingDefendersTest = new DTest('countBlockingDefendersTest', function() {
+  const builder = new StructBuilder();
+  const commandBuilder = new CommandStructBuilder();
+
+  const commandShip = commandBuilder.make(UNIT_TYPES.COMMAND_SHIP);
+  const tank = builder.make(UNIT_TYPES.TANK);
+  const sam = builder.make(UNIT_TYPES.SAM_LAUNCHER);
+  const fighterJet = builder.make(UNIT_TYPES.FIGHTER_JET);
+  const sub = builder.make(UNIT_TYPES.SUB);
+
+  this.assertEquals(commandShip.countBlockingDefenders(), 0);
+
+  commandShip.operatingAmbit = AMBITS.LAND;
+  tank.defend(commandShip);
+  fighterJet.defend(commandShip);
+  sam.defend(commandShip);
+  sub.defend(commandShip)
+
+  this.assertArrayEquals(commandShip.isBlockingCommandStruct(), 2);
+});
+
+// const chooseWeaponTest = new DTest('chooseWeaponTest', function(params) {
+//   try {
+//     const weaponSlot = params.attackStruct.chooseWeapon(params.targetAmbit);
+//     this.assertEquals(weaponSlot, params.expectedWeaponSlot);
+//   } catch(e) {
+//     this.assertEquals(params.exceptionExpected, true);
+//   }
+// }, function() {
+//   const structBuilder = new StructBuilder();
+//   const tank = structBuilder.make(UNIT_TYPES.TANK);
+//   const sub = structBuilder.make(UNIT_TYPES.SUB);
+//   const cruiser = structBuilder.make(UNIT_TYPES.CRUISER);
+//   return [
+//     {
+//       attackStruct: tank,
+//       targetAmbit: AMBITS.LAND,
+//       expectedWeaponSlot: MANUAL_WEAPON_SLOTS.PRIMARY,
+//       exceptionExpected: false
+//     },
+//     {
+//       attackStruct: sub,
+//       targetAmbit: AMBITS.WATER,
+//       expectedWeaponSlot: MANUAL_WEAPON_SLOTS.PRIMARY,
+//       exceptionExpected: false
+//     },
+//     {
+//       attackStruct: sub,
+//       targetAmbit: AMBITS.SPACE,
+//       expectedWeaponSlot: MANUAL_WEAPON_SLOTS.PRIMARY,
+//       exceptionExpected: false
+//     },
+//     {
+//       attackStruct: cruiser,
+//       targetAmbit: AMBITS.WATER,
+//       expectedWeaponSlot: MANUAL_WEAPON_SLOTS.PRIMARY,
+//       exceptionExpected: false
+//     },
+//     {
+//       attackStruct: cruiser,
+//       targetAmbit: AMBITS.SKY,
+//       expectedWeaponSlot: MANUAL_WEAPON_SLOTS.SECONDARY,
+//       exceptionExpected: false
+//     },
+//     {
+//       attackStruct: tank,
+//       targetAmbit: AMBITS.SKY,
+//       expectedWeaponSlot: null,
+//       exceptionExpected: true
+//     }
+//   ];
+// });
+
+const chooseWeaponTest = new DTest('chooseWeaponTest', function(params) {
+  const structBuilder = new StructBuilder();
+  const attackStruct = structBuilder.make(params.attackStructUnitType);
+  const target = structBuilder.make(params.targetUnitType);
+  try {
+    const weaponSlot = attackStruct.chooseWeapon(target);
+    this.assertEquals(weaponSlot, params.expectedWeaponSlot);
+  } catch(e) {
+    this.assertEquals(params.exceptionExpected, true);
+  }
+}, function() {
+  return [
+    {
+      attackStructUnitType: UNIT_TYPES.TANK,
+      targetUnitType: UNIT_TYPES.TANK,
+      expectedWeaponSlot: MANUAL_WEAPON_SLOTS.PRIMARY,
+      exceptionExpected: false
+    },
+    {
+      attackStructUnitType: UNIT_TYPES.SUB,
+      targetUnitType: UNIT_TYPES.CRUISER,
+      expectedWeaponSlot: MANUAL_WEAPON_SLOTS.PRIMARY,
+      exceptionExpected: false
+    },
+    {
+      attackStructUnitType: UNIT_TYPES.SUB,
+      targetUnitType: UNIT_TYPES.STAR_FIGHTER,
+      expectedWeaponSlot: MANUAL_WEAPON_SLOTS.PRIMARY,
+      exceptionExpected: false
+    },
+    {
+      attackStructUnitType: UNIT_TYPES.CRUISER,
+      targetUnitType: UNIT_TYPES.DESTROYER,
+      expectedWeaponSlot: MANUAL_WEAPON_SLOTS.PRIMARY,
+      exceptionExpected: false
+    },
+    {
+      attackStructUnitType: UNIT_TYPES.CRUISER,
+      targetUnitType: UNIT_TYPES.FIGHTER_JET,
+      expectedWeaponSlot: MANUAL_WEAPON_SLOTS.SECONDARY,
+      exceptionExpected: false
+    },
+    {
+      attackStructUnitType: UNIT_TYPES.TANK,
+      targetUnitType: UNIT_TYPES.FIGHTER_JET,
+      expectedWeaponSlot: null,
+      exceptionExpected: true
+    },
+    {
+      attackStructUnitType: UNIT_TYPES.STAR_FIGHTER,
+      targetUnitType: UNIT_TYPES.STAR_FIGHTER,
+      expectedWeaponSlot: MANUAL_WEAPON_SLOTS.PRIMARY,
+      exceptionExpected: false
+    },
+    {
+      attackStructUnitType: UNIT_TYPES.STAR_FIGHTER,
+      targetUnitType: UNIT_TYPES.GALACTIC_BATTLESHIP,
+      expectedWeaponSlot: MANUAL_WEAPON_SLOTS.SECONDARY,
+      exceptionExpected: false
+    },
+  ];
+});
+
+const isCounterUnitToTest = new DTest('isCounterUnitToTest', function (params) {
+  const structBuilder = new StructBuilder();
+  const target = structBuilder.make(params.targetUnitType);
+  const counter = structBuilder.make(params.counterUnitType);
+  this.assertEquals(counter.isCounterUnitTo(target), params.expected);
+}, function() {
+  return [
+    {
+      targetUnitType: UNIT_TYPES.TANK,
+      counterUnitType: UNIT_TYPES.TANK,
+      expected: false
+    },
+    {
+      targetUnitType: UNIT_TYPES.TANK,
+      counterUnitType: UNIT_TYPES.ARTILLERY,
+      expected: true
+    },
+    {
+      targetUnitType: UNIT_TYPES.TANK,
+      counterUnitType: UNIT_TYPES.STEALTH_BOMBER,
+      expected: true
+    },
+    {
+      targetUnitType: UNIT_TYPES.STEALTH_BOMBER,
+      counterUnitType: UNIT_TYPES.SAM_LAUNCHER,
+      expected: false
+    },
+    {
+      targetUnitType: UNIT_TYPES.FIGHTER_JET,
+      counterUnitType: UNIT_TYPES.CRUISER,
+      expected: true
+    },
+  ];
+});
+
+const canDefeatStructsCounterMeasureTest = new DTest('canDefeatStructsCounterMeasureTest', function(params) {
+  const structBuilder = new StructBuilder();
+  const target = structBuilder.make(params.targetUnitType);
+  const attacker = structBuilder.make(params.attackerUnitType);
+  this.assertEquals(attacker.canDefeatStructsCounterMeasure(target), params.expected);
+}, function () {
+  return [
+    {
+      targetUnitType: UNIT_TYPES.TANK,
+      attackerUnitType: UNIT_TYPES.STEALTH_BOMBER,
+      expected: true // Vacuously true
+    },
+    {
+      targetUnitType: UNIT_TYPES.TANK,
+      attackerUnitType: UNIT_TYPES.TANK,
+      expected: true // Vacuously true
+    },
+    {
+      targetUnitType: UNIT_TYPES.FIGHTER_JET,
+      attackerUnitType: UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
+      expected: false
+    },
+    {
+      targetUnitType: UNIT_TYPES.FIGHTER_JET,
+      attackerUnitType: UNIT_TYPES.CRUISER,
+      expected: true
+    },
+    {
+      targetUnitType: UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
+      attackerUnitType: UNIT_TYPES.CRUISER,
+      expected: false
+    },
+    {
+      targetUnitType: UNIT_TYPES.HIGH_ALTITUDE_INTERCEPTOR,
+      attackerUnitType: UNIT_TYPES.DESTROYER,
+      expected: true
+    },
+    {
+      targetUnitType: UNIT_TYPES.CRUISER,
+      attackerUnitType: UNIT_TYPES.STEALTH_BOMBER,
+      expected: false
+    },
+    {
+      targetUnitType: UNIT_TYPES.CRUISER,
+      attackerUnitType: UNIT_TYPES.GALACTIC_BATTLESHIP,
+      expected: true
+    },
+  ];
+});
+
+const countDefenderCounterAttacksTest = new DTest('countDefenderCounterAttacksTest', function(params) {
+  const structBuilder = new StructBuilder();
+  const attacker = structBuilder.make(params.attackerUnitType);
+  const target = structBuilder.make(params.targetUnitType);
+
+  params.defenderUnitTypes.forEach(unitType => {
+    (structBuilder.make(unitType)).defend(target)
+  });
+
+  this.assertEquals(target.countDefenderCounterAttacks(attacker), params.expected);
+}, function () {
+  return [
+    {
+      attackerUnitType: UNIT_TYPES.TANK,
+      targetUnitType: UNIT_TYPES.TANK,
+      defenderUnitTypes: [],
+      expected: 0
+    },
+    {
+      attackerUnitType: UNIT_TYPES.TANK,
+      targetUnitType: UNIT_TYPES.TANK,
+      defenderUnitTypes: [UNIT_TYPES.STAR_FIGHTER, UNIT_TYPES.FIGHTER_JET, UNIT_TYPES.SUB],
+      expected: 0
+    },
+    {
+      attackerUnitType: UNIT_TYPES.TANK,
+      targetUnitType: UNIT_TYPES.TANK,
+      defenderUnitTypes: [UNIT_TYPES.STEALTH_BOMBER, UNIT_TYPES.GALACTIC_BATTLESHIP],
+      expected: 2
+    },
+    {
+      attackerUnitType: UNIT_TYPES.CRUISER,
+      targetUnitType: UNIT_TYPES.FIGHTER_JET,
+      defenderUnitTypes: [UNIT_TYPES.SUB],
+      expected: 1
+    },
+  ];
+});
+
+const isVulnerableToFleetTest = new DTest('isVulnerableToFleetTest', function(params) {
+  const structBuilder = new StructBuilder();
+  const struct = structBuilder.make(params.structUnitType);
+  const fleet = new Fleet();
+
+  params.defenderUnitTypes.forEach(unitType => {
+    (structBuilder.make(unitType)).defend(struct)
+  });
+
+  params.fleetUnitTypes.forEach(unitType => {
+    fleet.addStruct(structBuilder.make(unitType));
+  });
+
+  this.assertEquals(struct.isVulnerableToFleet(fleet), params.expected);
+}, function() {
+  return [
+    {
+      structUnitType: UNIT_TYPES.TANK,
+      defenderUnitTypes: [],
+      fleetUnitTypes: [UNIT_TYPES.TANK],
+      expected: true
+    },
+    {
+      structUnitType: UNIT_TYPES.SAM_LAUNCHER,
+      defenderUnitTypes: [UNIT_TYPES.TANK],
+      fleetUnitTypes: [UNIT_TYPES.TANK],
+      expected: false
+    },
+    {
+      structUnitType: UNIT_TYPES.SAM_LAUNCHER,
+      defenderUnitTypes: [UNIT_TYPES.SUB],
+      fleetUnitTypes: [UNIT_TYPES.TANK],
+      expected: true
+    },
+    {
+      structUnitType: UNIT_TYPES.SAM_LAUNCHER,
+      defenderUnitTypes: [UNIT_TYPES.SUB],
+      fleetUnitTypes: [UNIT_TYPES.CRUISER],
+      expected: false
+    },
+    {
+      structUnitType: UNIT_TYPES.SAM_LAUNCHER,
+      defenderUnitTypes: [UNIT_TYPES.SUB],
+      fleetUnitTypes: [UNIT_TYPES.CRUISER, UNIT_TYPES.TANK],
+      expected: true
+    },
+  ];
+})
+
 // Test execution
-console.log('StructTest');
+DTestSuite.printSuiteHeader('StructTest');
 addDefenderTest.run();
 removeDefenderTest.run();
 defendTest.run();
@@ -695,3 +1005,9 @@ changeAmbitTest.run();
 getTargetableAmbitsTest.run();
 isBlockingTest.run();
 isBlockingCommandStructTest.run();
+countBlockingDefendersTest.run();
+chooseWeaponTest.run();
+isCounterUnitToTest.run();
+canDefeatStructsCounterMeasureTest.run();
+countDefenderCounterAttacksTest.run();
+isVulnerableToFleetTest.run();

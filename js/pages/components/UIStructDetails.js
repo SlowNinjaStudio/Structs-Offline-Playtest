@@ -2,10 +2,9 @@ import {
   AMBITS,
   DEFENSE_COMPONENT_TYPES,
   DEFENSE_COMPONENTS,
-  EVENTS,
+  EVENTS, ICONS,
   IMG,
-  MANUAL_WEAPON_SLOTS,
-  MAX_FLEET_STRUCTS_PER_AMBIT
+  MANUAL_WEAPON_SLOTS, PLAYER_FLEET_TYPES
 } from "../../modules/Constants.js";
 import {Util} from "../../modules/util/Util.js";
 import {CounterMeasure} from "../../modules/struct_components/CounterMeasure.js";
@@ -569,13 +568,15 @@ export class UIStructDetails {
    * @param {string} ambit
    * @param {Struct|undefined|null} struct
    * @param {boolean} isCommandSlot
+   * @param {boolean} isPlanetarySlot
    * @return {string}
    */
-  renderMiniMapSlot(ambit, struct = undefined, isCommandSlot = false) {
+  renderMiniMapSlot(ambit, struct = undefined, isCommandSlot = false, isPlanetarySlot = false) {
     const structImage = struct ? `<img src="${struct.image}" alt="${struct.unitType}" class="mini-map-struct">` : '';
     const commandSlot = isCommandSlot ? 'mini-map-command-slot' : '';
+    const planetarySlot = isPlanetarySlot ? 'mini-map-planetary-slot' : '';
     return `
-      <div class="col-auto mini-map-slot mini-map-ambit-${ambit.toLowerCase()} ${commandSlot}">
+      <div class="col-auto mini-map-slot mini-map-ambit-${ambit.toLowerCase()} ${commandSlot} ${planetarySlot}">
         <div class="mini-map-struct-container">${structImage}</div>
       </div>
     `;
@@ -584,25 +585,50 @@ export class UIStructDetails {
   /**
    * @param {string} ambit
    * @param {Struct[]} structs
-   * @param {boolean} includeCommandColumn
-   * @param {Struct} commandStruct
+   * @param {string} fleetType
    * @return {string}
    */
-  renderMiniMapAmbitRow(ambit, structs, includeCommandColumn = false, commandStruct = null) {
+  renderMiniMapFleetSlots(ambit, structs, fleetType) {
     const maxSlots = structs.reduce(
       (max, struct) => Math.max(max, parseInt(struct.getDisplayAmbitSlot())),
-      MAX_FLEET_STRUCTS_PER_AMBIT[ambit]
+      this.player[fleetType].maxStructsPerAmbit[ambit]
     );
 
     let slots = '';
     for (let i = 1; i <= maxSlots; i++) {
       const struct = structs.find(defender => parseInt(defender.getDisplayAmbitSlot()) === i);
-      slots += this.renderMiniMapSlot(ambit, struct);
+      slots += this.renderMiniMapSlot(ambit, struct, false, fleetType === PLAYER_FLEET_TYPES.PLANET);
     }
+
+    return slots;
+  }
+
+  /**
+   * @param {string} ambit
+   * @param {Struct[]} fleetStructs
+   * @param {Struct[]} planetaryStructs
+   * @param {boolean} includeCommandColumn
+   * @param {Struct} commandStruct
+   * @return {string}
+   */
+  renderMiniMapAmbitRow(
+    ambit,
+    fleetStructs,
+    planetaryStructs = [],
+    includeCommandColumn = false,
+    commandStruct = null
+  ) {
+    let slots = this.renderMiniMapFleetSlots(ambit, fleetStructs, PLAYER_FLEET_TYPES.FLEET);
+    let leftToRight = (this.player.id === this.state.player.id);
 
     if (includeCommandColumn) {
       const commandSlot = this.renderMiniMapSlot(ambit, commandStruct, true);
-      slots = (this.player.id === this.state.player.id) ? `${commandSlot} ${slots}` : `${slots} ${commandSlot}`;
+      slots = leftToRight ? `${commandSlot} ${slots}` : `${slots} ${commandSlot}`;
+
+      if (planetaryStructs.length) {
+        const planetarySlots = this.renderMiniMapFleetSlots(ambit, planetaryStructs, PLAYER_FLEET_TYPES.PLANET);
+        slots = leftToRight ? `${planetarySlots} ${slots}` : `${slots} ${planetarySlots}`;
+      }
     }
 
     return `<div class="row g-0">${slots}</div>`;
@@ -624,18 +650,21 @@ export class UIStructDetails {
    * @return {string}
    */
   getDefendingByAmbit(struct, ambit) {
-    let defending = [];
+    let fleetStructsDefending = [];
+    let planetaryStructsDefending = [];
     let commandStruct = null;
 
     if (struct.defending && struct.defending.operatingAmbit === ambit) {
       if (struct.defending.isCommandStruct()) {
         commandStruct = struct.defending;
+      } else if (struct.defending.isPlanetaryStruct()) {
+        planetaryStructsDefending.push(struct.defending);
       } else {
-        defending.push(struct.defending);
+        fleetStructsDefending.push(struct.defending);
       }
     }
 
-    return this.renderMiniMapAmbitRow(ambit, defending, true, commandStruct);
+    return this.renderMiniMapAmbitRow(ambit, fleetStructsDefending, planetaryStructsDefending,true, commandStruct);
   }
 
   /**
@@ -711,7 +740,7 @@ export class UIStructDetails {
 
           <div class="attributes-container container-fluid">
             <div class="row">
-              <div class="col-4">
+              <div class="col-4 mb-4">
                 <div class="row">
                   <div class="col text-center">
                     <img src="${this.struct.image}" alt="${this.struct.unitType}" class="struct-image img-thumbnail">
@@ -739,69 +768,93 @@ export class UIStructDetails {
                        title="Struct Position"
                        data-bs-content="This struct's position by ambit and slot number."
                     ><img src="${IMG.ICONS}icon-location-pin.png" alt="location-pin"></a><strong>:</strong>
-                    ${this.getAmbitIcon(this.struct.operatingAmbit)} ${this.struct.getDisplayAmbitSlot()}
+                    ${this.struct.isPlanetaryStruct() ? ICONS.POWER_GENERATOR : ''}${this.getAmbitIcon(this.struct.operatingAmbit)} ${this.struct.getDisplayAmbitSlot()}
                   </div>
                 </div>
               </div>
               <div class="col">
-
-                <div class="row">
-                  <div class="col p-2 mb-2 struct-details-group">
-                    <div>
-                      <a href="javascript: void(0)"
-                       data-bs-toggle="popover"
-                       data-bs-content="Primary Weapon"
-                      ><img src="${IMG.ICONS}icon-attack-range.png" alt="attack-range"></a>
-                      ${this.struct.manualWeaponPrimary.getActionLabel()}<strong>:</strong>
-                    </div>
-                    <div>
-                      ${this.getManualWeaponIcons(this.struct.manualWeaponPrimary)}
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col p-2 mb-2 struct-details-group">
-                    <div>
-                      <a href="javascript: void(0)"
-                       data-bs-toggle="popover"
-                       data-bs-content="Secondary Weapon"
-                      ><img src="${IMG.ICONS}icon-attack-range.png" alt="attack-range"></a>
-                      ${this.struct.manualWeaponSecondary ? this.struct.manualWeaponSecondary.getActionLabel() : 'N/A'}<strong>:</strong>
-                    </div>
-                    <div>
-                      ${this.struct.manualWeaponSecondary ? this.getManualWeaponIcons(this.struct.manualWeaponSecondary) : '--'}
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col p-2 mb-2 struct-details-group">
-                    <div>
-                      <a href="javascript: void(0)"
+                ${this.struct.manualWeaponPrimary ? `
+                  <div class="row">
+                    <div class="col p-2 mb-2 struct-details-group">
+                      <div>
+                        <a href="javascript: void(0)"
                          data-bs-toggle="popover"
-                         title="Counter Attack Capabilities"
-                         data-bs-content="Structs counter-attack when attacked. If this struct is defending a struct that is targeted, this struct will also counter-attack."
-                      ><img src="${IMG.ICONS}icon-counter-attack.png" alt="counter-attack"></a>
-                      Counter-Attack<strong>:</strong>
-                    </div>
-                    <div>
-                        ${this.struct.passiveWeapon ? this.getPassiveWeaponIcons(this.struct) : '--'}
+                         data-bs-content="Primary Weapon"
+                        ><img src="${IMG.ICONS}icon-attack-range.png" alt="attack-range"></a>
+                        ${this.struct.manualWeaponPrimary ? this.struct.manualWeaponPrimary.getActionLabel() : 'N/A'}<strong>:</strong>
+                      </div>
+                      <div>
+                        ${this.struct.manualWeaponPrimary ? this.getManualWeaponIcons(this.struct.manualWeaponPrimary) : '--'}
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div class="row">
-                  <div class="col p-2 mb-2 struct-details-group">
-                    <div>
-                      <a href="javascript: void(0)"
+                ` : ''}
+                ${this.struct.manualWeaponSecondary ? `
+                  <div class="row">
+                    <div class="col p-2 mb-2 struct-details-group">
+                      <div>
+                        <a href="javascript: void(0)"
                          data-bs-toggle="popover"
-                         data-bs-content="Defensive Capabilities"
-                      ><img src="${IMG.ICONS}icon-def-melee.png" alt="def-melee"></a>
-                      Defenses<strong>:</strong>
-                    </div>
-                    <div>
-                        ${this.getDefensiveComponentIcons(this.struct.defenseComponent)}
+                         data-bs-content="Secondary Weapon"
+                        ><img src="${IMG.ICONS}icon-attack-range.png" alt="attack-range"></a>
+                        ${this.struct.manualWeaponSecondary ? this.struct.manualWeaponSecondary.getActionLabel() : 'N/A'}<strong>:</strong>
+                      </div>
+                      <div>
+                        ${this.struct.manualWeaponSecondary ? this.getManualWeaponIcons(this.struct.manualWeaponSecondary) : '--'}
+                      </div>
                     </div>
                   </div>
-                </div>
+                ` : ''}
+                ${this.struct.passiveWeapon ? `
+                  <div class="row">
+                    <div class="col p-2 mb-2 struct-details-group">
+                      <div>
+                        <a href="javascript: void(0)"
+                           data-bs-toggle="popover"
+                           title="Counter Attack Capabilities"
+                           data-bs-content="Structs counter-attack when attacked. If this struct is defending a struct that is targeted, this struct will also counter-attack."
+                        ><img src="${IMG.ICONS}icon-counter-attack.png" alt="counter-attack"></a>
+                        Counter-Attack<strong>:</strong>
+                      </div>
+                      <div>
+                          ${this.struct.passiveWeapon ? this.getPassiveWeaponIcons(this.struct) : '--'}
+                      </div>
+                    </div>
+                  </div>
+                ` : ''}
+                ${this.struct.defenseComponent.type !== DEFENSE_COMPONENT_TYPES.DEFAULT ? `
+                  <div class="row">
+                    <div class="col p-2 mb-2 struct-details-group">
+                      <div>
+                        <a href="javascript: void(0)"
+                           data-bs-toggle="popover"
+                           data-bs-content="Defensive Capabilities"
+                        ><img src="${IMG.ICONS}icon-def-melee.png" alt="def-melee"></a>
+                        Defenses<strong>:</strong>
+                      </div>
+                      <div>
+                          ${this.getDefensiveComponentIcons(this.struct.defenseComponent)}
+                      </div>
+                    </div>
+                  </div>
+                ` : ''}
+                ${this.struct.powerGenerator ? `
+                  <div class="row">
+                    <div class="col p-2 mb-2 struct-details-group">
+                      <div>
+                        <a href="javascript: void(0)"
+                           data-bs-toggle="popover"
+                           title="Power Generation Capabilities"
+                           data-bs-content="Structs with power generator can generate watt every round."
+                        >${ICONS.POWER_OUTPUT}</a>
+                        Power Generator<strong>:</strong>
+                      </div>
+                      <div>
+                          ${this.struct.powerGenerator ? `Generates +${this.struct.powerGenerator.powerOutput} Watt Per Turn` : '--'}
+                      </div>
+                    </div>
+                  </div>
+                ` : ''}
               </div>
             </div>
           </div>

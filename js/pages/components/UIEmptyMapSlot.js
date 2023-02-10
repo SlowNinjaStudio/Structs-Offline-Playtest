@@ -8,13 +8,22 @@ export class UIEmptyMapSlot {
    * @param {string} ambit
    * @param {number} ambitSlot
    * @param {boolean} isCommandSlot
+   * @param {boolean} isPlanetarySlot
    */
-  constructor(state, player, ambit, ambitSlot, isCommandSlot = false) {
+  constructor(
+    state,
+    player,
+    ambit,
+    ambitSlot,
+    isCommandSlot = false,
+    isPlanetarySlot = false
+  ) {
     this.state = state;
     this.player = player;
     this.ambit = ambit;
     this.ambitSlot = ambitSlot;
     this.isCommandSlot = isCommandSlot;
+    this.isPlanetarySlot = isPlanetarySlot;
   }
 
   /**
@@ -37,16 +46,23 @@ export class UIEmptyMapSlot {
    */
   render() {
     const isSelectable = this.isSelectableSlot();
+    let slotType = 'fleet';
+    if (this.isCommandSlot) {
+      slotType = 'command';
+    } else if (this.isPlanetarySlot) {
+      slotType = 'planet';
+    }
     return `
       ${isSelectable ? `
       <a
-        class="map-slot-btn empty-slot ${this.isCommandSlot ? 'command' : 'fleet'}"
+        class="map-slot-btn empty-slot ${slotType}"
         data-player-id="${this.player.id}"
         data-ambit="${this.ambit}"
         data-ambit-slot="${this.ambitSlot}"
         data-struct-id=""
         data-is-command-struct="0"
         data-is-command-slot="${this.isCommandSlot ? 1 : 0}"
+        data-is-planetary-slot="${this.isPlanetarySlot ? 1 : 0}"
         href="javascript: void(0)"
         role="button"
       >
