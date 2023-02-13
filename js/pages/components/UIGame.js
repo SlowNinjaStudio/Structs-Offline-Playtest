@@ -5,6 +5,7 @@ import {
   GAME_PHASES,
   IMG,
   MANUAL_WEAPON_SLOTS,
+  POWER_GENERATORS,
   QUALITATIVE_BUDGETS
 } from "../../modules/Constants.js";
 import {UIStructDetails} from "./UIStructDetails.js";
@@ -538,7 +539,7 @@ export class UIGame {
               </div>
               <div class="col">
                 <div class="fw-bold">Deploy Your Power Generator</div>
-                <div>Click a space with the <img src="${IMG.ICONS}icon-power-bolt.png" alt="Lightning Bolt"> icon to deploy your Power Generator there. This Struct generates 1 Watt per turn, which you can use to deploy new units during the game.</div>
+                <div>Click a space with the <img src="${IMG.ICONS}icon-power-bolt.png" alt="Lightning Bolt"> icon to deploy your Power Generator there. This Struct generates ${POWER_GENERATORS.GENERIC.POWER_OUTPUT} Watt per turn, which you can use to deploy new units during the game.</div>
               </div>
             </div>
           </div>
